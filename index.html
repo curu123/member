@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V22 Stable Pages</title>
+  <title>RK CELL Admin V23</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -1087,6 +1087,14 @@ body.mode-public .footer{display:none!important}
 body.mode-public #publicMember{min-height:100vh}
 
 </style>
+<script>
+(function(){
+  const id=new URLSearchParams(location.search).get("id");
+  if(id){
+    location.replace(`./member.html?id=${encodeURIComponent(id)}`);
+  }
+})();
+</script>
 </head>
 <body>
 <div class="app">
@@ -1722,7 +1730,7 @@ async function renderMemberQr(id){
   const m=members.find(x=>x.id===id);
   if(!m) return;
 
-  const memberUrl=`https://curu123.github.io/member/?id=${encodeURIComponent(m.id)}`;
+  const memberUrl=`https://curu123.github.io/member/member.html?id=${encodeURIComponent(m.id)}`;
   box.innerHTML="";
 
   if(typeof QRCode !== "undefined"){
@@ -1969,7 +1977,7 @@ function renderCardPreview(memberId){
   if(!m){name.textContent="Pilih Member";id.textContent="RK-XXXX-XXXX";pts.textContent="0";return;}
   name.textContent=m.name; id.textContent=m.id; pts.textContent=m.points||0;
   if(typeof QRCode!=="undefined"){
-    new QRCode(qr,{text:`https://curu123.github.io/member/?id=${encodeURIComponent(m.id)}`,width:93,height:93,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});
+    new QRCode(qr,{text:`https://curu123.github.io/member/member.html?id=${encodeURIComponent(m.id)}`,width:93,height:93,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});
   }
 }
 
@@ -1980,7 +1988,7 @@ function preparePrintCard(memberId){
   document.getElementById("printCardId").textContent=m.id;
   const qr=document.getElementById("printCardQr");
   qr.innerHTML="";
-  const url=`https://curu123.github.io/member/?id=${encodeURIComponent(m.id)}`;
+  const url=`https://curu123.github.io/member/member.html?id=${encodeURIComponent(m.id)}`;
   if(typeof QRCode!=="undefined"){
     new QRCode(qr,{text:url,width:90,height:90,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});
   }
@@ -2740,7 +2748,7 @@ document.getElementById("printMemberCardBtn").onclick=()=>{
 document.getElementById("openMemberLinkBtn").onclick=()=>{
   const id=document.getElementById("qrMemberSelect").value;
   if(!id) return alert("Pilih member terlebih dahulu.");
-  window.open(`https://curu123.github.io/member/?id=${encodeURIComponent(id)}`,"_blank","noopener");
+  window.open(`https://curu123.github.io/member/member.html?id=${encodeURIComponent(id)}`,"_blank","noopener");
 };
 
 
