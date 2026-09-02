@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member V7 Compact</title>
+<title>RK CELL Member V8 Balanced</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -246,6 +246,112 @@ body{padding:3px 0!important}
   .history{padding:4px 5px!important}
 }
 
+
+/* V8 balanced compact + contact toggle */
+.member-shell{
+  padding:0 9px 8px!important;
+  border-radius:18px!important;
+}
+.title h1{font-size:16px!important}
+.title small{font-size:7px!important}
+.voice-welcome{
+  padding:4px 9px!important;
+  font-size:7px!important;
+}
+.profile{
+  grid-template-columns:44px 1fr auto!important;
+  padding:8px 9px!important;
+  border-radius:13px!important
+}
+.avatar{width:42px!important;height:42px!important;font-size:21px!important}
+.name{font-size:14px!important}
+.idrow{font-size:7px!important}
+.idchip{padding:4px 6px!important}
+.status{font-size:6px!important;padding:4px 6px!important}
+
+.stat{min-height:56px!important;padding:7px 9px!important}
+.stat small{font-size:7px!important}
+.stat strong{font-size:19px!important}
+.sub{font-size:7px!important}
+
+.reward-alert{padding:6px 8px!important;font-size:8px!important}
+.progress-card{padding:6px 8px!important}
+.progress-head{font-size:7px!important}
+.last-tx{font-size:6px!important}
+
+.section{margin:7px 1px 4px!important}
+.section strong{font-size:9px!important}
+.section span{font-size:6px!important}
+
+.reward{
+  min-height:78px!important;
+  padding:6px 3px 4px!important
+}
+.reward .rp{font-size:9px!important}
+.reward .ri{font-size:18px!important}
+.reward .rn{font-size:6px!important;min-height:17px!important}
+.reward .rs{font-size:6px!important}
+.state{font-size:5px!important}
+
+.history{
+  flex-basis:155px!important;
+  min-width:155px!important;
+  padding:6px 7px!important
+}
+.hicon{width:23px!important;height:23px!important}
+.hmain b{font-size:8px!important}
+.hmain small,.date{font-size:6px!important}
+.poin{font-size:10px!important}
+
+/* Floating contact admin toggle */
+.admin-contact-toggle{
+  position:fixed;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:50;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 12px;
+  border-radius:18px;
+  border:1px solid rgba(0,223,134,.38);
+  background:rgba(5,20,24,.92);
+  color:#8dffbd;
+  font:900 8px ui-monospace,monospace;
+  box-shadow:0 7px 20px rgba(0,0,0,.28);
+  backdrop-filter:blur(10px);
+}
+.admin-contact-panel{
+  position:fixed;
+  left:50%;
+  bottom:48px;
+  transform:translateX(-50%) translateY(12px);
+  z-index:49;
+  width:min(92vw,360px);
+  padding:10px;
+  border-radius:14px;
+  border:1px solid rgba(0,223,134,.32);
+  background:rgba(5,17,22,.97);
+  box-shadow:0 12px 30px rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.2s ease;
+}
+.admin-contact-panel.open{
+  opacity:1;
+  pointer-events:auto;
+  transform:translateX(-50%) translateY(0);
+}
+.admin-contact-panel .contact-admin{
+  margin:0!important;
+  padding:8px 10px!important;
+  font-size:8px!important;
+}
+.admin-contact-panel .contact-admin small{
+  font-size:6px!important;
+}
+
 </style>
 </head>
 <body>
@@ -329,6 +435,20 @@ function setupWelcomeVoice(name){
   document.addEventListener("touchstart",unlock,{once:true});
 }
 
+
+function toggleAdminContact(){
+  const panel=document.getElementById("adminContactPanel");
+  panel?.classList.toggle("open");
+}
+document.addEventListener("click",e=>{
+  const panel=document.getElementById("adminContactPanel");
+  const btn=document.getElementById("adminContactToggle");
+  if(!panel || !btn) return;
+  if(panel.classList.contains("open") && !panel.contains(e.target) && !btn.contains(e.target)){
+    panel.classList.remove("open");
+  }
+});
+
 async function init(){
  const id=new URLSearchParams(location.search).get("id");
  if(!id){
@@ -411,9 +531,15 @@ async function init(){
 
    <div class="section"><strong>RIWAYAT REWARD</strong><span>${claims.length} klaim</span></div>
    <div class="history-strip">${claims.length?claims.slice(0,6).map(c=>`<div class="history"><div class="hleft"><div class="hicon">🎁</div><div class="hmain"><b>${esc(c.reward_name)}</b><small>Reward diklaim</small></div></div><div class="date">${new Date(c.claimed_at).toLocaleString("id-ID")}</div></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}</div>
+ </div>
 
+ <button class="admin-contact-toggle" id="adminContactToggle" type="button" onclick="toggleAdminContact()">
+   💬 Hubungi Admin
+ </button>
+
+ <div class="admin-contact-panel" id="adminContactPanel">
    <a class="contact-admin" href="https://wa.me/6281271012313?text=${encodeURIComponent(`Halo Admin RK CELL, saya ${d.name} (${d.id}). Saya ingin meminta bantuan terkait member/reward.`)}" target="_blank" rel="noopener">
-     <span style="font-size:20px">💬</span>
+     <span style="font-size:16px">💬</span>
      <span>HUBUNGI ADMIN<br><small>Bantuan member, poin, atau klaim reward</small></span>
    </a>
  </div>`;
