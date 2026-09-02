@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member V8 Balanced</title>
+<title>RK CELL Member V9 WA Corner</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -352,6 +352,42 @@ body{padding:3px 0!important}
   font-size:6px!important;
 }
 
+
+/* V9 WhatsApp compact top-right */
+.admin-contact-toggle{
+  position:fixed!important;
+  top:10px!important;
+  right:10px!important;
+  left:auto!important;
+  bottom:auto!important;
+  transform:none!important;
+  width:38px!important;
+  height:38px!important;
+  padding:0!important;
+  border-radius:50%!important;
+  display:grid!important;
+  place-items:center!important;
+  background:#16a85a!important;
+  border:1px solid rgba(154,255,197,.65)!important;
+  box-shadow:0 5px 16px rgba(0,0,0,.30)!important;
+  font-size:0!important;
+  z-index:80!important;
+}
+.admin-contact-toggle .wa-icon{
+  width:22px;height:22px;display:block;
+}
+.admin-contact-panel{
+  top:55px!important;
+  right:10px!important;
+  left:auto!important;
+  bottom:auto!important;
+  transform:translateY(-6px)!important;
+  width:min(84vw,300px)!important;
+}
+.admin-contact-panel.open{
+  transform:translateY(0)!important;
+}
+
 </style>
 </head>
 <body>
@@ -533,8 +569,10 @@ async function init(){
    <div class="history-strip">${claims.length?claims.slice(0,6).map(c=>`<div class="history"><div class="hleft"><div class="hicon">🎁</div><div class="hmain"><b>${esc(c.reward_name)}</b><small>Reward diklaim</small></div></div><div class="date">${new Date(c.claimed_at).toLocaleString("id-ID")}</div></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}</div>
  </div>
 
- <button class="admin-contact-toggle" id="adminContactToggle" type="button" onclick="toggleAdminContact()">
-   💬 Hubungi Admin
+ <button class="admin-contact-toggle" id="adminContactToggle" type="button" onclick="toggleAdminContact()" aria-label="Hubungi Admin via WhatsApp" title="Hubungi Admin">
+   <svg class="wa-icon" viewBox="0 0 32 32" aria-hidden="true">
+     <path fill="#fff" d="M16.04 3C8.85 3 3 8.73 3 15.78c0 2.25.6 4.45 1.74 6.38L3 28.5l6.57-1.7a13.2 13.2 0 0 0 6.46 1.66h.01C23.23 28.46 29 22.73 29 15.68 29 8.63 23.23 3 16.04 3Zm0 23.3h-.01a11 11 0 0 1-5.61-1.5l-.4-.23-3.9 1.01 1.04-3.73-.26-.4a10.55 10.55 0 0 1-1.68-5.67c0-5.85 4.86-10.61 10.83-10.61 5.96 0 10.78 4.69 10.78 10.51 0 5.85-4.83 10.62-10.79 10.62Zm5.94-7.94c-.33-.16-1.93-.94-2.23-1.05-.3-.1-.52-.16-.74.16-.22.32-.85 1.05-1.04 1.26-.19.22-.38.24-.71.08-.33-.16-1.38-.5-2.63-1.59-.97-.85-1.63-1.91-1.82-2.23-.19-.32-.02-.5.14-.66.15-.14.33-.38.49-.57.16-.19.22-.32.33-.54.11-.21.05-.4-.03-.56-.08-.16-.74-1.75-1.01-2.4-.27-.64-.54-.55-.74-.56h-.63c-.22 0-.57.08-.87.4-.3.32-1.14 1.1-1.14 2.67 0 1.57 1.17 3.09 1.33 3.3.16.22 2.3 3.45 5.57 4.84.78.33 1.38.52 1.85.67.78.24 1.49.21 2.05.13.63-.09 1.93-.78 2.2-1.53.27-.75.27-1.39.19-1.53-.08-.13-.3-.21-.63-.37Z"/>
+   </svg>
  </button>
 
  <div class="admin-contact-panel" id="adminContactPanel">
