@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V26 Direct Scan</title>
+  <title>RK CELL Admin V27 Direct Camera</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -962,6 +962,26 @@ body.light-mode .center-scan-btn{
   <div class="footer">RK CELL // MEMBER NETWORK // SYSTEM ONLINE</div>
 </div>
 
+
+<div id="directScanOverlay" class="hidden" style="
+  position:fixed;inset:0;z-index:10000;background:rgba(3,8,18,.98);
+  padding:18px 12px 40px;overflow:auto;">
+  <div style="max-width:520px;margin:0 auto;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px">
+      <div>
+        <strong style="font-size:18px;color:#fff">SCAN MEMBER</strong><br>
+        <small style="color:#7893a7">Arahkan kamera ke QR member</small>
+      </div>
+      <button id="directScanClose" class="btn soft" type="button" style="width:auto">✕ Tutup</button>
+    </div>
+
+    <div class="card">
+      <div id="directScanReader"></div>
+      <div id="directScanStatus" class="scan-status" style="margin-top:10px">Menunggu kamera...</div>
+    </div>
+  </div>
+</div>
+
 <div class="bottom-nav" id="bottomNav">
   <button class="active" data-tab="memberTab"><span>🛠</span>Admin</button>
   <button data-tab="txTab"><span>🧾</span>Transaksi</button>
@@ -1641,48 +1661,94 @@ function selectMemberById(id, source="manual"){
   return true;
 }
 
-async function startScanner(){
-  if(scannerRunning) return;
-  const status = document.getElementById("scanStatus");
+async function startScanner(targetId="scanReader", statusId="scanStatus"){
+  if(scannerRunning){
+    try{ await stopScanner(); }catch(e){}
+  }
+
+  const status = document.getElementById(statusId);
+
   if(typeof Html5Qrcode === "undefined"){
-    status.textContent = "Library scanner gagal dimuat. Pastikan perangkat terhubung internet.";
+    if(status) status.textContent = "Library scanner gagal dimuat. Periksa koneksi internet.";
     return;
   }
-  html5QrCode = new Html5Qrcode("scanReader");
+
+  html5QrCode = new Html5Qrcode(targetId);
+
   try{
+    if(status) status.textContent = "Meminta izin kamera...";
+
     const cameras = await Html5Qrcode.getCameras();
+
     if(!cameras || !cameras.length){
-      status.textContent = "Kamera tidak ditemukan.";
+      if(status) status.textContent = "Kamera tidak ditemukan.";
       return;
     }
-    const preferred = cameras.find(c=>/back|rear|environment/i.test(c.label)) || cameras[cameras.length-1];
+
+    const preferred =
+      cameras.find(c=>/back|rear|environment/i.test(c.label)) ||
+      cameras[cameras.length-1];
+
     await html5QrCode.start(
       preferred.id,
-      {fps:10, qrbox:{width:240,height:160}},
+      {
+        fps:10,
+        qrbox:{width:240,height:240},
+        aspectRatio:1
+      },
       decodedText=>{
-        status.textContent = `QR terbaca. Memeriksa member...`;
-        selectMemberById(decodedText, "qr");
+        if(status) status.textContent = "QR terbaca. Memeriksa member...";
+
+        const found = selectMemberById(decodedText, "qr");
+
+        if(found){
+          stopScanner();
+          document.getElementById("directScanOverlay")?.classList.add("hidden");
+          document.body.style.overflow="";
+
+          // Open transaction tab only AFTER successful scan,
+          // so admin can continue setting category/points.
+          activateTab("txTab");
+
+          setTimeout(()=>{
+            document.getElementById("selectedMemberBox")?.scrollIntoView({
+              behavior:"smooth",
+              block:"center"
+            });
+          },150);
+        }
       },
       ()=>{}
     );
+
     scannerRunning = true;
-    status.textContent = "Scanner aktif. Arahkan kamera ke QR/barcode member.";
+    if(status) status.textContent = "Kamera aktif. Arahkan ke QR member.";
   }catch(err){
-    status.textContent = "Kamera gagal dibuka. Pastikan izin kamera diberikan dan halaman menggunakan HTTPS.";
+    console.error(err);
+    scannerRunning = false;
+    if(status){
+      status.textContent =
+        "Kamera gagal dibuka. Pastikan izin kamera aktif dan website dibuka melalui HTTPS.";
+    }
   }
 }
 
 async function stopScanner(){
-  if(!html5QrCode || !scannerRunning) return;
+  if(!html5QrCode) return;
+
   try{
-    await html5QrCode.stop();
+    if(scannerRunning) await html5QrCode.stop();
+  }catch(e){}
+
+  try{
     await html5QrCode.clear();
   }catch(e){}
+
   scannerRunning = false;
-  document.getElementById("scanStatus").textContent = "Scanner dihentikan.";
+  html5QrCode = null;
 }
 
-document.getElementById("startScanBtn").onclick = startScanner;
+document.getElementById("startScanBtn").onclick = ()=>startScanner("scanReader","scanStatus");
 document.getElementById("stopScanBtn").onclick = stopScanner;
 
 document.getElementById("txMember").addEventListener("change", e=>{
@@ -1960,23 +2026,6 @@ document.getElementById("loginBtn").onclick=async()=>{
 
   status.textContent="Login berhasil.";
   await 
-function ensureScannerCloseButton(){
-  const panel=document.getElementById("scannerPanel");
-  if(!panel || document.getElementById("directScannerClose")) return;
-  const btn=document.createElement("button");
-  btn.id="directScannerClose";
-  btn.type="button";
-  btn.className="btn soft";
-  btn.textContent="✕ Tutup Scanner";
-  btn.style.cssText="position:sticky;top:0;float:right;z-index:10001;margin:0 0 10px 10px";
-  btn.onclick=async()=>{
-    try{await stopScanner();}catch(e){}
-    panel.classList.add("hidden");
-    panel.removeAttribute("style");
-  };
-  panel.prepend(btn);
-}
-ensureScannerCloseButton();
 
 refreshAuthUI();
 };
@@ -2083,31 +2132,22 @@ document.getElementById("openMemberLinkBtn").onclick=()=>{
 const centerScanBtn=document.getElementById("centerScanBtn");
 if(centerScanBtn){
   centerScanBtn.onclick=async()=>{
-    // SCAN is a direct action, not navigation.
-    // Keep the current admin tab exactly where it is.
-    const panel=document.getElementById("scannerPanel");
-    const reader=document.getElementById("reader");
-    const status=document.getElementById("scanStatus");
+    const overlay=document.getElementById("directScanOverlay");
+    overlay?.classList.remove("hidden");
+    document.body.style.overflow="hidden";
 
-    if(panel){
-      panel.classList.remove("hidden");
-      panel.style.position="fixed";
-      panel.style.inset="0";
-      panel.style.zIndex="9999";
-      panel.style.overflowY="auto";
-      panel.style.background="rgba(3,8,18,.97)";
-      panel.style.padding="18px 12px 90px";
-    }
-
+    const status=document.getElementById("directScanStatus");
     if(status) status.textContent="Membuka kamera...";
-    try{
-      await startScanner();
-    }catch(e){
-      console.error(e);
-      if(status) status.textContent="Kamera gagal dibuka. Periksa izin kamera browser.";
-    }
+
+    await startScanner("directScanReader","directScanStatus");
   };
 }
+
+document.getElementById("directScanClose")?.addEventListener("click",async()=>{
+  await stopScanner();
+  document.getElementById("directScanOverlay")?.classList.add("hidden");
+  document.body.style.overflow="";
+});
 refreshAuthUI();
 if("serviceWorker" in navigator && location.protocol==="https:"){
   navigator.serviceWorker.register("./sw.js").catch(()=>{});
