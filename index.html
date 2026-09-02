@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V34 Reward Priority</title>
+  <title>RK CELL Admin V35 Point Adjustment</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -604,6 +604,43 @@ body.light-mode .center-scan-btn{
   box-shadow:0 8px 22px rgba(0,0,0,.12);
 }
 
+
+/* V35 point adjustment */
+.point-mode-switch{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:8px 0;
+}
+.point-mode-btn{
+  width:100%;
+  min-height:42px;
+}
+.point-quick-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:8px 0 12px;
+}
+.point-quick-grid .btn{
+  width:100%;
+  font-size:14px;
+}
+#pointModeSubtract.active{
+  background:linear-gradient(135deg,#ff334f,#b7102b)!important;
+  color:#fff!important;
+  border-color:#ff546b!important;
+}
+.point-minus-warning{
+  margin:8px 0 0;
+  padding:8px 10px;
+  border:1px solid rgba(255,70,90,.25);
+  border-radius:10px;
+  background:rgba(255,50,70,.04);
+  color:#ff9baa;
+  font-size:9px;
+}
+
 </style>
 <script>
 (function(){
@@ -684,64 +721,7 @@ body.light-mode .center-scan-btn{
         <div class="stat-icon">🎁</div>
         <strong id="statRewards">0</strong><span>Reward Tercapai</span>
       </div>
-      <div class="card stat-card">
-        <div class="stat-icon">⚡</div>
-        <strong id="statToday">0</strong><span>Transaksi Hari Ini</span>
-      </div>
-    </div>
-
-
-
-    <div class="section">
-      <div class="section-title"><h2>DAILY PULSE</h2><span>Hari ini</span></div>
-      <div class="kpi-mini">
-        <div class="kpi-box"><strong id="kpiNewMembers">0</strong><span>Member Baru</span></div>
-        <div class="kpi-box"><strong id="kpiTodayTx">0</strong><span>Transaksi</span></div>
-        <div class="kpi-box"><strong id="kpiTodayPoints">0</strong><span>Poin Diberikan</span></div>
-        <div class="kpi-box"><strong id="kpiTodayClaims">0</strong><span>Reward Diklaim</span></div>
-      </div>
-    </div>
-    </div>
-
-    <div id="memberTab" class="tabPage section">
-      <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
-      <div class="card">
-        <div class="row">
-          <div class="field"><label>NAMA MEMBER</label><input id="name" placeholder="Contoh: Andi"></div>
-          <div class="field"><label>WHATSAPP</label><input id="wa" placeholder="08xxxxxxxxxx"></div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div class="field"><label>ALAMAT / KETERANGAN</label><input id="address" placeholder="Opsional"></div>
-          <div style="display:flex;align-items:end"><button class="btn primary" id="addMemberBtn">＋ Tambah Member</button></div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><h2>ADMIN • Kelola Member</h2><span>Data member</span></div>
-        <div class="card">
-          <div class="field"><label>CARI MEMBER</label><input id="searchMember" placeholder="Cari nama, ID, atau WhatsApp"></div>
-          <div id="memberList" class="list" style="margin-top:10px"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="txTab" class="tabPage section hidden"><div class="section-title"><h2>TRANSAKSI</h2><span>Operasional member</span></div>
-      <div class="section-title"><h2>Tambah Poin Member</h2><span>Scan QR / Barcode atau cari nama</span></div>
-
-      <div class="card">
-        <div class="scan-panel">
-          <div class="scan-box">
-            <strong style="font-size:14px">1. Pilih member dengan scan</strong>
-            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR member. QR boleh berisi <b>ID langsung</b> atau <b>link halaman member</b> seperti <b>https://curu123.github.io/member/member.html?id=RK-2026-0001</b>. Sistem otomatis mengambil ID member dari link. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
-
-            <div class="scan-actions">
-              <button class="btn primary" id="startScanBtn">📷 Scan QR / Barcode</button>
-              <button class="btn soft" id="stopScanBtn">■ Stop Kamera</button>
-            </div>
-
-            <div id="scanReader" style="margin-top:10px"></div>
-            <div class="scan-status" id="scanStatus">Scanner belum aktif.</div>
-          </div>
+      
 
           <div class="scan-box">
             <strong style="font-size:14px">2. Jika kartu lupa dibawa</strong>
@@ -769,7 +749,29 @@ body.light-mode .center-scan-btn{
       </div>
 
       <div class="card section">
-        <div class="row">
+        
+        <div class="section-title" style="margin-top:12px">
+          <h2>ATUR POIN</h2><span>Tambah / Kurangi</span>
+        </div>
+
+        <div class="point-mode-switch">
+          <button class="btn primary point-mode-btn active" id="pointModeAdd" type="button">＋ Tambah Poin</button>
+          <button class="btn soft point-mode-btn" id="pointModeSubtract" type="button">− Kurangi Poin</button>
+        </div>
+
+        <div class="point-quick-grid" id="pointQuickAdd">
+          <button class="btn soft quickPointSet" type="button" data-points="1">+1</button>
+          <button class="btn soft quickPointSet" type="button" data-points="2">+2</button>
+          <button class="btn soft quickPointSet" type="button" data-points="5">+5</button>
+        </div>
+
+        <div class="point-quick-grid hidden" id="pointQuickSubtract">
+          <button class="btn danger quickPointSet" type="button" data-points="-1">-1</button>
+          <button class="btn danger quickPointSet" type="button" data-points="-2">-2</button>
+          <button class="btn danger quickPointSet" type="button" data-points="-5">-5</button>
+        </div>
+
+<div class="row">
           <div class="field"><label>MEMBER TERPILIH</label><select id="txMember"></select></div>
           <div class="field"><label>KATEGORI</label>
             <select id="txCategory">
@@ -1907,12 +1909,16 @@ document.getElementById("addTxBtn").onclick = async ()=>{
 
   if(points < 0){
     const reason=document.getElementById("txNote").value.trim();
-    if(!reason) return alert("Untuk pengurangan poin, alasan wajib diisi pada Catatan.");
+    if(!reason) return alert("Alasan pengurangan poin wajib diisi pada Catatan.");
     if(!confirm(`Kurangi ${Math.abs(points)} poin dari member ini?\nAlasan: ${reason}`)) return;
   }
 
   const m=members.find(x=>x.id===member_id);
   if(!m) return alert("Member tidak ditemukan.");
+
+  if(points < 0 && Math.abs(points) > Number(m.points||0)){
+    return alert(`Poin member hanya ${m.points||0}. Pengurangan tidak boleh melebihi poin yang tersedia.`);
+  }
   if(m.active===false) return alert("Member ini sedang NONAKTIF. Aktifkan kembali sebelum transaksi.");
 
   try{
@@ -2180,6 +2186,52 @@ document.getElementById("offlineRetryBtn")?.addEventListener("click",()=>refresh
 
 
 document.getElementById("addRewardManualBtn")?.addEventListener("click",addRewardManual);
+
+
+let pointAdjustmentMode="add";
+
+function setPointAdjustmentMode(mode){
+  pointAdjustmentMode=mode;
+  const addBtn=document.getElementById("pointModeAdd");
+  const subBtn=document.getElementById("pointModeSubtract");
+  const addQuick=document.getElementById("pointQuickAdd");
+  const subQuick=document.getElementById("pointQuickSubtract");
+  const warning=document.getElementById("minusPointWarning");
+  const input=document.getElementById("txPoints");
+
+  addBtn?.classList.toggle("active",mode==="add");
+  addBtn?.classList.toggle("primary",mode==="add");
+  addBtn?.classList.toggle("soft",mode!=="add");
+
+  subBtn?.classList.toggle("active",mode==="subtract");
+  subBtn?.classList.toggle("danger",mode==="subtract");
+  subBtn?.classList.toggle("soft",mode!=="subtract");
+
+  addQuick?.classList.toggle("hidden",mode!=="add");
+  subQuick?.classList.toggle("hidden",mode!=="subtract");
+  warning?.classList.toggle("hidden",mode!=="subtract");
+
+  if(input){
+    let v=Math.abs(Number(input.value||1)) || 1;
+    input.value=mode==="subtract" ? -v : v;
+  }
+}
+
+document.getElementById("pointModeAdd")?.addEventListener("click",()=>setPointAdjustmentMode("add"));
+document.getElementById("pointModeSubtract")?.addEventListener("click",()=>setPointAdjustmentMode("subtract"));
+
+document.querySelectorAll(".quickPointSet").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    const input=document.getElementById("txPoints");
+    if(input) input.value=Number(btn.dataset.points||0);
+  });
+});
+
+document.getElementById("txPoints")?.addEventListener("input",e=>{
+  const v=Number(e.target.value||0);
+  if(v<0 && pointAdjustmentMode!=="subtract") setPointAdjustmentMode("subtract");
+  if(v>0 && pointAdjustmentMode!=="add") setPointAdjustmentMode("add");
+});
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
 
