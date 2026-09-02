@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V11 Secure</title>
+  <title>RK CELL Member V12</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -505,6 +505,18 @@ body.light-mode .wa-preview{background:#f8fbfd;color:#4f697d;border-color:#d5e2e
 body.light-mode .report-box{background:#fff;border-color:#d5e2ea}
 @media(min-width:760px){.report-grid{grid-template-columns:repeat(4,1fr)}}
 
+
+/* V12 polish + exports */
+.export-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.card-preview{width:min(420px,100%);aspect-ratio:1.586/1;margin:12px auto;padding:18px;border:1px solid rgba(0,245,255,.28);border-radius:12px;background:linear-gradient(135deg,rgba(0,245,255,.08),rgba(139,92,246,.08));position:relative;overflow:hidden}
+.card-preview h3{margin:0;font:900 18px ui-monospace,monospace;letter-spacing:1px}
+.card-preview .cp-name{font-weight:900;font-size:18px;margin-top:20px}
+.card-preview .cp-id{font:800 11px ui-monospace,monospace;color:var(--cyan);margin-top:4px}
+.card-preview .cp-qr{position:absolute;right:16px;bottom:16px;width:105px;height:105px;background:white;padding:6px}
+.card-preview .cp-points{position:absolute;left:18px;bottom:20px;font:900 22px ui-monospace,monospace}
+.card-preview .cp-points small{display:block;font-size:8px;color:#6e8799}
+body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)}
+
 </style>
 </head>
 <body>
@@ -662,6 +674,13 @@ body.light-mode .report-box{background:#fff;border-color:#d5e2ea}
     <div id="printToolPanel" class="card section hidden qr-card">
       <div class="section-title"><h2>CETAK KARTU MEMBER</h2><span>Ukuran kartu ATM</span></div>
       <div class="field"><label>PILIH MEMBER</label><select id="printMemberSelect"></select></div>
+      <div class="card-preview" id="cardPreview">
+        <h3>RK CELL MEMBER</h3>
+        <div class="cp-name" id="cpName">Pilih Member</div>
+        <div class="cp-id" id="cpId">RK-XXXX-XXXX</div>
+        <div class="cp-points"><span id="cpPoints">0</span> ⭐<small>LOYALTY POINTS</small></div>
+        <div class="cp-qr" id="cpQr"></div>
+      </div>
       <div class="row" style="justify-content:center;margin-top:10px">
         <button class="btn primary" id="printMemberCardBtn" type="button">🖨 Cetak Kartu</button>
       </div>
@@ -693,6 +712,11 @@ body.light-mode .report-box{background:#fff;border-color:#d5e2ea}
       </div>
       <div class="section-title" style="margin-top:14px"><h2>RIWAYAT KLAIM</h2><span>Reward history</span></div>
       <div id="reportClaimHistory" class="claim-history"></div>
+      <div class="export-actions">
+        <button class="btn soft" id="exportReportCsvBtn" type="button">⬇ Export Laporan CSV</button>
+        <button class="btn soft" id="exportMembersCsvBtn" type="button">⬇ Export Member CSV</button>
+        <button class="btn soft" id="exportClaimsCsvBtn" type="button">⬇ Export Klaim CSV</button>
+      </div>
     </div>
 
     <div id="activityPanel" class="card section hidden">
@@ -1069,6 +1093,7 @@ function syncQrMemberOptions(){
     ? '<option value="">-- Pilih member --</option>'+members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} — ${m.id}</option>`).join("")
     : '<option value="">Belum ada member</option>';
   if(current && members.some(m=>m.id===current)) sel.value=current;
+  renderCardPreview(sel.value);
 }
 
 async function renderMemberQr(id){
@@ -1286,6 +1311,53 @@ async function createAudit(action,memberId=null,details={}){
       details
     });
   }catch(e){ console.warn("audit log failed",e); }
+}
+
+
+function csvEscape(v){
+  const s=String(v??"");
+  return `"${s.replace(/"/g,'""')}"`;
+}
+function downloadCsv(filename,rows){
+  const csv="\uFEFF"+rows.map(r=>r.map(csvEscape).join(",")).join("\r\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportReportCsv(){
+  const {from,to}=dateRangeBounds();
+  const inRange=ts=>Number(ts)>=from&&Number(ts)<=to;
+  const rows=[["Tanggal","Member ID","Nama","Kategori","Poin","Sumber","Catatan"]];
+  transactions.filter(t=>inRange(t.created_at)).forEach(t=>{
+    const m=members.find(x=>x.id===t.member_id);
+    rows.push([new Date(t.created_at).toLocaleString("id-ID"),t.member_id,m?.name||"",t.category,t.points,t.source,t.note||""]);
+  });
+  downloadCsv("rk-cell-laporan-transaksi.csv",rows);
+}
+function exportMembersCsv(){
+  const rows=[["Member ID","Nama","WhatsApp","Alamat","Poin","Tanggal Bergabung"]];
+  members.forEach(m=>rows.push([m.id,m.name,m.wa||"",m.address||"",m.points||0,new Date(m.created_at).toLocaleString("id-ID")]));
+  downloadCsv("rk-cell-members.csv",rows);
+}
+function exportClaimsCsv(){
+  const rows=[["Tanggal Klaim","Member ID","Nama","Poin Reward","Reward"]];
+  rewardClaims.forEach(c=>{
+    const m=members.find(x=>x.id===c.member_id);
+    rows.push([new Date(c.claimed_at).toLocaleString("id-ID"),c.member_id,m?.name||"",c.points_required,c.reward_name]);
+  });
+  downloadCsv("rk-cell-reward-claims.csv",rows);
+}
+function renderCardPreview(memberId){
+  const m=members.find(x=>x.id===memberId);
+  const name=document.getElementById("cpName"), id=document.getElementById("cpId"), pts=document.getElementById("cpPoints"), qr=document.getElementById("cpQr");
+  qr.innerHTML="";
+  if(!m){name.textContent="Pilih Member";id.textContent="RK-XXXX-XXXX";pts.textContent="0";return;}
+  name.textContent=m.name; id.textContent=m.id; pts.textContent=m.points||0;
+  if(typeof QRCode!=="undefined"){
+    new QRCode(qr,{text:`https://curu123.github.io/member/?id=${encodeURIComponent(m.id)}`,width:93,height:93,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});
+  }
 }
 
 function preparePrintCard(memberId){
@@ -1816,6 +1888,12 @@ document.getElementById("reportBtn").onclick=()=>{
   renderReport();
 };
 document.getElementById("runReportBtn").onclick=renderReport;
+
+document.getElementById("exportReportCsvBtn").onclick=exportReportCsv;
+document.getElementById("exportMembersCsvBtn").onclick=exportMembersCsv;
+document.getElementById("exportClaimsCsvBtn").onclick=exportClaimsCsv;
+document.getElementById("printMemberSelect").addEventListener("change",e=>renderCardPreview(e.target.value));
+
 
 document.getElementById("activityBtn").onclick=()=>{
   document.getElementById("activityPanel").classList.toggle("hidden");
