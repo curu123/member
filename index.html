@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member</title>
+  <title>RK CELL Member V11 Secure</title>
+  <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
   --bg:#03050b;
@@ -464,6 +465,46 @@ body.light-mode .admin-bar{
 }
 body.light-mode .admin-bar strong{color:#008f5b}
 
+
+/* V10 additions */
+.kpi-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.kpi-box{padding:12px;border:1px solid rgba(0,245,255,.16);border-radius:4px 14px 4px 14px;background:rgba(0,245,255,.025)}
+.kpi-box strong{display:block;font:900 20px ui-monospace,monospace}
+.kpi-box span{display:block;margin-top:5px;color:#6e8799;font-size:9px;text-transform:uppercase;letter-spacing:.8px}
+.reward-claim{padding:10px 0;border-bottom:1px solid #142536}
+.reward-claim:last-child{border-bottom:0}
+.reward-state{font-size:9px;font-weight:900;padding:5px 8px;border-radius:3px 9px 3px 9px;display:inline-block}
+.reward-ready{color:var(--yellow);border:1px solid rgba(255,230,0,.25);background:rgba(255,230,0,.04)}
+.reward-claimed{color:var(--green);border:1px solid rgba(0,255,156,.25);background:rgba(0,255,156,.04)}
+.reward-locked{color:#667f92;border:1px solid #1a3040;background:#07101b}
+.member-card-print{display:none}
+.quick-point{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.quick-point .btn{width:100%}
+.wa-preview{white-space:pre-wrap;font-size:10px;color:#87a0b2;background:#050a12;border:1px solid #17364a;border-radius:4px 12px 4px 12px;padding:10px}
+body.light-mode .wa-preview{background:#f8fbfd;color:#4f697d;border-color:#d5e2ea}
+@media(min-width:760px){.kpi-mini{grid-template-columns:repeat(4,1fr)}}
+@media print{
+  body *{visibility:hidden!important}
+  #printCard,#printCard *{visibility:visible!important}
+  #printCard{display:block!important;position:absolute;left:0;top:0;width:85.6mm;height:53.98mm;padding:0;margin:0}
+  .print-inner{width:85.6mm;height:53.98mm;padding:6mm;background:#071a2b;color:white;border-radius:4mm;font-family:Arial,sans-serif;position:relative;overflow:hidden}
+  .print-inner h2{margin:0 0 2mm;font-size:16pt}
+  .print-inner .meta{font-size:8pt;opacity:.8}
+  .print-inner .qr{position:absolute;right:5mm;bottom:5mm;width:25mm;height:25mm;background:white;padding:2mm}
+}
+
+
+/* V11: roles, reports, public privacy */
+.role-pill{display:inline-flex;padding:5px 8px;border:1px solid rgba(139,92,246,.28);background:rgba(139,92,246,.06);color:#bda7ff;border-radius:3px 9px 3px 9px;font:900 9px ui-monospace,monospace;margin-left:6px}
+.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.report-box{padding:12px;border:1px solid #17364a;border-radius:4px 14px 4px 14px;background:rgba(0,245,255,.025)}
+.report-box strong{display:block;font:900 19px ui-monospace,monospace}
+.report-box span{font-size:9px;color:#6e8799;text-transform:uppercase}
+.claim-history{margin-top:12px}
+.public-safe{max-width:620px;margin:20px auto}
+body.light-mode .report-box{background:#fff;border-color:#d5e2ea}
+@media(min-width:760px){.report-grid{grid-template-columns:repeat(4,1fr)}}
+
 </style>
 </head>
 <body>
@@ -485,7 +526,7 @@ body.light-mode .admin-bar strong{color:#008f5b}
     </div>
     <div class="hero-copy">
       <h2>MEMBER SYSTEM // RK CELL</h2>
-      <p>Sistem loyalitas digital RK CELL untuk identifikasi member, scan QR/barcode, transaksi, poin, dan reward.</p>
+      <p>Sistem loyalitas digital RK CELL untuk member, poin, reward, dan layanan pelanggan.</p>
     </div>
   </header>
 
@@ -511,7 +552,7 @@ body.light-mode .admin-bar strong{color:#008f5b}
   <div id="adminBar" class="admin-bar hidden">
     <div>
       <strong>ADMIN SESSION ACTIVE</strong><br>
-      <small id="adminIdentity">-</small>
+      <small id="adminIdentity">-</small><span class="role-pill" id="adminRole">ROLE</span>
     </div>
     <button class="btn danger" id="logoutBtn" style="width:auto">Logout</button>
   </div>
@@ -565,6 +606,17 @@ body.light-mode .admin-bar strong{color:#008f5b}
     </div>
 
 
+
+    <div class="section">
+      <div class="section-title"><h2>DAILY PULSE</h2><span>Hari ini</span></div>
+      <div class="kpi-mini">
+        <div class="kpi-box"><strong id="kpiNewMembers">0</strong><span>Member Baru</span></div>
+        <div class="kpi-box"><strong id="kpiTodayTx">0</strong><span>Transaksi</span></div>
+        <div class="kpi-box"><strong id="kpiTodayPoints">0</strong><span>Poin Diberikan</span></div>
+        <div class="kpi-box"><strong id="kpiTodayClaims">0</strong><span>Reward Diklaim</span></div>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-title"><h2>QUICK TOOLS</h2><span>Operator utilities</span></div>
       <div class="utility-row">
@@ -578,7 +630,15 @@ body.light-mode .admin-bar strong{color:#008f5b}
         </button>
         <button class="btn soft utility-btn" id="memberQrBtn">
           <strong>▦ QR Member</strong>
-          <small>Buat QR dari member terpilih</small>
+          <small>Buat QR halaman member</small>
+        </button>
+        <button class="btn soft utility-btn" id="printCardBtn">
+          <strong>🪪 Cetak Kartu</strong>
+          <small>Kartu member ukuran ATM</small>
+        </button>
+        <button class="btn soft utility-btn" id="reportBtn">
+          <strong>▥ Laporan</strong>
+          <small>Harian, bulanan & klaim</small>
         </button>
         <button class="btn soft utility-btn" id="activityBtn">
           <strong>☰ Activity Log</strong>
@@ -589,10 +649,50 @@ body.light-mode .admin-bar strong{color:#008f5b}
     </div>
 
     <div id="qrToolPanel" class="card section hidden qr-card">
-      <div class="section-title"><h2>MEMBER QR</h2><span>Generated identity</span></div>
+      <div class="section-title"><h2>MEMBER QR</h2><span>GitHub Pages Member Link</span></div>
       <div class="field"><label>PILIH MEMBER</label><select id="qrMemberSelect"></select></div>
       <div id="qrBox" class="qr-box"><span style="color:#334155;font-size:12px">Pilih member</span></div>
-      <div class="note" id="qrLabel" style="margin-top:8px">QR berisi ID member.</div>
+      <div class="note" id="qrLabel" style="margin-top:8px">QR membuka halaman member RK CELL.</div>
+      <div class="row" style="justify-content:center;margin-top:10px">
+        <button class="btn soft" id="openMemberLinkBtn" type="button" style="width:auto">↗ Buka Halaman Member</button>
+      </div>
+    </div>
+
+
+    <div id="printToolPanel" class="card section hidden qr-card">
+      <div class="section-title"><h2>CETAK KARTU MEMBER</h2><span>Ukuran kartu ATM</span></div>
+      <div class="field"><label>PILIH MEMBER</label><select id="printMemberSelect"></select></div>
+      <div class="row" style="justify-content:center;margin-top:10px">
+        <button class="btn primary" id="printMemberCardBtn" type="button">🖨 Cetak Kartu</button>
+      </div>
+    </div>
+
+    <div id="printCard" class="member-card-print">
+      <div class="print-inner">
+        <h2>RK CELL MEMBER</h2>
+        <div class="meta" id="printCardName">Nama</div>
+        <div class="meta" id="printCardId">ID</div>
+        <div class="meta" style="margin-top:2mm">Cepat • Akurat • Transparan</div>
+        <div class="qr" id="printCardQr"></div>
+      </div>
+    </div>
+
+
+    <div id="reportPanel" class="card section hidden">
+      <div class="section-title"><h2>LAPORAN MEMBER</h2><span>Operational report</span></div>
+      <div class="row">
+        <div class="field"><label>DARI TANGGAL</label><input type="date" id="reportFrom"></div>
+        <div class="field"><label>SAMPAI TANGGAL</label><input type="date" id="reportTo"></div>
+        <div style="display:flex;align-items:end"><button class="btn primary" id="runReportBtn">Tampilkan</button></div>
+      </div>
+      <div class="report-grid">
+        <div class="report-box"><strong id="reportMembers">0</strong><span>Member Baru</span></div>
+        <div class="report-box"><strong id="reportTx">0</strong><span>Transaksi</span></div>
+        <div class="report-box"><strong id="reportPoints">0</strong><span>Poin Diberikan</span></div>
+        <div class="report-box"><strong id="reportClaims">0</strong><span>Reward Diklaim</span></div>
+      </div>
+      <div class="section-title" style="margin-top:14px"><h2>RIWAYAT KLAIM</h2><span>Reward history</span></div>
+      <div id="reportClaimHistory" class="claim-history"></div>
     </div>
 
     <div id="activityPanel" class="card section hidden">
@@ -659,6 +759,12 @@ body.light-mode .admin-bar strong{color:#008f5b}
           </div>
         </div>
 
+        <div class="quick-point">
+          <button class="btn soft" type="button" id="quickPlus1">+1 Poin</button>
+          <button class="btn soft" type="button" id="quickPlus2">+2 Poin</button>
+          <button class="btn soft" type="button" id="quickPlus5">+5 Poin</button>
+        </div>
+
         <div id="selectedMemberBox" class="member-selected hidden">
           <strong id="selectedMemberName">Member terpilih</strong>
           <small id="selectedMemberMeta">-</small>
@@ -685,7 +791,10 @@ body.light-mode .admin-bar strong{color:#008f5b}
         </div>
         <div class="row" style="margin-top:10px">
           <div class="field"><label>CATATAN</label><input id="txNote" placeholder="Opsional"></div>
-          <div style="display:flex;align-items:end"><button class="btn primary" id="addTxBtn">✓ Tambah Poin & Simpan</button></div>
+          <div style="display:flex;align-items:end;gap:8px;flex-wrap:wrap">
+            <button class="btn primary" id="addTxBtn">✓ Tambah Poin & Simpan</button>
+            <button class="btn soft" id="waMemberBtn" type="button">WhatsApp Member</button>
+          </div>
         </div>
       </div>
 
@@ -712,7 +821,13 @@ body.light-mode .admin-bar strong{color:#008f5b}
             <span class="badge">🎁 REWARD 3</span>
           </div>
         </div>
-        <p class="note">Reward bisa diubah pada tahap berikutnya. Sistem saat ini menghitung pencapaian berdasarkan total poin member.</p>
+        <p class="note">Reward mengikuti data Supabase dan klaim dicatat agar hadiah yang sama tidak dapat diklaim dua kali.</p>
+        <div class="section" style="margin-top:14px">
+          <div class="section-title"><h2>KLAIM REWARD</h2><span>Anti klaim ganda</span></div>
+          <div class="field"><label>PILIH MEMBER</label><select id="claimMemberSelect"></select></div>
+          <div id="claimRewardList" style="margin-top:10px"></div>
+        </div>
+
       </div>
     </div>
 
@@ -724,7 +839,7 @@ body.light-mode .admin-bar strong{color:#008f5b}
         <div class="field" style="margin-top:10px"><label>ANON PUBLIC KEY</label><input id="sbKey" placeholder="eyJ..."></div>
         <div class="row" style="margin-top:12px">
           <button class="btn primary" id="saveConfigBtn">Simpan Konfigurasi</button>
-          <button class="btn danger" id="clearConfigBtn">Hapus Konfigurasi</button>
+          <button class="btn danger" id="clearConfigBtn" data-admin-only>Hapus Konfigurasi</button>
         </div>
       </div>
 
@@ -748,7 +863,7 @@ body.light-mode .admin-bar strong{color:#008f5b}
 </div>
 
 <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 let REWARDS = [
@@ -764,6 +879,9 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let members = [];
 let transactions = [];
 let rewards = [];
+let rewardClaims = [];
+let auditLogs = [];
+let currentProfile = null;
 const QR_COOLDOWN_MS = 5 * 60 * 1000;
 let selectedMemberSource = "manual";
 let cooldownTimer = null;
@@ -798,30 +916,40 @@ function rewardInfo(points){
 
 async function loadSupabaseData(){
   setConnectionStatus("SYNC...");
-  const [mRes, tRes, rRes] = await Promise.all([
-    supabaseClient.from("members").select("*").order("created_at",{ascending:true}),
-    supabaseClient.from("transactions").select("*").order("created_at",{ascending:false}),
-    supabaseClient.from("rewards").select("*").eq("active",true).order("points_required",{ascending:true})
-  ]);
+  const {data:{session}} = await supabaseClient.auth.getSession();
 
-  if(mRes.error || tRes.error || rRes.error){
-    console.error(mRes.error, tRes.error, rRes.error);
-    setConnectionStatus("DB ERROR");
-    alert("Gagal membaca database Supabase. Cek koneksi atau policy RLS.");
+  if(!session){
+    // Public visitors must not download the full member database.
+    members=[]; transactions=[]; rewardClaims=[]; auditLogs=[];
+    const rRes=await supabaseClient.from("rewards").select("*").eq("active",true).order("points_required",{ascending:true});
+    rewards=rRes.data||[];
+    setConnectionStatus("PUBLIC");
     return;
   }
 
-  members = (mRes.data || []).map(m=>({
-    ...m,
-    created_at: new Date(m.created_at).getTime()
-  }));
+  const [mRes,tRes,rRes,cRes,aRes,pRes]=await Promise.all([
+    supabaseClient.from("members").select("*").order("created_at",{ascending:true}),
+    supabaseClient.from("transactions").select("*").order("created_at",{ascending:false}),
+    supabaseClient.from("rewards").select("*").eq("active",true).order("points_required",{ascending:true}),
+    supabaseClient.from("reward_claims").select("*").order("claimed_at",{ascending:false}),
+    supabaseClient.from("audit_logs").select("*").order("created_at",{ascending:false}).limit(100),
+    supabaseClient.from("profiles").select("*").eq("id",session.user.id).maybeSingle()
+  ]);
 
-  transactions = (tRes.data || []).map(t=>({
-    ...t,
-    created_at: new Date(t.created_at).getTime()
-  }));
+  if(mRes.error||tRes.error||rRes.error||cRes.error||aRes.error||pRes.error){
+    console.error(mRes.error,tRes.error,rRes.error,cRes.error,aRes.error,pRes.error);
+    setConnectionStatus("DB ERROR");
+    alert("Gagal membaca database Supabase. Pastikan SQL V11 sudah dijalankan.");
+    return;
+  }
 
-  rewards = rRes.data || [];
+  members=(mRes.data||[]).map(m=>({...m,created_at:new Date(m.created_at).getTime()}));
+  transactions=(tRes.data||[]).map(t=>({...t,created_at:new Date(t.created_at).getTime()}));
+  rewards=rRes.data||[];
+  rewardClaims=(cRes.data||[]).map(c=>({...c,claimed_at:new Date(c.claimed_at).getTime()}));
+  auditLogs=(aRes.data||[]).map(a=>({...a,created_at:new Date(a.created_at).getTime()}));
+  currentProfile=pRes.data||{role:"operator"};
+  applyRoleUI();
   setConnectionStatus("SUPABASE ONLINE");
   refresh();
 }
@@ -887,7 +1015,7 @@ function renderMembers(){
       </div>
       <div class="row">
         <button class="btn soft" onclick="openMember('${m.id}')">Lihat</button>
-        <button class="btn danger" onclick="deleteMember('${m.id}')">Hapus</button>
+        ${isAdminRole()?`<button class="btn danger" onclick="deleteMember(\'${m.id}\')">Hapus</button>`:""}
       </div>
     </div>`).join("") : '<div class="empty">Belum ada member.</div>';
 
@@ -923,14 +1051,14 @@ function renderTodayStat(){
 function buildActivityLog(){
   const el=document.getElementById("activityLog");
   if(!el) return;
-  const rows=[...transactions].sort((a,b)=>b.created_at-a.created_at).slice(0,40);
-  el.innerHTML=rows.length ? rows.map(t=>{
-    const m=members.find(x=>x.id===t.member_id);
+  const rows=[...auditLogs].sort((a,b)=>b.created_at-a.created_at).slice(0,50);
+  el.innerHTML=rows.length ? rows.map(a=>{
+    const m=members.find(x=>x.id===a.member_id);
     return `<div class="activity-line">
-      <strong>${escapeHtml(m?.name||t.member_id)} • ${t.points>0?"+":""}${t.points} poin</strong>
-      <small>${escapeHtml(t.category)} • ${fmtDate(t.created_at)} • ${escapeHtml(t.source||"manual")}</small>
+      <strong>${escapeHtml(a.action)}${m ? " • "+escapeHtml(m.name):""}</strong>
+      <small>${fmtDate(a.created_at)}${a.member_id ? " • "+escapeHtml(a.member_id):""}</small>
     </div>`;
-  }).join("") : '<div class="empty">Belum ada aktivitas.</div>';
+  }).join("") : '<div class="empty">Belum ada aktivitas audit.</div>';
 }
 
 function syncQrMemberOptions(){
@@ -946,25 +1074,36 @@ function syncQrMemberOptions(){
 async function renderMemberQr(id){
   const box=document.getElementById("qrBox");
   const label=document.getElementById("qrLabel");
+
   if(!id){
     box.innerHTML='<span style="color:#334155;font-size:12px">Pilih member</span>';
-    label.textContent="QR berisi ID member.";
+    label.textContent="QR akan membuka halaman member RK CELL.";
     return;
   }
+
   const m=members.find(x=>x.id===id);
   if(!m) return;
+
+  const memberUrl=`https://curu123.github.io/member/?id=${encodeURIComponent(m.id)}`;
   box.innerHTML="";
-  const canvas=document.createElement("canvas");
-  box.appendChild(canvas);
-  if(window.QRCode && QRCode.toCanvas){
+
+  if(typeof QRCode !== "undefined"){
     try{
-      await QRCode.toCanvas(canvas,m.id,{width:170,margin:1});
-      label.textContent=`${m.name} • ${m.id}`;
+      new QRCode(box,{
+        text:memberUrl,
+        width:170,
+        height:170,
+        colorDark:"#000000",
+        colorLight:"#ffffff",
+        correctLevel:QRCode.CorrectLevel.H
+      });
+      label.innerHTML=`<strong>${escapeHtml(m.name)}</strong><br>${m.id}<br><span style="word-break:break-all">${memberUrl}</span>`;
     }catch(e){
+      console.error(e);
       box.innerHTML='<span style="color:#b91c1c;font-size:12px">Gagal membuat QR</span>';
     }
   }else{
-    box.innerHTML='<span style="color:#b91c1c;font-size:12px">Library QR belum termuat</span>';
+    box.innerHTML='<span style="color:#b91c1c;font-size:12px">Library QR gagal dimuat. Periksa koneksi internet.</span>';
   }
 }
 
@@ -1011,18 +1150,187 @@ function applyTheme(mode){
   if(btn) btn.textContent=mode==="light" ? "☾ DARK" : "☀ LIGHT";
 }
 
+
+
+function isAdminRole(){
+  return currentProfile && currentProfile.role==="admin";
+}
+function applyRoleUI(){
+  const role=(currentProfile?.role||"operator").toUpperCase();
+  const roleEl=document.getElementById("adminRole");
+  if(roleEl) roleEl.textContent=role;
+  document.querySelectorAll("[data-admin-only]").forEach(el=>{
+    el.classList.toggle("hidden",!isAdminRole());
+  });
+}
+async function loadPublicMember(memberId){
+  const {data,error}=await supabaseClient.rpc("get_public_member",{p_member_id:memberId});
+  if(error || !data || data.error){
+    return null;
+  }
+  return data;
+}
+function dateRangeBounds(){
+  const f=document.getElementById("reportFrom").value;
+  const t=document.getElementById("reportTo").value;
+  const from=f?new Date(f+"T00:00:00").getTime():0;
+  const to=t?new Date(t+"T23:59:59.999").getTime():Date.now();
+  return {from,to};
+}
+function renderReport(){
+  const {from,to}=dateRangeBounds();
+  const inRange=ts=>Number(ts)>=from && Number(ts)<=to;
+  document.getElementById("reportMembers").textContent=members.filter(m=>inRange(m.created_at)).length;
+  document.getElementById("reportTx").textContent=transactions.filter(t=>inRange(t.created_at)).length;
+  document.getElementById("reportPoints").textContent=transactions.filter(t=>inRange(t.created_at)&&Number(t.points)>0).reduce((s,t)=>s+Number(t.points||0),0);
+  document.getElementById("reportClaims").textContent=rewardClaims.filter(c=>inRange(c.claimed_at)).length;
+  const rows=rewardClaims.filter(c=>inRange(c.claimed_at));
+  document.getElementById("reportClaimHistory").innerHTML=rows.length?rows.map(c=>{
+    const m=members.find(x=>x.id===c.member_id);
+    return `<div class="item"><div><strong>${escapeHtml(c.reward_name)}</strong><small>${escapeHtml(m?.name||c.member_id)} • ${fmtDate(c.claimed_at)}</small></div><span class="reward-state reward-claimed">DIKLAIM</span></div>`;
+  }).join(""):'<div class="empty">Tidak ada klaim pada periode ini.</div>';
+}
+
+function renderDailyPulse(){
+  const now=Date.now();
+  document.getElementById("kpiNewMembers").textContent=members.filter(m=>isSameLocalDay(m.created_at,now)).length;
+  document.getElementById("kpiTodayTx").textContent=transactions.filter(t=>isSameLocalDay(t.created_at,now)).length;
+  document.getElementById("kpiTodayPoints").textContent=transactions.filter(t=>isSameLocalDay(t.created_at,now) && Number(t.points)>0).reduce((s,t)=>s+Number(t.points||0),0);
+  document.getElementById("kpiTodayClaims").textContent=rewardClaims.filter(c=>isSameLocalDay(c.claimed_at,now)).length;
+}
+
+function normalizePhone(wa){
+  let n=String(wa||"").replace(/\D/g,"");
+  if(n.startsWith("0")) n="62"+n.slice(1);
+  if(!n.startsWith("62") && n) n="62"+n;
+  return n;
+}
+
+function buildWaMessage(member){
+  const ri=rewardInfo(Number(member.points)||0);
+  const next=ri.next;
+  let msg=`Halo ${member.name}, poin RK CELL Anda sekarang ${member.points||0}.`;
+  if(next){
+    msg+=` Tinggal ${next.p-(member.points||0)} poin lagi menuju reward ${next.name}.`;
+  }else{
+    msg+=" Semua reward utama saat ini sudah tercapai.";
+  }
+  msg+=" Terima kasih sudah menjadi Member RK CELL.";
+  return msg;
+}
+
+function openWhatsAppForMember(member){
+  const phone=normalizePhone(member?.wa);
+  if(!phone) return alert("Nomor WhatsApp member belum tersedia.");
+  const url=`https://wa.me/${phone}?text=${encodeURIComponent(buildWaMessage(member))}`;
+  window.open(url,"_blank");
+}
+
+function syncClaimOptions(){
+  const sel=document.getElementById("claimMemberSelect");
+  if(!sel) return;
+  const current=sel.value;
+  sel.innerHTML=members.length
+    ? '<option value="">-- Pilih member --</option>'+members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} — ${m.id}</option>`).join("")
+    : '<option value="">Belum ada member</option>';
+  if(current && members.some(m=>m.id===current)) sel.value=current;
+  renderClaimRewards(sel.value);
+}
+
+function syncPrintOptions(){
+  const sel=document.getElementById("printMemberSelect");
+  if(!sel) return;
+  const current=sel.value;
+  sel.innerHTML=members.length
+    ? '<option value="">-- Pilih member --</option>'+members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} — ${m.id}</option>`).join("")
+    : '<option value="">Belum ada member</option>';
+  if(current && members.some(m=>m.id===current)) sel.value=current;
+}
+
+function renderClaimRewards(memberId){
+  const box=document.getElementById("claimRewardList");
+  if(!box) return;
+  const m=members.find(x=>x.id===memberId);
+  if(!m){ box.innerHTML='<div class="empty">Pilih member untuk melihat reward.</div>'; return; }
+
+  box.innerHTML=REWARDS.map(r=>{
+    const claimed=rewardClaims.some(c=>c.member_id===m.id && Number(c.points_required)===Number(r.p));
+    const ready=Number(m.points)>=Number(r.p);
+    let state='TERKUNCI', cls='reward-locked', button='';
+    if(claimed){ state='SUDAH DIKLAIM'; cls='reward-claimed'; }
+    else if(ready){ state='SIAP DIKLAIM'; cls='reward-ready'; button=`<button class="btn primary" style="width:auto;margin-top:8px" onclick="claimReward('${m.id}',${r.p},'${String(r.name).replace(/'/g,"&#39;")}')">Klaim Reward</button>`; }
+    return `<div class="reward-claim">
+      <strong>${r.p} Poin — ${escapeHtml(r.name)}</strong><br>
+      <span class="reward-state ${cls}">${state}</span>
+      ${button}
+    </div>`;
+  }).join("");
+}
+
+async function claimReward(memberId,pointsRequired,rewardName){
+  if(!confirm(`Klaim reward "${rewardName}" untuk member ini?`)) return;
+  const {data,error}=await supabaseClient.rpc("claim_member_reward",{
+    p_member_id:memberId,
+    p_points_required:pointsRequired
+  });
+  if(error) return alert("Gagal klaim reward: "+error.message);
+  await loadSupabaseData();
+  alert("Reward berhasil diklaim.");
+}
+
+async function createAudit(action,memberId=null,details={}){
+  try{
+    await supabaseClient.from("audit_logs").insert({
+      action,
+      member_id:memberId,
+      details
+    });
+  }catch(e){ console.warn("audit log failed",e); }
+}
+
+function preparePrintCard(memberId){
+  const m=members.find(x=>x.id===memberId);
+  if(!m) return alert("Pilih member terlebih dahulu.");
+  document.getElementById("printCardName").textContent=m.name;
+  document.getElementById("printCardId").textContent=m.id;
+  const qr=document.getElementById("printCardQr");
+  qr.innerHTML="";
+  const url=`https://curu123.github.io/member/?id=${encodeURIComponent(m.id)}`;
+  if(typeof QRCode!=="undefined"){
+    new QRCode(qr,{text:url,width:90,height:90,colorDark:"#000",colorLight:"#fff",correctLevel:QRCode.CorrectLevel.H});
+  }
+  setTimeout(()=>window.print(),150);
+}
+
 function refresh(){
-  renderStats(); renderTodayStat(); renderMembers(); renderTransactions(); buildActivityLog(); syncQrMemberOptions();
+  renderStats();
+  renderTodayStat();
+  renderDailyPulse();
+  renderMembers();
+  renderTransactions();
+  buildActivityLog();
+  syncQrMemberOptions();
+  syncClaimOptions();
+  syncPrintOptions();
 }
 
 document.getElementById("addMemberBtn").onclick = async ()=>{
   const name=document.getElementById("name").value.trim();
   if(!name) return alert("Nama member wajib diisi.");
 
+  const waInput=document.getElementById("wa").value.trim();
+  const normalizedWa=normalizePhone(waInput);
+  if(normalizedWa){
+    const duplicate=members.find(x=>normalizePhone(x.wa)===normalizedWa);
+    if(duplicate){
+      return alert(`Nomor WhatsApp ini sudah terdaftar atas nama ${duplicate.name} (${duplicate.id}).`);
+    }
+  }
+
   const m={
     id:memberId(),
     name,
-    wa:document.getElementById("wa").value.trim(),
+    wa:waInput,
     address:document.getElementById("address").value.trim(),
     points:0,
     created_at:Date.now()
@@ -1031,6 +1339,7 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
   try{
     setConnectionStatus("SAVING...");
     await insertMemberToSupabase(m);
+    await createAudit("member_created",m.id,{name:m.name,wa:m.wa});
     await loadSupabaseData();
     document.getElementById("name").value="";
     document.getElementById("wa").value="";
@@ -1246,6 +1555,7 @@ document.getElementById("addTxBtn").onclick = async ()=>{
 
     if(error) throw error;
 
+    await createAudit("points_changed",member_id,{points,category:document.getElementById("txCategory").value,source:selectedMemberSource});
     await loadSupabaseData();
     document.getElementById("txNote").value="";
 
@@ -1270,9 +1580,11 @@ document.getElementById("addTxBtn").onclick = async ()=>{
 };
 
 async function deleteMember(id){
+  if(!isAdminRole()) return alert("Hanya Admin yang boleh menghapus member.");
   if(!confirm("Hapus member dan seluruh transaksinya?")) return;
   try{
     setConnectionStatus("DELETING...");
+    await createAudit("member_deleted",id,{});
     await deleteMemberSupabase(id);
     await loadSupabaseData();
   }catch(err){
@@ -1288,36 +1600,51 @@ function openMember(id){
   location.href=url.toString();
 }
 
-function showMemberPage(id){
-  const m=members.find(x=>x.id===id);
+async function showMemberPage(id){
   document.getElementById("adminView").classList.add("hidden");
-  document.getElementById("memberView").classList.remove("hidden");
   document.getElementById("bottomNav").classList.add("hidden");
+  document.getElementById("publicView").classList.remove("hidden");
+
+  let m=members.find(x=>x.id===id);
+  let publicData=null;
 
   if(!m){
-    document.getElementById("mvName").textContent="Member tidak ditemukan";
-    document.getElementById("mvId").textContent=id;
+    publicData=await loadPublicMember(id);
+    if(publicData){
+      m={
+        id:publicData.id,
+        name:publicData.name,
+        points:Number(publicData.points||0),
+        created_at:publicData.created_at ? new Date(publicData.created_at).getTime() : Date.now()
+      };
+    }
+  }
+
+  const box=document.getElementById("publicMember");
+  if(!m){
+    box.innerHTML='<div class="card public-safe"><div class="empty">Member tidak ditemukan.</div></div>';
     return;
   }
-  document.getElementById("mvId").textContent=m.id;
-  document.getElementById("mvName").textContent=m.name;
-  document.getElementById("mvPoints").textContent=m.points||0;
 
-  const ri=rewardInfo(Number(m.points)||0);
-  const target=ri.next?.p || 30;
-  document.getElementById("mvProgress").style.width=Math.min(100,(m.points/target)*100)+"%";
-  document.getElementById("mvReward").textContent = ri.next
-    ? `${target-(m.points||0)} poin lagi menuju ${ri.next.name}`
-    : "Semua reward utama sudah tercapai 🎉";
+  const rw=rewardInfo(Number(m.points)||0);
+  const next=rw.next;
+  const pct=next?Math.min(100,Math.round((Number(m.points)||0)/next.p*100)):100;
+  const claims=(publicData?.claims||[]);
 
-  const tx=transactions.filter(t=>t.member_id===id).sort((a,b)=>b.created_at-a.created_at);
-  document.getElementById("mvHistory").innerHTML = tx.length ? tx.map(t=>`
-    <div class="item">
-      <div><strong>${escapeHtml(t.category)}</strong><br><small>${fmtDate(t.created_at)}${t.note?" • "+escapeHtml(t.note):""}</small></div>
-      <strong>${t.points>0?"+":""}${t.points}</strong>
+  box.innerHTML=`<div class="card member-card public-safe">
+    <div class="member-head">
+      <div><div class="member-id">${escapeHtml(m.id)}</div><h2>${escapeHtml(m.name)}</h2></div>
+      <span class="badge">RK CELL MEMBER</span>
     </div>
-  `).join("") : '<div class="empty">Belum ada transaksi.</div>';
+    <div class="points">${Number(m.points)||0} <small>POIN</small></div>
+    <div class="progress"><div style="width:${pct}%"></div></div>
+    <div class="reward">${next?`${next.p-(Number(m.points)||0)} poin lagi menuju <b>${escapeHtml(next.name)}</b>`:"Reward utama telah tercapai."}</div>
+    <div class="section-title" style="margin-top:16px"><h2>REWARD DIKLAIM</h2><span>Riwayat aman</span></div>
+    ${claims.length?claims.map(c=>`<div class="item"><div><strong>${escapeHtml(c.reward_name)}</strong><small>${new Date(c.claimed_at).toLocaleString("id-ID")}</small></div><span class="reward-state reward-claimed">DIKLAIM</span></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}
+    <p class="note" style="margin-top:12px">Halaman ini hanya menampilkan informasi member yang diperlukan. Data anggota lain dan transaksi internal RK CELL tidak ditampilkan.</p>
+  </div>`;
 }
+
 
 function escapeHtml(s){
   return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
@@ -1401,7 +1728,7 @@ async function refreshAuthUI(){
     document.getElementById("adminBar").classList.add("hidden");
     document.getElementById("bottomNav").classList.add("hidden");
     await loadSupabaseData();
-    showMemberPage(memberParam);
+    await showMemberPage(memberParam);
     return;
   }
 
@@ -1452,6 +1779,16 @@ supabaseClient.auth.onAuthStateChange(()=>{
   refreshAuthUI();
 });
 
+
+{
+  const d=new Date();
+  const first=new Date(d.getFullYear(),d.getMonth(),1);
+  const iso=x=>`${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+  const rf=document.getElementById("reportFrom"), rt=document.getElementById("reportTo");
+  if(rf) rf.value=iso(first);
+  if(rt) rt.value=iso(d);
+}
+
 applyTheme(localStorage.getItem("rk_theme") || "dark");
 
 document.getElementById("themeToggle").onclick=()=>{
@@ -1470,6 +1807,16 @@ document.getElementById("memberQrBtn").onclick=()=>{
   document.getElementById("qrToolPanel").classList.toggle("hidden");
   document.getElementById("activityPanel").classList.add("hidden");
 };
+
+document.getElementById("reportBtn").onclick=()=>{
+  document.getElementById("reportPanel").classList.toggle("hidden");
+  document.getElementById("activityPanel").classList.add("hidden");
+  document.getElementById("qrToolPanel").classList.add("hidden");
+  document.getElementById("printToolPanel").classList.add("hidden");
+  renderReport();
+};
+document.getElementById("runReportBtn").onclick=renderReport;
+
 document.getElementById("activityBtn").onclick=()=>{
   document.getElementById("activityPanel").classList.toggle("hidden");
   document.getElementById("qrToolPanel").classList.add("hidden");
@@ -1477,7 +1824,39 @@ document.getElementById("activityBtn").onclick=()=>{
 };
 document.getElementById("qrMemberSelect").addEventListener("change",e=>renderMemberQr(e.target.value));
 
+document.getElementById("quickPlus1").onclick=()=>{document.getElementById("txPoints").value=1};
+document.getElementById("quickPlus2").onclick=()=>{document.getElementById("txPoints").value=2};
+document.getElementById("quickPlus5").onclick=()=>{document.getElementById("txPoints").value=5};
+
+document.getElementById("waMemberBtn").onclick=()=>{
+  const id=document.getElementById("txMember").value;
+  const m=members.find(x=>x.id===id);
+  if(!m) return alert("Pilih member terlebih dahulu.");
+  openWhatsAppForMember(m);
+};
+
+document.getElementById("claimMemberSelect").addEventListener("change",e=>renderClaimRewards(e.target.value));
+
+document.getElementById("printCardBtn").onclick=()=>{
+  document.getElementById("printToolPanel").classList.toggle("hidden");
+  document.getElementById("qrToolPanel").classList.add("hidden");
+  document.getElementById("activityPanel").classList.add("hidden");
+};
+
+document.getElementById("printMemberCardBtn").onclick=()=>{
+  preparePrintCard(document.getElementById("printMemberSelect").value);
+};
+
+document.getElementById("openMemberLinkBtn").onclick=()=>{
+  const id=document.getElementById("qrMemberSelect").value;
+  if(!id) return alert("Pilih member terlebih dahulu.");
+  window.open(`https://curu123.github.io/member/?id=${encodeURIComponent(id)}`,"_blank");
+};
+
 refreshAuthUI();
+if("serviceWorker" in navigator && location.protocol==="https:"){
+  navigator.serviceWorker.register("./sw.js").catch(()=>{});
+}
 </script>
 </body>
 </html>
