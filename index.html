@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V32 Camera Fix</title>
+  <title>RK CELL Admin V33 Scan Runtime Fixed</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -1852,8 +1852,8 @@ async function stopScanner(){
   html5QrCode = null;
 }
 
-document.getElementById("startScanBtn").onclick = ()=>startScanner("scanReader","scanStatus");
-document.getElementById("stopScanBtn").onclick = stopScanner;
+document.getElementById("startScanBtn")?.addEventListener("click",()=>startScanner("scanReader","scanStatus"));
+document.getElementById("stopScanBtn")?.addEventListener("click",stopScanner);
 
 document.getElementById("txMember").addEventListener("change", e=>{
   selectedMemberSource = "manual";
@@ -2162,18 +2162,18 @@ supabaseClient.auth.onAuthStateChange(()=>{
 
 window.addEventListener("online",()=>{setConnectionUI(true,"Internet kembali tersedia"); refreshAuthUI();});
 window.addEventListener("offline",()=>{setConnectionUI(false,"Perangkat sedang offline"); showOfflineMode();});
-document.getElementById("retryConnectionBtn").onclick=()=>refreshAuthUI();
-document.getElementById("offlineRetryBtn").onclick=()=>refreshAuthUI();
+document.getElementById("retryConnectionBtn")?.addEventListener("click",()=>refreshAuthUI());
+document.getElementById("offlineRetryBtn")?.addEventListener("click",()=>refreshAuthUI());
 
 
 document.getElementById("addRewardManualBtn")?.addEventListener("click",addRewardManual);
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
 
-document.getElementById("themeToggle").onclick=()=>{
+document.getElementById("themeToggle")?.addEventListener("click",()=>{
   const next=document.body.classList.contains("light-mode") ? "dark" : "light";
   applyTheme(next);
-};
+});
 
 document.getElementById("exportBtn").onclick=exportBackup;
 document.getElementById("importBtn").onclick=()=>alert("Import langsung ke Supabase belum diaktifkan di V7 agar data online tidak tertimpa tanpa sengaja.");
@@ -2299,6 +2299,11 @@ async function openDirectCamera(){
   document.body.style.overflow="hidden";
   if(status) status.textContent="Meminta izin kamera...";
 
+  if(!window.isSecureContext){
+    if(status) status.textContent="Kamera hanya bisa dibuka dari HTTPS. Buka melalui GitHub Pages, bukan file lokal.";
+    return;
+  }
+
   if(!navigator.mediaDevices?.getUserMedia){
     if(status) status.textContent="Browser ini tidak mendukung akses kamera.";
     return;
@@ -2352,6 +2357,8 @@ if(centerScanBtn){
     event.preventDefault();
     event.stopPropagation();
     await closeDirectCamera();
+    const status=document.getElementById("directScanStatus");
+    if(status) status.textContent="Tombol SCAN aktif. Membuka kamera...";
     await openDirectCamera();
   });
 }
