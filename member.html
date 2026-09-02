@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member V5 Reward Status</title>
+<title>RK CELL Member V6 Smart Reward</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -128,6 +128,31 @@ body{
   font:1000 6px ui-monospace,monospace;white-space:nowrap;
 }
 
+
+/* V6 member experience */
+.reward-alert{
+  margin:12px 0 4px;padding:11px 12px;border-radius:13px;
+  background:linear-gradient(135deg,#7d0d18,#d52b3c);
+  border:1px solid #ff6574;color:#fff;
+  font:900 10px ui-monospace,monospace;text-align:center;
+  box-shadow:0 7px 18px rgba(180,20,40,.22)
+}
+.progress-card{margin-top:10px;padding:11px 12px;border:1px solid #29485d;border-radius:13px;background:#081725}
+.progress-head{display:flex;justify-content:space-between;gap:10px;color:#b8d8e7;font:900 9px ui-monospace,monospace}
+.progress-track{height:9px;margin-top:8px;border-radius:10px;overflow:hidden;background:#1c3040}
+.progress-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#16b8ff,#00df86);transition:width .5s ease}
+.last-tx{margin-top:7px;color:#7fa1b3;font-size:8px;text-align:center}
+.claim-btn{
+  display:block;margin:7px auto 0;padding:5px 7px;border:0;border-radius:8px;
+  background:#fff;color:#c61f31;text-decoration:none;
+  font:1000 7px ui-monospace,monospace
+}
+.reward.reached{animation:rewardPulse 1.8s ease-in-out infinite}
+@keyframes rewardPulse{
+  0%,100%{box-shadow:0 0 12px rgba(255,55,75,.25),0 8px 18px rgba(0,0,0,.28)}
+  50%{box-shadow:0 0 25px rgba(255,55,75,.62),0 8px 18px rgba(0,0,0,.28)}
+}
+
 </style>
 </head>
 <body>
@@ -164,7 +189,7 @@ function speakMemberWelcome(force=false){
   try{
     window.speechSynthesis.cancel();
 
-    const text=`Selamat datang, ${memberVoiceName}, di Sistem Member RK CELL.`;
+    const text=window.memberVoiceMessage || `Selamat datang, ${memberVoiceName}, di Sistem Member RK CELL.`;
     const utter=new SpeechSynthesisUtterance(text);
     utter.lang="id-ID";
     utter.rate=0.96;
@@ -228,7 +253,19 @@ async function init(){
    return;
  }
  const pts=Number(d.points||0),claims=d.claims||[],hist=d.history||[];
+ const availableRewards=REWARDS.filter(r=>pts>=Number(r.p) && !claims.some(c=>Number(c.points_required)===Number(r.p)));
  const next=REWARDS.find(r=>pts<r.p);
+ const previousTarget=[...REWARDS].filter(r=>Number(r.p)<=pts).pop()?.p || 0;
+ const progressTarget=next?Number(next.p):Math.max(pts,1);
+ const progressBase=next?Number(previousTarget):0;
+ const progressPct=next?Math.max(0,Math.min(100,((pts-progressBase)/(progressTarget-progressBase||1))*100)):100;
+ const lastTx=hist[0]||null;
+
+ window.memberVoiceMessage=availableRewards.length
+   ? `Selamat datang, ${d.name}. Selamat! Anda memiliki ${availableRewards.length} reward yang sudah tersedia dan bisa diklaim di RK CELL.`
+   : next
+     ? `Selamat datang, ${d.name}, di Sistem Member RK CELL. Saat ini Anda memiliki ${pts} poin. ${Math.max(0,Number(next.p)-pts)} poin lagi menuju reward berikutnya.`
+     : `Selamat datang, ${d.name}, di Sistem Member RK CELL. Saat ini Anda memiliki ${pts} poin.`;
  const cards=[...REWARDS];
  while(cards.length<4) cards.push({p:"—",name:"Reward Berikutnya"});
 
@@ -254,6 +291,17 @@ async function init(){
     <div class="stat next"><small>🎁 NEXT REWARD</small><strong>${next?next.p+" POIN":"SELESAI"}</strong><div class="sub">${next?Math.max(0,next.p-pts)+" poin lagi ke reward berikutnya":"Reward utama tercapai"}</div></div>
    </div>
 
+   ${availableRewards.length?`<div class="reward-alert">🎉 SELAMAT! ${availableRewards.length} REWARD SIAP DIAMBIL</div>`:""}
+
+   <div class="progress-card">
+     <div class="progress-head">
+       <span>PROGRESS REWARD</span>
+       <span>${next?`${pts} / ${next.p} POIN`:`${pts} POIN • TARGET TERCAPAI`}</span>
+     </div>
+     <div class="progress-track"><div class="progress-fill" style="width:${progressPct}%"></div></div>
+     <div class="last-tx">${lastTx?`Transaksi terakhir: ${new Date(lastTx.created_at).toLocaleString("id-ID")} • ${Number(lastTx.points)>0?"+":""}${Number(lastTx.points)||0} poin`:"Belum ada transaksi terakhir"}</div>
+   </div>
+
    <div class="section"><strong>REWARD YANG TERSEDIA</strong><span>Lihat Semua ›</span></div>
    <div class="rewards">${cards.slice(0,4).map(r=>{
      if(r.p==="—") return `<div class="reward"><div class="rp">—</div><div class="ri">🎁</div><div class="rn">${esc(r.name)}</div><div class="rs">—</div></div>`;
@@ -261,7 +309,8 @@ async function init(){
      const reached=pts>=Number(r.p);
      const st=claimed?["DIKLAIM","#dff7e8","#177245"]:reached?["TERSEDIA","#fff0bc","#765800"]:["TERKUNCI","#e5e7eb","#5f6872"];
      const emphasize=reached && !claimed;
-     return `<div class="reward ${claimed?"claimed":(emphasize?"reached":"")}"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span></div>`;
+     const claimText=encodeURIComponent(`Halo Admin RK CELL, saya ${d.name} (${d.id}). Saya ingin klaim reward: ${r.name} (${r.p} poin).`);
+     return `<div class="reward ${claimed?"claimed":(emphasize?"reached":"")}"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span>${emphasize?`<a class="claim-btn" href="https://wa.me/6281271012313?text=${claimText}" target="_blank" rel="noopener">KLAIM VIA ADMIN</a>`:""}</div>`;
    }).join("")}</div>
 
    <div class="section"><strong>RIWAYAT TRANSAKSI</strong><span>Lihat Semua ›</span></div>
