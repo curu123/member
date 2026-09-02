@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V12</title>
+  <title>RK CELL Member V13</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -517,6 +517,30 @@ body.light-mode .report-box{background:#fff;border-color:#d5e2ea}
 .card-preview .cp-points small{display:block;font-size:8px;color:#6e8799}
 body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)}
 
+
+/* V13 finishing */
+.connection-strip{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin:0 0 12px;padding:9px 11px;border:1px solid rgba(0,245,255,.18);
+  border-radius:4px 13px 4px 13px;background:rgba(0,245,255,.03)
+}
+.connection-strip strong{font-size:10px}
+.connection-strip small{font-size:9px;color:#6d879a}
+.connection-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
+.conn-online{background:var(--green);box-shadow:0 0 9px var(--green)}
+.conn-offline{background:var(--danger);box-shadow:0 0 9px var(--danger)}
+.member-status{
+  display:inline-flex;padding:4px 7px;border-radius:3px 8px 3px 8px;
+  font:900 8px ui-monospace,monospace;margin-left:6px
+}
+.member-active{color:var(--green);border:1px solid rgba(0,255,156,.22);background:rgba(0,255,156,.04)}
+.member-inactive{color:#ff8fa6;border:1px solid rgba(255,49,88,.22);background:rgba(255,49,88,.04)}
+.offline-page{
+  max-width:560px;margin:30px auto;text-align:center
+}
+.offline-page h2{margin:0 0 8px}
+.offline-icon{font-size:42px;margin-bottom:10px}
+
 </style>
 </head>
 <body>
@@ -590,6 +614,11 @@ body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)
         <div id="mvHistory" class="list"></div>
       </div>
     </div>
+  </div>
+
+  <div id="connectionStrip" class="connection-strip hidden">
+    <div><strong><span id="connectionDot" class="connection-dot conn-online"></span><span id="connectionText">ONLINE</span></strong><br><small id="connectionDetail">Supabase connected</small></div>
+    <button class="btn soft" id="retryConnectionBtn" type="button" style="width:auto">Retry</button>
   </div>
 
   <div id="adminView" class="hidden">
@@ -876,6 +905,16 @@ body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)
     </div>
   </div>
 
+  
+  <div id="offlineView" class="hidden">
+    <div class="card offline-page">
+      <div class="offline-icon">📡</div>
+      <h2>RK CELL sedang offline</h2>
+      <p class="note">Koneksi internet atau Supabase tidak tersedia. Data tidak akan diubah sampai koneksi kembali normal.</p>
+      <button class="btn primary" id="offlineRetryBtn" type="button">Coba Lagi</button>
+    </div>
+  </div>
+
   <div class="footer">RK CELL // MEMBER NETWORK // SYSTEM ONLINE</div>
 </div>
 
@@ -963,7 +1002,8 @@ async function loadSupabaseData(){
   if(mRes.error||tRes.error||rRes.error||cRes.error||aRes.error||pRes.error){
     console.error(mRes.error,tRes.error,rRes.error,cRes.error,aRes.error,pRes.error);
     setConnectionStatus("DB ERROR");
-    alert("Gagal membaca database Supabase. Pastikan SQL V11 sudah dijalankan.");
+    setConnectionUI(false,"Gagal membaca Supabase");
+    showOfflineMode();
     return;
   }
 
@@ -975,6 +1015,8 @@ async function loadSupabaseData(){
   currentProfile=pRes.data||{role:"operator"};
   applyRoleUI();
   setConnectionStatus("SUPABASE ONLINE");
+  setConnectionUI(true,"Supabase connected");
+  document.getElementById("offlineView")?.classList.add("hidden");
   refresh();
 }
 
@@ -989,7 +1031,8 @@ async function insertMemberToSupabase(member){
     name:member.name,
     wa:member.wa || null,
     address:member.address || null,
-    points:member.points || 0
+    points:member.points || 0,
+    active:member.active !== false
   };
   const {error}=await supabaseClient.from("members").insert(payload);
   if(error) throw error;
@@ -1035,11 +1078,11 @@ function renderMembers(){
     <div class="item">
       <div>
         <strong>${escapeHtml(m.name)}</strong><br>
-        <small>${m.id} • ${escapeHtml(m.wa || "-")} • ${m.points||0} poin</small>
+        <small>${m.id} • ${escapeHtml(m.wa || "-")} • ${m.points||0} poin ${m.active===false?`<span class="member-status member-inactive">NONAKTIF</span>`:`<span class="member-status member-active">AKTIF</span>`}</small>
       </div>
       <div class="row">
         <button class="btn soft" onclick="openMember('${m.id}')">Lihat</button>
-        ${isAdminRole()?`<button class="btn danger" onclick="deleteMember(\'${m.id}\')">Hapus</button>`:""}
+        ${isAdminRole()?`<button class="btn soft" onclick="toggleMemberActive(\'${m.id}\',${m.active===false})">${m.active===false?"Aktifkan":"Nonaktifkan"}</button><button class="btn danger" onclick="deleteMember(\'${m.id}\')">Hapus</button>`:""}
       </div>
     </div>`).join("") : '<div class="empty">Belum ada member.</div>';
 
@@ -1405,6 +1448,7 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
     wa:waInput,
     address:document.getElementById("address").value.trim(),
     points:0,
+    active:true,
     created_at:Date.now()
   };
 
@@ -1611,8 +1655,15 @@ document.getElementById("addTxBtn").onclick = async ()=>{
 
   if(!member_id) return alert("Pilih member terlebih dahulu.");
 
+  if(points < 0){
+    const reason=document.getElementById("txNote").value.trim();
+    if(!reason) return alert("Untuk pengurangan poin, alasan wajib diisi pada Catatan.");
+    if(!confirm(`Kurangi ${Math.abs(points)} poin dari member ini?\nAlasan: ${reason}`)) return;
+  }
+
   const m=members.find(x=>x.id===member_id);
   if(!m) return alert("Member tidak ditemukan.");
+  if(m.active===false) return alert("Member ini sedang NONAKTIF. Aktifkan kembali sebelum transaksi.");
 
   try{
     setConnectionStatus("SAVING...");
@@ -1651,6 +1702,34 @@ document.getElementById("addTxBtn").onclick = async ()=>{
   }
 };
 
+
+async function toggleMemberActive(id,makeActive){
+  if(!isAdminRole()) return alert("Hanya Admin yang boleh mengubah status member.");
+  const {error}=await supabaseClient.from("members").update({active:makeActive}).eq("id",id);
+  if(error) return alert("Gagal mengubah status member: "+error.message);
+  await createAudit(makeActive?"member_activated":"member_deactivated",id,{});
+  await loadSupabaseData();
+}
+
+function setConnectionUI(online,detail=""){
+  const strip=document.getElementById("connectionStrip");
+  const dot=document.getElementById("connectionDot");
+  const text=document.getElementById("connectionText");
+  const det=document.getElementById("connectionDetail");
+  if(!strip) return;
+  strip.classList.remove("hidden");
+  dot.className="connection-dot "+(online?"conn-online":"conn-offline");
+  text.textContent=online?"ONLINE":"OFFLINE";
+  det.textContent=detail || (online?"Supabase connected":"Connection unavailable");
+}
+
+function showOfflineMode(){
+  document.getElementById("offlineView")?.classList.remove("hidden");
+  document.getElementById("adminView")?.classList.add("hidden");
+  document.getElementById("publicView")?.classList.add("hidden");
+  setConnectionUI(false,"Internet/Supabase tidak tersedia");
+}
+
 async function deleteMember(id){
   if(!isAdminRole()) return alert("Hanya Admin yang boleh menghapus member.");
   if(!confirm("Hapus member dan seluruh transaksinya?")) return;
@@ -1687,6 +1766,7 @@ async function showMemberPage(id){
         id:publicData.id,
         name:publicData.name,
         points:Number(publicData.points||0),
+        active:publicData.active!==false,
         created_at:publicData.created_at ? new Date(publicData.created_at).getTime() : Date.now()
       };
     }
@@ -1706,7 +1786,7 @@ async function showMemberPage(id){
   box.innerHTML=`<div class="card member-card public-safe">
     <div class="member-head">
       <div><div class="member-id">${escapeHtml(m.id)}</div><h2>${escapeHtml(m.name)}</h2></div>
-      <span class="badge">RK CELL MEMBER</span>
+      <span class="badge">${m.active===false?"MEMBER NONAKTIF":"RK CELL MEMBER"}</span>
     </div>
     <div class="points">${Number(m.points)||0} <small>POIN</small></div>
     <div class="progress"><div style="width:${pct}%"></div></div>
@@ -1860,6 +1940,12 @@ supabaseClient.auth.onAuthStateChange(()=>{
   if(rf) rf.value=iso(first);
   if(rt) rt.value=iso(d);
 }
+
+
+window.addEventListener("online",()=>{setConnectionUI(true,"Internet kembali tersedia"); refreshAuthUI();});
+window.addEventListener("offline",()=>{setConnectionUI(false,"Perangkat sedang offline"); showOfflineMode();});
+document.getElementById("retryConnectionBtn").onclick=()=>refreshAuthUI();
+document.getElementById("offlineRetryBtn").onclick=()=>refreshAuthUI();
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
 
