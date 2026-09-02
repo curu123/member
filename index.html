@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V31 Final</title>
+  <title>RK CELL Admin V32 Camera Fix</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -843,16 +843,6 @@ body.light-mode .center-scan-btn{
     </div>
 
     <div id="setupTab" class="tabPage section hidden"><div class="section-title"><h2>SETUP</h2><span>Pengaturan sistem</span></div>
-      <div class="card section">
-        <div class="section-title"><h2>KONEKSI SUPABASE</h2><span>Status database</span></div>
-        <div class="connection-strip" style="display:flex!important;margin:0">
-          <div>
-            <strong><span id="setupConnectionDot" class="connection-dot conn-online"></span><span id="setupConnectionText">ONLINE</span></strong><br>
-            <small id="setupConnectionDetail">Supabase connected</small>
-          </div>
-          <button class="btn soft" id="setupRetryConnectionBtn" type="button" style="width:auto">Retry</button>
-        </div>
-      </div>
 
       <div class="card">
         <div class="section-title"><h2>SETUP & TOOLS</h2><span>Pengaturan admin</span></div>
@@ -961,9 +951,8 @@ body.light-mode .center-scan-btn{
       <div class="section-title"><h2>ACTIVITY LOG</h2><span>Recent operations</span></div>
       <div id="activityLog" class="activity-log"></div>
     </div>
-      </div>
 
-      <div class="section-title"><h2>Koneksi Supabase</h2><span>Koneksi database online</span></div>
+      <div class="section-title"><h2>KONEKSI SUPABASE</h2><span>Hanya di Setup</span></div>
       <div class="card">
         <p class="note">Gunakan Project URL dan anon public key. Jangan pernah menaruh service_role key pada halaman GitHub Pages.</p>
         <div class="field"><label>SETUP URL</label><input id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
@@ -1008,7 +997,10 @@ body.light-mode .center-scan-btn{
     </div>
 
     <div class="card">
-      <div id="directScanReader"></div>
+      <div id="directCameraBox" style="position:relative;background:#000;border-radius:16px;overflow:hidden;min-height:320px;display:grid;place-items:center">
+        <video id="directCameraVideo" playsinline autoplay muted style="width:100%;max-height:68vh;object-fit:cover"></video>
+        <div style="position:absolute;width:230px;height:230px;border:3px solid #45dfff;border-radius:18px;box-shadow:0 0 0 9999px rgba(0,0,0,.20);pointer-events:none"></div>
+      </div>
       <div id="directScanStatus" class="scan-status" style="margin-top:10px">Menunggu kamera...</div>
     </div>
   </div>
@@ -1022,7 +1014,7 @@ body.light-mode .center-scan-btn{
   <button data-tab="setupTab"><span>⚙️</span>Setup</button>
 </div>
 
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1956,15 +1948,7 @@ async function toggleMemberActive(id,makeActive){
   await loadSupabaseData();
 }
 
-function setConnectionUI(online,detail=""){
-  const dot=document.getElementById("setupConnectionDot");
-  const text=document.getElementById("setupConnectionText");
-  const det=document.getElementById("setupConnectionDetail");
-
-  if(dot) dot.className="connection-dot "+(online?"conn-online":"conn-offline");
-  if(text) text.textContent=online?"ONLINE":"OFFLINE";
-  if(det) det.textContent=detail || (online?"Supabase connected":"Connection unavailable");
-}
+function setConnectionUI(online,detail=""){ /* status UI removed; connection settings live only in Setup */ }
 
 function showOfflineMode(){
   setConnectionUI(false,"Internet/Supabase tidak tersedia");
@@ -2182,7 +2166,6 @@ document.getElementById("retryConnectionBtn").onclick=()=>refreshAuthUI();
 document.getElementById("offlineRetryBtn").onclick=()=>refreshAuthUI();
 
 
-document.getElementById("setupRetryConnectionBtn")?.addEventListener("click",()=>refreshAuthUI());
 document.getElementById("addRewardManualBtn")?.addEventListener("click",addRewardManual);
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
@@ -2256,34 +2239,126 @@ document.getElementById("openMemberLinkBtn").onclick=()=>{
 };
 
 
+
+let directCameraStream=null;
+let directCameraRAF=null;
+let directDetector=null;
+let directDetectBusy=false;
+
+async function closeDirectCamera(){
+  if(directCameraRAF){
+    cancelAnimationFrame(directCameraRAF);
+    directCameraRAF=null;
+  }
+  if(directCameraStream){
+    directCameraStream.getTracks().forEach(t=>t.stop());
+    directCameraStream=null;
+  }
+  const video=document.getElementById("directCameraVideo");
+  if(video) video.srcObject=null;
+  document.getElementById("directScanOverlay")?.classList.add("hidden");
+  document.body.style.overflow="";
+}
+
+async function directDetectLoop(){
+  const video=document.getElementById("directCameraVideo");
+  if(!video || !directCameraStream) return;
+
+  if(directDetector && video.readyState>=2 && !directDetectBusy){
+    directDetectBusy=true;
+    try{
+      const codes=await directDetector.detect(video);
+      if(codes && codes.length){
+        const raw=codes[0].rawValue||"";
+        const status=document.getElementById("directScanStatus");
+        if(status) status.textContent="QR terbaca. Memeriksa member...";
+
+        const found=selectMemberById(raw,"qr");
+        if(found){
+          await closeDirectCamera();
+          activateTab("txTab");
+          setTimeout(()=>document.getElementById("selectedMemberBox")?.scrollIntoView({behavior:"smooth",block:"center"}),120);
+          directDetectBusy=false;
+          return;
+        }
+      }
+    }catch(e){}
+    directDetectBusy=false;
+  }
+  directCameraRAF=requestAnimationFrame(directDetectLoop);
+}
+
+async function openDirectCamera(){
+  const overlay=document.getElementById("directScanOverlay");
+  const status=document.getElementById("directScanStatus");
+  const video=document.getElementById("directCameraVideo");
+
+  if(!overlay || !video) throw new Error("Panel kamera tidak ditemukan");
+
+  overlay.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+  if(status) status.textContent="Meminta izin kamera...";
+
+  if(!navigator.mediaDevices?.getUserMedia){
+    if(status) status.textContent="Browser ini tidak mendukung akses kamera.";
+    return;
+  }
+
+  try{
+    directCameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},
+      audio:false
+    });
+    video.srcObject=directCameraStream;
+    await video.play();
+
+    if("BarcodeDetector" in window){
+      try{
+        directDetector=new BarcodeDetector({formats:["qr_code"]});
+        if(status) status.textContent="Kamera aktif. Arahkan QR ke kotak.";
+        directCameraRAF=requestAnimationFrame(directDetectLoop);
+      }catch(e){
+        directDetector=null;
+      }
+    }
+
+    // Fallback decoder: camera is already open, use html5-qrcode only if BarcodeDetector unavailable.
+    if(!directDetector){
+      if(status) status.textContent="Kamera aktif. Pemindai QR sedang disiapkan...";
+      if(typeof Html5Qrcode!=="undefined"){
+        // Stop native stream before library takes camera ownership.
+        directCameraStream.getTracks().forEach(t=>t.stop());
+        directCameraStream=null;
+        video.srcObject=null;
+        document.getElementById("directCameraBox").innerHTML='<div id="directScanReader" style="width:100%"></div>';
+        await startScanner("directScanReader","directScanStatus");
+      }else{
+        if(status) status.textContent="Kamera aktif, tetapi decoder QR gagal dimuat.";
+      }
+    }
+  }catch(err){
+    console.error(err);
+    if(status){
+      if(err?.name==="NotAllowedError") status.textContent="Izin kamera ditolak. Aktifkan izin Camera untuk situs ini.";
+      else if(err?.name==="NotFoundError") status.textContent="Kamera tidak ditemukan.";
+      else status.textContent="Kamera gagal dibuka: "+(err?.message||"unknown error");
+    }
+  }
+}
+
 const centerScanBtn=document.getElementById("centerScanBtn");
 if(centerScanBtn){
-  centerScanBtn.onclick=async(event)=>{
-    event?.preventDefault();
-    event?.stopPropagation();
-
-    const overlay=document.getElementById("directScanOverlay");
-    if(!overlay) return alert("Panel scanner tidak ditemukan.");
-
-    overlay.classList.remove("hidden");
-    document.body.style.overflow="hidden";
-
-    const status=document.getElementById("directScanStatus");
-    if(status) status.textContent="Membuka kamera...";
-
-    try{
-      await startScanner("directScanReader","directScanStatus");
-    }catch(err){
-      console.error(err);
-      if(status) status.textContent="Kamera gagal dibuka. Periksa izin kamera.";
-    }
-  };
+  centerScanBtn.addEventListener("click",async(event)=>{
+    event.preventDefault();
+    event.stopPropagation();
+    await closeDirectCamera();
+    await openDirectCamera();
+  });
 }
 
 document.getElementById("directScanClose")?.addEventListener("click",async()=>{
-  await stopScanner();
-  document.getElementById("directScanOverlay")?.classList.add("hidden");
-  document.body.style.overflow="";
+  try{await stopScanner();}catch(e){}
+  await closeDirectCamera();
 });
 refreshAuthUI();
 if("serviceWorker" in navigator && location.protocol==="https:"){
