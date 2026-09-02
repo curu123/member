@@ -1,0 +1,9 @@
+{
+  "name": "RK CELL Member",
+  "short_name": "RK Member",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#03050b",
+  "theme_color": "#03050b",
+  "description": "Sistem Member dan Reward RK CELL"
+}
