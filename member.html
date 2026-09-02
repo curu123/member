@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member V4 Voice</title>
+<title>RK CELL Member V5 Reward Status</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -106,6 +106,26 @@ body{
   border-color:rgba(0,255,156,.4);
   color:#7dffb1;
   box-shadow:0 0 12px rgba(0,255,156,.08);
+}
+
+
+/* V5 claimed reward */
+.reward.claimed{
+  transform:none!important;
+  border:1px solid #6d7480!important;
+  background:linear-gradient(180deg,#777d86 0%,#565c65 36%,#e0e2e5 37%,#c5c9ce 100%)!important;
+  box-shadow:none!important;
+  filter:saturate(.25);
+  opacity:.78;
+}
+.reward.claimed .rp{color:#f3f4f6!important;text-shadow:none!important}
+.reward.claimed .ri{filter:grayscale(1);opacity:.72}
+.reward.claimed .rn,.reward.claimed .rs{color:#5c626b!important}
+.reward.claimed:before{
+  content:"✓ SUDAH DIAMBIL";
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  padding:3px 7px;border-radius:10px;background:#626872;color:#fff;
+  font:1000 6px ui-monospace,monospace;white-space:nowrap;
 }
 
 </style>
@@ -241,7 +261,7 @@ async function init(){
      const reached=pts>=Number(r.p);
      const st=claimed?["DIKLAIM","#dff7e8","#177245"]:reached?["TERSEDIA","#fff0bc","#765800"]:["TERKUNCI","#e5e7eb","#5f6872"];
      const emphasize=reached && !claimed;
-     return `<div class="reward ${emphasize?"reached":""}"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span></div>`;
+     return `<div class="reward ${claimed?"claimed":(emphasize?"reached":"")}"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span></div>`;
    }).join("")}</div>
 
    <div class="section"><strong>RIWAYAT TRANSAKSI</strong><span>Lihat Semua ›</span></div>
