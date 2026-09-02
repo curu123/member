@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V21 Admin Split</title>
+  <title>RK CELL Member V22 Stable Pages</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -1034,6 +1034,58 @@ body.light-mode .history-premium{
 #publicView:not(.hidden) ~ #adminView,
 #publicView:not(.hidden) ~ #bottomNav{display:none!important}
 
+
+/* V22 strict page modes */
+html,body{min-height:100%;overflow-x:hidden}
+body.mode-admin #publicView,
+body.mode-admin #offlineView{display:none!important}
+
+body.mode-public #adminView,
+body.mode-public #adminModeBanner,
+body.mode-public #adminBar,
+body.mode-public #connectionStrip,
+body.mode-public #authGate,
+body.mode-public #memberView,
+body.mode-public #bottomNav,
+body.mode-public #offlineView{display:none!important}
+
+body.mode-public #publicView{
+  display:block!important;
+  position:relative!important;
+  inset:auto!important;
+  width:100%!important;
+  min-height:100vh!important;
+  margin:0!important;
+  padding:0!important;
+}
+
+body.mode-login #adminView,
+body.mode-login #adminModeBanner,
+body.mode-login #adminBar,
+body.mode-login #connectionStrip,
+body.mode-login #publicView,
+body.mode-login #offlineView,
+body.mode-login #bottomNav{display:none!important}
+
+body.mode-offline #adminView,
+body.mode-offline #adminModeBanner,
+body.mode-offline #adminBar,
+body.mode-offline #authGate,
+body.mode-offline #publicView,
+body.mode-offline #bottomNav{display:none!important}
+body.mode-offline #offlineView{display:block!important}
+
+#publicView.hidden{display:none!important}
+#publicView:not(.hidden){display:block}
+body.mode-public .app{
+  max-width:none!important;
+  padding:0 0 24px!important;
+  min-height:100vh!important;
+}
+body.mode-public .hero,
+body.mode-public .footer{display:none!important}
+body.mode-public #publicMember{min-height:100vh}
+
 </style>
 </head>
 <body>
@@ -1222,7 +1274,6 @@ body.light-mode .history-premium{
         <div class="premium-thanks">Terima Kasih Telah Menjadi Member Setia RK CELL ♥</div>
         <span id="cpPoints" style="display:none">0</span>
       </div>
-    </div>
       <div class="row" style="justify-content:center;margin-top:10px">
         <button class="btn primary" id="printMemberCardBtn" type="button">🖨 Cetak Kartu</button>
       </div>
@@ -1444,7 +1495,7 @@ body.light-mode .history-premium{
   <button data-tab="setupTab"><span>⚙️</span>Setup</button>
 </div>
 
-<script src=<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -2265,10 +2316,8 @@ function setConnectionUI(online,detail=""){
 }
 
 function showOfflineMode(){
-  document.getElementById("offlineView")?.classList.remove("hidden");
-  document.getElementById("adminView")?.classList.add("hidden");
-  document.getElementById("publicView")?.classList.add("hidden");
   setConnectionUI(false,"Internet/Supabase tidak tersedia");
+  setPageMode("offline");
 }
 
 async function deleteMember(id){
@@ -2293,17 +2342,8 @@ function openMember(id){
 }
 
 async function showMemberPage(id){
-  document.getElementById("adminModeBanner")?.classList.add("hidden");
-  document.getElementById("adminView")?.classList.add("hidden");
-  document.getElementById("authGate")?.classList.add("hidden");
-  document.getElementById("adminBar")?.classList.add("hidden");
-  document.getElementById("connectionStrip")?.classList.add("hidden");
-  document.getElementById("bottomNav")?.classList.add("hidden");
-  document.getElementById("offlineView")?.classList.add("hidden");
-  document.querySelectorAll(".tabPage,.tabs,.utility-row,.stats,.section-title").forEach(el=>{
-    if(!el.closest("#publicView")) el.classList.add("public-route-hidden");
-  });
-  document.getElementById("publicView")?.classList.remove("hidden");
+  resetAdminHiddenStates();
+  setPageMode("public");
 
   const d=await loadPublicMember(id);
   const box=document.getElementById("publicMember");
@@ -2480,42 +2520,105 @@ alter table public.rewards enable row level security;`;
 
 
 
+
+function setPageMode(mode){
+  document.body.classList.remove("mode-admin","mode-public","mode-login","mode-offline");
+  document.body.classList.add("mode-"+mode);
+
+  if(mode==="admin"){
+    document.getElementById("adminView")?.classList.remove("hidden");
+    document.getElementById("adminModeBanner")?.classList.remove("hidden");
+    document.getElementById("adminBar")?.classList.remove("hidden");
+    document.getElementById("bottomNav")?.classList.remove("hidden");
+    document.getElementById("authGate")?.classList.add("hidden");
+    document.getElementById("publicView")?.classList.add("hidden");
+    document.getElementById("offlineView")?.classList.add("hidden");
+  }
+
+  if(mode==="public"){
+    document.getElementById("adminView")?.classList.add("hidden");
+    document.getElementById("adminModeBanner")?.classList.add("hidden");
+    document.getElementById("adminBar")?.classList.add("hidden");
+    document.getElementById("connectionStrip")?.classList.add("hidden");
+    document.getElementById("bottomNav")?.classList.add("hidden");
+    document.getElementById("authGate")?.classList.add("hidden");
+    document.getElementById("offlineView")?.classList.add("hidden");
+    document.getElementById("publicView")?.classList.remove("hidden");
+  }
+
+  if(mode==="login"){
+    document.getElementById("authGate")?.classList.remove("hidden");
+    document.getElementById("adminView")?.classList.add("hidden");
+    document.getElementById("adminModeBanner")?.classList.add("hidden");
+    document.getElementById("adminBar")?.classList.add("hidden");
+    document.getElementById("bottomNav")?.classList.add("hidden");
+    document.getElementById("publicView")?.classList.add("hidden");
+  }
+
+  if(mode==="offline"){
+    document.getElementById("offlineView")?.classList.remove("hidden");
+    document.getElementById("adminView")?.classList.add("hidden");
+    document.getElementById("adminModeBanner")?.classList.add("hidden");
+    document.getElementById("adminBar")?.classList.add("hidden");
+    document.getElementById("authGate")?.classList.add("hidden");
+    document.getElementById("publicView")?.classList.add("hidden");
+    document.getElementById("bottomNav")?.classList.add("hidden");
+  }
+
+  requestAnimationFrame(()=>{
+    window.scrollTo({top:0,left:0,behavior:"instant"});
+    document.documentElement.scrollTop=0;
+    document.body.scrollTop=0;
+  });
+}
+
+function resetAdminHiddenStates(){
+  document.querySelectorAll(".public-route-hidden").forEach(el=>el.classList.remove("public-route-hidden"));
+}
+
+
 let currentSession = null;
 
 async function refreshAuthUI(){
-  const {data:{session}} = await supabaseClient.auth.getSession();
-  currentSession = session;
-
   const params=new URLSearchParams(location.search);
   const memberParam=params.get("id");
 
+  // Public QR/member URL always wins. No admin layout should render first.
   if(memberParam){
-    document.getElementById("authGate").classList.add("hidden");
-    document.getElementById("adminModeBanner")?.classList.add("hidden");
-    document.getElementById("adminView").classList.add("hidden");
-    document.getElementById("adminBar").classList.add("hidden");
-    document.getElementById("bottomNav").classList.add("hidden");
-    await loadSupabaseData();
-    document.getElementById("connectionStrip")?.classList.add("hidden");
+    currentSession=null;
+    resetAdminHiddenStates();
+    setPageMode("public");
+
+    const rRes=await supabaseClient
+      .from("rewards")
+      .select("*")
+      .eq("active",true)
+      .order("points_required",{ascending:true});
+
+    rewards=rRes.data||[];
+    if(rewards.length){
+      REWARDS=rewards.map(r=>({p:Number(r.points_required),name:r.reward_name}));
+    }
+
     await showMemberPage(memberParam);
     return;
   }
 
+  const {data:{session}}=await supabaseClient.auth.getSession();
+  currentSession=session;
+
   if(session){
-    document.getElementById("authGate").classList.add("hidden");
-    document.getElementById("adminModeBanner")?.classList.remove("hidden");
-    document.getElementById("adminView").classList.remove("hidden");
-    document.getElementById("adminBar").classList.remove("hidden");
-    document.getElementById("bottomNav").classList.remove("hidden");
-    document.getElementById("adminIdentity").textContent=session.user.email || session.user.id;
+    resetAdminHiddenStates();
+    setPageMode("admin");
+    document.getElementById("adminIdentity").textContent=session.user.email||session.user.id;
     setConnectionStatus("ADMIN ONLINE");
     await loadSupabaseData();
+    window.scrollTo(0,0);
   }else{
-    document.getElementById("authGate").classList.remove("hidden");
-    document.getElementById("adminView").classList.add("hidden");
-    document.getElementById("adminBar").classList.add("hidden");
-    document.getElementById("bottomNav").classList.add("hidden");
+    resetAdminHiddenStates();
+    setPageMode("login");
     setConnectionStatus("LOGIN REQUIRED");
+    window.scrollTo(0,0);
   }
 }
 
@@ -2537,7 +2640,12 @@ document.getElementById("loginBtn").onclick=async()=>{
   }
 
   status.textContent="Login berhasil.";
-  await refreshAuthUI();
+  await 
+try{history.scrollRestoration="manual";}catch(e){}
+window.addEventListener("pageshow",()=>window.scrollTo(0,0));
+window.addEventListener("popstate",()=>{window.scrollTo(0,0);refreshAuthUI();});
+
+refreshAuthUI();
 };
 
 document.getElementById("logoutBtn").onclick=async()=>{
@@ -2632,7 +2740,7 @@ document.getElementById("printMemberCardBtn").onclick=()=>{
 document.getElementById("openMemberLinkBtn").onclick=()=>{
   const id=document.getElementById("qrMemberSelect").value;
   if(!id) return alert("Pilih member terlebih dahulu.");
-  window.open(`https://curu123.github.io/member/?id=${encodeURIComponent(id)}`,"_blank");
+  window.open(`https://curu123.github.io/member/?id=${encodeURIComponent(id)}`,"_blank","noopener");
 };
 
 
