@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#06111d">
+<title>RK CELL Member</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --cyan:#45dfff;--green:#00df86;--text:#f4fbff;--muted:#7fa1b3;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#030812;color:var(--text);font-family:Inter,system-ui,Segoe UI,Arial,sans-serif}
+body{
+  background:
+    radial-gradient(circle at 50% 0%,rgba(0,194,255,.09),transparent 28%),
+    linear-gradient(180deg,#030812,#06111d 50%,#071727);
+  padding:10px 0 26px;
+}
+.member-shell{
+  width:min(500px,calc(100% - 12px));margin:0 auto;padding:0 11px 16px;
+  border-radius:22px;overflow:hidden;
+  background:linear-gradient(180deg,#06111d 0%,#071522 54%,#081b2a 100%);
+  border:2px solid #3e6078;
+  box-shadow:0 0 0 3px rgba(118,71,255,.14),0 16px 42px rgba(0,0,0,.45);
+}
+.cap{
+  margin:0 -11px 8px;padding:9px;text-align:center;
+  background:linear-gradient(90deg,#37236f,#7642dc,#37236f);
+  font:1000 13px ui-monospace,monospace
+}
+.cap:before,.cap:after{content:"✦";margin:0 12px}
+.phonebar{display:flex;justify-content:space-between;padding:7px 5px 4px;font:800 9px ui-monospace,monospace;color:#d6e5ee}
+.title{text-align:center;padding:5px 0 13px}.title h1{margin:0;font:1000 18px ui-monospace,monospace}.title h1 span{color:var(--cyan)}.title small{display:block;color:#7196a8;font:800 8px ui-monospace,monospace;letter-spacing:2px}
+.profile{display:grid;grid-template-columns:58px 1fr auto;gap:11px;align-items:center;padding:13px;border:2px solid var(--green);border-radius:16px;background:linear-gradient(135deg,rgba(0,255,156,.06),rgba(0,13,23,.78))}
+.avatar{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:28px;background:linear-gradient(135deg,#50dbff,#0879e9);border:2px solid #84efff}
+.name{font:1000 18px ui-monospace,monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.idrow{margin-top:6px;color:#80a7b9;font:900 9px ui-monospace,monospace}.idchip{display:inline-block;margin-left:6px;padding:5px 9px;border-radius:12px;background:#2679ff;color:#fff}
+.status{padding:6px 8px;border-radius:12px;border:1px solid rgba(0,255,156,.38);color:#7dffb1;background:rgba(0,255,156,.05);font:900 8px ui-monospace,monospace;white-space:nowrap}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.stat{min-height:94px;padding:14px;border-radius:13px;border:1px solid #29485d;background:linear-gradient(160deg,#0a1b2a,#07131f)}
+.stat small{display:block;color:#9db8c6;font:900 8px ui-monospace,monospace}.stat strong{display:block;margin-top:7px;font:1000 27px ui-monospace,monospace}.stat.points strong{color:#ffc63a}.stat.next strong{color:#75d6ff}.sub{margin-top:4px;color:#7da4b7;font-size:9px}
+.section{display:flex;justify-content:space-between;align-items:center;margin:17px 2px 8px}.section strong{color:#a5efff;font:1000 11px ui-monospace,monospace}.section span{color:#5ed0f6;font-size:9px}
+.rewards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.reward{min-height:121px;padding:9px 4px 7px;text-align:center;border-radius:12px;border:1px solid #d9a62a;background:linear-gradient(180deg,#ffd248 0%,#ffc42b 35%,#f4f1e7 36%,#e8e6dc 100%);color:#17202a}
+.reward .rp{font:1000 12px ui-monospace,monospace}.reward .ri{font-size:27px;margin:8px 0 5px}.reward .rn{min-height:26px;font:1000 8px ui-monospace,monospace;text-transform:uppercase}.reward .rs{font:900 8px ui-monospace,monospace;color:#454b52}
+.state{display:inline-block;margin-top:5px;padding:3px 5px;border-radius:7px;font:900 6px ui-monospace,monospace}
+.history{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px;padding:10px 12px;border-radius:11px;border:1px solid #2c516a;background:linear-gradient(135deg,#112b3f,#0b2030)}
+.hleft{display:flex;align-items:center;gap:10px}.hicon{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;border:1px solid #3d7596;background:#153d55;color:#c2f2ff}
+.hmain b{display:block;font:900 11px ui-monospace,monospace}.hmain small{display:block;margin-top:3px;color:#8ea8b6;font-size:8px}.hright{text-align:right}.date{color:#8099a8;font-size:8px}.poin{margin-top:3px;color:#34e4c4;font:1000 14px ui-monospace,monospace}
+.empty{text-align:center;padding:18px;color:#7190a2;font-size:10px}
+.error{width:min(460px,calc(100% - 20px));margin:40px auto;padding:20px;border:1px solid #28465a;border-radius:14px;text-align:center;background:#071522}
+@media(max-width:420px){
+ .member-shell{width:calc(100% - 6px);padding-left:8px;padding-right:8px}
+ .profile{grid-template-columns:50px 1fr auto;gap:8px;padding:11px 9px}.avatar{width:48px;height:48px;font-size:24px}.name{font-size:15px}.status{font-size:6px;padding:5px 6px}
+ .stat{padding:11px 9px}.stat strong{font-size:22px}.rewards{gap:4px}.reward{min-height:108px;padding-left:2px;padding-right:2px}.reward .ri{font-size:22px}.reward .rn{font-size:6px}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const SUPABASE_URL="https://dguqxtxhfvuoobwraywp.supabase.co";
+const SUPABASE_KEY="sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj";
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let REWARDS=[
+ {p:10,name:"Free Admin"},
+ {p:20,name:"Free Deterjen"},
+ {p:30,name:"Minyak 500 ml"}
+];
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+function rewardIcon(name){
+ const n=String(name||"").toLowerCase();
+ if(n.includes("minyak")) return "🧴";
+ if(n.includes("deterjen")) return "🧼";
+ if(n.includes("gula")) return "🛍️";
+ if(n.includes("admin")) return "🧾";
+ return "🎁";
+}
+async function init(){
+ const id=new URLSearchParams(location.search).get("id");
+ if(!id){
+   document.getElementById("app").innerHTML='<div class="error">ID member tidak ditemukan pada link.</div>';
+   return;
+ }
+ const [rRes,mRes]=await Promise.all([
+   sb.from("rewards").select("*").eq("active",true).order("points_required",{ascending:true}),
+   sb.rpc("get_public_member",{p_member_id:id})
+ ]);
+ if(rRes.data?.length) REWARDS=rRes.data.map(r=>({p:Number(r.points_required),name:r.reward_name}));
+ const d=mRes.data;
+ if(mRes.error||!d||d.error){
+   document.getElementById("app").innerHTML='<div class="error">Member tidak ditemukan.</div>';
+   return;
+ }
+ const pts=Number(d.points||0),claims=d.claims||[],hist=d.history||[];
+ const next=REWARDS.find(r=>pts<r.p);
+ const cards=[...REWARDS];
+ while(cards.length<4) cards.push({p:"—",name:"Reward Berikutnya"});
+
+ document.getElementById("app").innerHTML=`<div class="member-shell">
+   <div class="cap">TAMPILAN HALAMAN MEMBER (PUBLIK)</div>
+   <div class="phonebar"><span>RK CELL</span><span>● ● ▰</span></div>
+   <div class="title"><h1>RK <span>CELL</span> MEMBER</h1><small>LOYALTY SYSTEM</small></div>
+
+   <div class="profile">
+     <div class="avatar">👤</div>
+     <div><div class="name">${esc(d.name)}</div><div class="idrow">ID MEMBER <span class="idchip">${esc(d.id)}</span></div></div>
+     <div class="status">${d.active===false?"NONAKTIF":"✓ MEMBER AKTIF"}</div>
+   </div>
+
+   <div class="stats">
+    <div class="stat points"><small>⭐ TOTAL POIN</small><strong>${pts} <span style="font-size:9px">POIN</span></strong></div>
+    <div class="stat next"><small>🎁 NEXT REWARD</small><strong>${next?next.p+" POIN":"SELESAI"}</strong><div class="sub">${next?Math.max(0,next.p-pts)+" poin lagi ke reward berikutnya":"Reward utama tercapai"}</div></div>
+   </div>
+
+   <div class="section"><strong>REWARD YANG TERSEDIA</strong><span>Lihat Semua ›</span></div>
+   <div class="rewards">${cards.slice(0,4).map(r=>{
+     if(r.p==="—") return `<div class="reward"><div class="rp">—</div><div class="ri">🎁</div><div class="rn">${esc(r.name)}</div><div class="rs">—</div></div>`;
+     const claimed=claims.some(c=>Number(c.points_required)===Number(r.p));
+     const reached=pts>=Number(r.p);
+     const st=claimed?["DIKLAIM","#dff7e8","#177245"]:reached?["TERSEDIA","#fff0bc","#765800"]:["TERKUNCI","#e5e7eb","#5f6872"];
+     return `<div class="reward"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span></div>`;
+   }).join("")}</div>
+
+   <div class="section"><strong>RIWAYAT TRANSAKSI</strong><span>Lihat Semua ›</span></div>
+   ${hist.length?hist.slice(0,8).map(t=>`<div class="history"><div class="hleft"><div class="hicon">✓</div><div class="hmain"><b>${Number(t.points)>0?"+":""}${Number(t.points)||0} Poin</b><small>${esc(t.category||"Transaksi")}</small></div></div><div class="hright"><div class="date">${new Date(t.created_at).toLocaleString("id-ID")}</div><div class="poin">${Number(t.points)>0?"+":""}${Number(t.points)||0}</div></div></div>`).join(""):'<div class="empty">Belum ada riwayat transaksi.</div>'}
+
+   <div class="section"><strong>RIWAYAT REWARD</strong><span>${claims.length} klaim</span></div>
+   ${claims.length?claims.slice(0,6).map(c=>`<div class="history"><div class="hleft"><div class="hicon">🎁</div><div class="hmain"><b>${esc(c.reward_name)}</b><small>Reward diklaim</small></div></div><div class="date">${new Date(c.claimed_at).toLocaleString("id-ID")}</div></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}
+ </div>`;
+}
+init();
+</script>
+</body>
+</html>
