@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member</title>
+<title>RK CELL Member V4 Voice</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -25,12 +25,8 @@ body{
   border:2px solid #3e6078;
   box-shadow:0 0 0 3px rgba(118,71,255,.14),0 16px 42px rgba(0,0,0,.45);
 }
-.cap{
-  margin:0 -11px 8px;padding:9px;text-align:center;
-  background:linear-gradient(90deg,#37236f,#7642dc,#37236f);
-  font:1000 13px ui-monospace,monospace
-}
-.cap:before,.cap:after{content:"✦";margin:0 12px}
+
+
 .phonebar{display:flex;justify-content:space-between;padding:7px 5px 4px;font:800 9px ui-monospace,monospace;color:#d6e5ee}
 .title{text-align:center;padding:5px 0 13px}.title h1{margin:0;font:1000 18px ui-monospace,monospace}.title h1 span{color:var(--cyan)}.title small{display:block;color:#7196a8;font:800 8px ui-monospace,monospace;letter-spacing:2px}
 .profile{display:grid;grid-template-columns:58px 1fr auto;gap:11px;align-items:center;padding:13px;border:2px solid var(--green);border-radius:16px;background:linear-gradient(135deg,rgba(0,255,156,.06),rgba(0,13,23,.78))}
@@ -56,6 +52,62 @@ body{
  .profile{grid-template-columns:50px 1fr auto;gap:8px;padding:11px 9px}.avatar{width:48px;height:48px;font-size:24px}.name{font-size:15px}.status{font-size:6px;padding:5px 6px}
  .stat{padding:11px 9px}.stat strong{font-size:22px}.rewards{gap:4px}.reward{min-height:108px;padding-left:2px;padding-right:2px}.reward .ri{font-size:22px}.reward .rn{font-size:6px}
 }
+
+/* V2 reward emphasis + admin contact */
+.reward.reached{
+  position:relative;
+  z-index:3;
+  transform:scale(1.07);
+  border:2px solid #ff4d5e;
+  background:linear-gradient(180deg,#ff5968 0%,#e8263b 35%,#fff1f1 36%,#f2dddd 100%);
+  box-shadow:0 0 18px rgba(255,55,75,.38),0 8px 18px rgba(0,0,0,.28);
+}
+.reward.reached .rp{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.28)}
+.reward.reached:before{
+  content:"✓ TERCAPAI";
+  position:absolute;top:-9px;left:50%;transform:translateX(-50%);
+  padding:3px 7px;border-radius:10px;background:#ff2038;color:#fff;
+  font:1000 6px ui-monospace,monospace;white-space:nowrap;
+  box-shadow:0 3px 8px rgba(0,0,0,.25)
+}
+.contact-admin{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:18px 0 2px;padding:12px 14px;border-radius:14px;
+  text-decoration:none;color:#fff;font:1000 11px ui-monospace,monospace;
+  background:linear-gradient(135deg,#0fbd68,#087d4a);
+  border:1px solid rgba(105,255,177,.45);
+  box-shadow:0 8px 18px rgba(0,0,0,.25)
+}
+.contact-admin small{font:700 8px system-ui,sans-serif;color:#d9ffeb}
+@media(max-width:420px){
+  .reward.reached{transform:scale(1.045)}
+}
+
+
+/* V4 member voice assistant */
+.voice-welcome{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  margin:8px auto 4px;
+  width:max-content;
+  max-width:100%;
+  padding:6px 10px;
+  border-radius:14px;
+  border:1px solid rgba(69,223,255,.25);
+  background:rgba(69,223,255,.04);
+  color:#8feaff;
+  font:800 8px ui-monospace,monospace;
+  cursor:pointer;
+}
+.voice-welcome .voice-icon{font-size:13px}
+.voice-welcome.speaking{
+  border-color:rgba(0,255,156,.4);
+  color:#7dffb1;
+  box-shadow:0 0 12px rgba(0,255,156,.08);
+}
+
 </style>
 </head>
 <body>
@@ -80,6 +132,65 @@ function rewardIcon(name){
  if(n.includes("admin")) return "🧾";
  return "🎁";
 }
+
+let memberVoiceName = "";
+let voiceHasPlayed = false;
+
+function speakMemberWelcome(force=false){
+  if(!memberVoiceName || !("speechSynthesis" in window)) return;
+
+  if(voiceHasPlayed && !force) return;
+
+  try{
+    window.speechSynthesis.cancel();
+
+    const text=`Selamat datang, ${memberVoiceName}, di Sistem Member RK CELL.`;
+    const utter=new SpeechSynthesisUtterance(text);
+    utter.lang="id-ID";
+    utter.rate=0.96;
+    utter.pitch=1.02;
+    utter.volume=1;
+
+    const voices=window.speechSynthesis.getVoices();
+    const indo=voices.find(v=>/^id(-|_)/i.test(v.lang)) ||
+               voices.find(v=>/Indonesia/i.test(v.name));
+    if(indo) utter.voice=indo;
+
+    const btn=document.getElementById("voiceWelcomeBtn");
+    utter.onstart=()=>{
+      voiceHasPlayed=true;
+      btn?.classList.add("speaking");
+      if(btn) btn.querySelector(".voice-text").textContent="Menyapa Anda...";
+    };
+    utter.onend=()=>{
+      btn?.classList.remove("speaking");
+      if(btn) btn.querySelector(".voice-text").textContent="Putar Sapaan";
+    };
+    utter.onerror=()=>{
+      btn?.classList.remove("speaking");
+      if(btn) btn.querySelector(".voice-text").textContent="Ketuk untuk dengar sapaan";
+    };
+
+    window.speechSynthesis.speak(utter);
+  }catch(e){}
+}
+
+function setupWelcomeVoice(name){
+  memberVoiceName=String(name||"Member RK CELL").trim();
+
+  // Try automatic playback after the member page is fully rendered.
+  setTimeout(()=>speakMemberWelcome(false),650);
+
+  // Mobile browsers may require one user interaction.
+  const unlock=()=>{
+    if(!voiceHasPlayed) speakMemberWelcome(false);
+    document.removeEventListener("click",unlock);
+    document.removeEventListener("touchstart",unlock);
+  };
+  document.addEventListener("click",unlock,{once:true});
+  document.addEventListener("touchstart",unlock,{once:true});
+}
+
 async function init(){
  const id=new URLSearchParams(location.search).get("id");
  if(!id){
@@ -102,9 +213,15 @@ async function init(){
  while(cards.length<4) cards.push({p:"—",name:"Reward Berikutnya"});
 
  document.getElementById("app").innerHTML=`<div class="member-shell">
-   <div class="cap">TAMPILAN HALAMAN MEMBER (PUBLIK)</div>
    <div class="phonebar"><span>RK CELL</span><span>● ● ▰</span></div>
-   <div class="title"><h1>RK <span>CELL</span> MEMBER</h1><small>LOYALTY SYSTEM</small></div>
+   <div class="title">
+     <h1>RK <span>CELL</span> MEMBER</h1>
+     <small>LOYALTY SYSTEM</small>
+     <button class="voice-welcome" id="voiceWelcomeBtn" type="button" onclick="speakMemberWelcome(true)">
+       <span class="voice-icon">🔊</span>
+       <span class="voice-text">Putar Sapaan</span>
+     </button>
+   </div>
 
    <div class="profile">
      <div class="avatar">👤</div>
@@ -123,7 +240,8 @@ async function init(){
      const claimed=claims.some(c=>Number(c.points_required)===Number(r.p));
      const reached=pts>=Number(r.p);
      const st=claimed?["DIKLAIM","#dff7e8","#177245"]:reached?["TERSEDIA","#fff0bc","#765800"]:["TERKUNCI","#e5e7eb","#5f6872"];
-     return `<div class="reward"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span></div>`;
+     const emphasize=reached && !claimed;
+     return `<div class="reward ${emphasize?"reached":""}"><div class="rp">${r.p} Poin</div><div class="ri">${rewardIcon(r.name)}</div><div class="rn">${esc(r.name)}</div><div class="rs">${r.p} Poin</div><span class="state" style="background:${st[1]};color:${st[2]}">${st[0]}</span></div>`;
    }).join("")}</div>
 
    <div class="section"><strong>RIWAYAT TRANSAKSI</strong><span>Lihat Semua ›</span></div>
@@ -131,7 +249,14 @@ async function init(){
 
    <div class="section"><strong>RIWAYAT REWARD</strong><span>${claims.length} klaim</span></div>
    ${claims.length?claims.slice(0,6).map(c=>`<div class="history"><div class="hleft"><div class="hicon">🎁</div><div class="hmain"><b>${esc(c.reward_name)}</b><small>Reward diklaim</small></div></div><div class="date">${new Date(c.claimed_at).toLocaleString("id-ID")}</div></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}
+
+   <a class="contact-admin" href="https://wa.me/6285148495045?text=${encodeURIComponent(`Halo Admin RK CELL, saya ${d.name} (${d.id}). Saya ingin meminta bantuan terkait member/reward.`)}" target="_blank" rel="noopener">
+     <span style="font-size:20px">💬</span>
+     <span>HUBUNGI ADMIN<br><small>Bantuan member, poin, atau klaim reward</small></span>
+   </a>
  </div>`;
+
+ setupWelcomeVoice(d.name);
 }
 init();
 </script>
