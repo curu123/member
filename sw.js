@@ -1,4 +1,4 @@
-const CACHE = "rk-member-v11";
+const CACHE = "rk-member-v12";
 
 const ASSETS = [
   "./",
@@ -10,6 +10,7 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE).then(cache => cache.addAll(ASSETS))
   );
+
   self.skipWaiting();
 });
 
