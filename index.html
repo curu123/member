@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V27 Direct Camera</title>
+  <title>RK CELL Admin V29 Rewards</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -651,7 +651,7 @@ body.light-mode .center-scan-btn{
     <button class="btn danger" id="logoutBtn" style="width:auto">Logout</button>
   </div>
 
-  <div id="connectionStrip" class="connection-strip hidden">
+  <div id="connectionStrip" class="connection-strip hidden" style="display:none!important">
     <div><strong><span id="connectionDot" class="connection-dot conn-online"></span><span id="connectionText">ONLINE</span></strong><br><small id="connectionDetail">Supabase connected</small></div>
     <button class="btn soft" id="retryConnectionBtn" type="button" style="width:auto">Retry</button>
   </div>
@@ -704,9 +704,177 @@ body.light-mode .center-scan-btn{
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-title"><h2>QUICK TOOLS</h2><span>Operator utilities</span></div>
-      <div class="utility-row">
+
+
+    <div id="memberTab" class="tabPage section">
+      <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
+      <div class="card">
+        <div class="row">
+          <div class="field"><label>NAMA MEMBER</label><input id="name" placeholder="Contoh: Andi"></div>
+          <div class="field"><label>WHATSAPP</label><input id="wa" placeholder="08xxxxxxxxxx"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field"><label>ALAMAT / KETERANGAN</label><input id="address" placeholder="Opsional"></div>
+          <div style="display:flex;align-items:end"><button class="btn primary" id="addMemberBtn">＋ Tambah Member</button></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>ADMIN • Kelola Member</h2><span>Data member</span></div>
+        <div class="card">
+          <div class="field"><label>CARI MEMBER</label><input id="searchMember" placeholder="Cari nama, ID, atau WhatsApp"></div>
+          <div id="memberList" class="list" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="txTab" class="tabPage section hidden">
+      <div class="section-title"><h2>Tambah Poin Member</h2><span>Scan QR / Barcode atau cari nama</span></div>
+
+      <div class="card">
+        <div class="scan-panel">
+          <div class="scan-box">
+            <strong style="font-size:14px">1. Pilih member dengan scan</strong>
+            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR member. QR boleh berisi <b>ID langsung</b> atau <b>link halaman member</b> seperti <b>https://curu123.github.io/member/member.html?id=RK-2026-0001</b>. Sistem otomatis mengambil ID member dari link. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
+
+            <div class="scan-actions">
+              <button class="btn primary" id="startScanBtn">📷 Scan QR / Barcode</button>
+              <button class="btn soft" id="stopScanBtn">■ Stop Kamera</button>
+            </div>
+
+            <div id="scanReader" style="margin-top:10px"></div>
+            <div class="scan-status" id="scanStatus">Scanner belum aktif.</div>
+          </div>
+
+          <div class="scan-box">
+            <strong style="font-size:14px">2. Jika kartu lupa dibawa</strong>
+            <p class="note" style="margin:6px 0 8px">Cari berdasarkan nama, ID member, atau nomor WhatsApp.</p>
+            <div class="field">
+              <input id="manualMemberSearch" placeholder="Contoh: Andi / RK-2026-0001 / 08xxxx">
+            </div>
+            <div id="manualMemberResults" class="manual-results hidden"></div>
+          </div>
+        </div>
+
+        <div class="quick-point">
+          <button class="btn soft" type="button" id="quickPlus1">+1 Poin</button>
+          <button class="btn soft" type="button" id="quickPlus2">+2 Poin</button>
+          <button class="btn soft" type="button" id="quickPlus5">+5 Poin</button>
+        </div>
+
+        <div id="selectedMemberBox" class="member-selected hidden">
+          <strong id="selectedMemberName">Member terpilih</strong>
+          <small id="selectedMemberMeta">-</small>
+        </div>
+        <div id="qrCooldownBox" class="cooldown-box cooldown-ok hidden">
+          QR siap digunakan.
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="row">
+          <div class="field"><label>MEMBER TERPILIH</label><select id="txMember"></select></div>
+          <div class="field"><label>KATEGORI</label>
+            <select id="txCategory">
+              <option>Service</option>
+              <option>Transfer</option>
+              <option>Tarik Tunai</option>
+              <option>Voucher</option>
+              <option>Aksesoris</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field"><label>POIN</label><input id="txPoints" type="number" value="1" min="-99" max="99"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field"><label>CATATAN</label><input id="txNote" placeholder="Opsional"></div>
+          <div style="display:flex;align-items:end;gap:8px;flex-wrap:wrap">
+            <button class="btn primary" id="addTxBtn">✓ Tambah Poin & Simpan</button>
+            <button class="btn soft" id="waMemberBtn" type="button">WhatsApp Member</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Riwayat Terbaru</h2><span>30 transaksi terakhir</span></div>
+        <div class="card"><div id="txList" class="list"></div></div>
+      </div>
+    </div>
+
+    <div id="rewardTab" class="tabPage section hidden">
+      <div class="card">
+        <div class="section-title"><h2>KELOLA REWARD & PROMO</h2><span>Tambah manual</span></div>
+        <div class="row">
+          <div class="field"><label>NAMA REWARD / PROMO</label><input id="rewardNameInput" placeholder="Contoh: Free Admin / Promo September"></div>
+          <div class="field"><label>POIN DIBUTUHKAN</label><input id="rewardPointsInput" type="number" min="0" value="10"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field"><label>JENIS</label>
+            <select id="rewardTypeInput">
+              <option value="reward">Reward</option>
+              <option value="promo">Promo</option>
+            </select>
+          </div>
+          <div class="field"><label>MULAI</label><input id="rewardStartInput" type="date"></div>
+          <div class="field"><label>BERAKHIR</label><input id="rewardEndInput" type="date"></div>
+        </div>
+        <div class="field" style="margin-top:10px"><label>DESKRIPSI</label><input id="rewardDescInput" placeholder="Keterangan singkat reward/promo"></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="addRewardManualBtn" type="button">＋ Tambah Reward / Promo</button>
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="section-title"><h2>DAFTAR REWARD & PROMO</h2><span>Supabase</span></div>
+        <div id="rewardManagerList" class="list"></div>
+      </div>
+
+      <div class="section-title"><h2>Program Reward</h2><span>Loyalty RK CELL</span></div>
+      <div class="card">
+        <div class="list">
+          <div class="item">
+            <div><strong>10 Poin</strong><br><small>Reward: Free Admin</small></div>
+            <span class="badge">🎁 REWARD 1</span>
+          </div>
+          <div class="item">
+            <div><strong>20 Poin</strong><br><small>Reward: Free Deterjen</small></div>
+            <span class="badge">🎁 REWARD 2</span>
+          </div>
+          <div class="item">
+            <div><strong>30 Poin</strong><br><small>Reward: Minyak 500 ml</small></div>
+            <span class="badge">🎁 REWARD 3</span>
+          </div>
+        </div>
+        <p class="note">Reward mengikuti data Supabase dan klaim dicatat agar hadiah yang sama tidak dapat diklaim dua kali.</p>
+        <div class="section" style="margin-top:14px">
+          <div class="section-title"><h2>KLAIM REWARD</h2><span>Anti klaim ganda</span></div>
+          <div class="field"><label>PILIH MEMBER</label><select id="claimMemberSelect"></select></div>
+          <div id="claimRewardList" style="margin-top:10px"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="setupTab" class="tabPage section hidden">
+      <div class="card section">
+        <div class="section-title"><h2>KONEKSI SUPABASE</h2><span>Status database</span></div>
+        <div class="connection-strip" style="display:flex!important;margin:0">
+          <div>
+            <strong><span id="setupConnectionDot" class="connection-dot conn-online"></span><span id="setupConnectionText">ONLINE</span></strong><br>
+            <small id="setupConnectionDetail">Supabase connected</small>
+          </div>
+          <button class="btn soft" id="setupRetryConnectionBtn" type="button" style="width:auto">Retry</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><h2>SETUP & TOOLS</h2><span>Pengaturan admin</span></div>
+        <p class="note">Pengaturan sistem, QR member, backup/export, cetak kartu, laporan, dan activity log dikumpulkan di sini agar dashboard Admin tetap ringkas.</p>
+      </div>
+
+      <div class="section" id="setupQuickTools">
+        <div class="section-title"><h2>TOOLS & UTILITIES</h2><span>Setup RK CELL</span></div>
+<div class="utility-row">
         <button class="btn soft utility-btn" id="exportBtn">
           <strong>⬇ Export Data</strong>
           <small>Backup member & transaksi ke JSON</small>
@@ -806,135 +974,12 @@ body.light-mode .center-scan-btn{
       <div class="section-title"><h2>ACTIVITY LOG</h2><span>Recent operations</span></div>
       <div id="activityLog" class="activity-log"></div>
     </div>
-
-
-    <div id="memberTab" class="tabPage section">
-      <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
-      <div class="card">
-        <div class="row">
-          <div class="field"><label>NAMA MEMBER</label><input id="name" placeholder="Contoh: Andi"></div>
-          <div class="field"><label>WHATSAPP</label><input id="wa" placeholder="08xxxxxxxxxx"></div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div class="field"><label>ALAMAT / KETERANGAN</label><input id="address" placeholder="Opsional"></div>
-          <div style="display:flex;align-items:end"><button class="btn primary" id="addMemberBtn">＋ Tambah Member</button></div>
-        </div>
       </div>
 
-      <div class="section">
-        <div class="section-title"><h2>ADMIN • Kelola Member</h2><span>Data member</span></div>
-        <div class="card">
-          <div class="field"><label>CARI MEMBER</label><input id="searchMember" placeholder="Cari nama, ID, atau WhatsApp"></div>
-          <div id="memberList" class="list" style="margin-top:10px"></div>
-        </div>
-      </div>
-    </div>
-
-    <div id="txTab" class="tabPage section hidden">
-      <div class="section-title"><h2>Tambah Poin Member</h2><span>Scan QR / Barcode atau cari nama</span></div>
-
-      <div class="card">
-        <div class="scan-panel">
-          <div class="scan-box">
-            <strong style="font-size:14px">1. Pilih member dengan scan</strong>
-            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR member. QR boleh berisi <b>ID langsung</b> atau <b>link halaman member</b> seperti <b>https://curu123.github.io/member/member.html?id=RK-2026-0001</b>. Sistem otomatis mengambil ID member dari link. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
-
-            <div class="scan-actions">
-              <button class="btn primary" id="startScanBtn">📷 Scan QR / Barcode</button>
-              <button class="btn soft" id="stopScanBtn">■ Stop Kamera</button>
-            </div>
-
-            <div id="scanReader" style="margin-top:10px"></div>
-            <div class="scan-status" id="scanStatus">Scanner belum aktif.</div>
-          </div>
-
-          <div class="scan-box">
-            <strong style="font-size:14px">2. Jika kartu lupa dibawa</strong>
-            <p class="note" style="margin:6px 0 8px">Cari berdasarkan nama, ID member, atau nomor WhatsApp.</p>
-            <div class="field">
-              <input id="manualMemberSearch" placeholder="Contoh: Andi / RK-2026-0001 / 08xxxx">
-            </div>
-            <div id="manualMemberResults" class="manual-results hidden"></div>
-          </div>
-        </div>
-
-        <div class="quick-point">
-          <button class="btn soft" type="button" id="quickPlus1">+1 Poin</button>
-          <button class="btn soft" type="button" id="quickPlus2">+2 Poin</button>
-          <button class="btn soft" type="button" id="quickPlus5">+5 Poin</button>
-        </div>
-
-        <div id="selectedMemberBox" class="member-selected hidden">
-          <strong id="selectedMemberName">Member terpilih</strong>
-          <small id="selectedMemberMeta">-</small>
-        </div>
-        <div id="qrCooldownBox" class="cooldown-box cooldown-ok hidden">
-          QR siap digunakan.
-        </div>
-      </div>
-
-      <div class="card section">
-        <div class="row">
-          <div class="field"><label>MEMBER TERPILIH</label><select id="txMember"></select></div>
-          <div class="field"><label>KATEGORI</label>
-            <select id="txCategory">
-              <option>Service</option>
-              <option>Transfer</option>
-              <option>Tarik Tunai</option>
-              <option>Voucher</option>
-              <option>Aksesoris</option>
-              <option>Lainnya</option>
-            </select>
-          </div>
-          <div class="field"><label>POIN</label><input id="txPoints" type="number" value="1" min="-99" max="99"></div>
-        </div>
-        <div class="row" style="margin-top:10px">
-          <div class="field"><label>CATATAN</label><input id="txNote" placeholder="Opsional"></div>
-          <div style="display:flex;align-items:end;gap:8px;flex-wrap:wrap">
-            <button class="btn primary" id="addTxBtn">✓ Tambah Poin & Simpan</button>
-            <button class="btn soft" id="waMemberBtn" type="button">WhatsApp Member</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div class="section-title"><h2>Riwayat Terbaru</h2><span>30 transaksi terakhir</span></div>
-        <div class="card"><div id="txList" class="list"></div></div>
-      </div>
-    </div>
-
-    <div id="rewardTab" class="tabPage section hidden">
-      <div class="section-title"><h2>Program Reward</h2><span>Loyalty RK CELL</span></div>
-      <div class="card">
-        <div class="list">
-          <div class="item">
-            <div><strong>10 Poin</strong><br><small>Reward: Free Admin</small></div>
-            <span class="badge">🎁 REWARD 1</span>
-          </div>
-          <div class="item">
-            <div><strong>20 Poin</strong><br><small>Reward: Free Deterjen</small></div>
-            <span class="badge">🎁 REWARD 2</span>
-          </div>
-          <div class="item">
-            <div><strong>30 Poin</strong><br><small>Reward: Minyak 500 ml</small></div>
-            <span class="badge">🎁 REWARD 3</span>
-          </div>
-        </div>
-        <p class="note">Reward mengikuti data Supabase dan klaim dicatat agar hadiah yang sama tidak dapat diklaim dua kali.</p>
-        <div class="section" style="margin-top:14px">
-          <div class="section-title"><h2>KLAIM REWARD</h2><span>Anti klaim ganda</span></div>
-          <div class="field"><label>PILIH MEMBER</label><select id="claimMemberSelect"></select></div>
-          <div id="claimRewardList" style="margin-top:10px"></div>
-        </div>
-
-      </div>
-    </div>
-
-    <div id="setupTab" class="tabPage section hidden">
-      <div class="section-title"><h2>Konfigurasi Supabase</h2><span>Koneksi database online</span></div>
+      <div class="section-title"><h2>Koneksi Supabase</h2><span>Koneksi database online</span></div>
       <div class="card">
         <p class="note">Gunakan Project URL dan anon public key. Jangan pernah menaruh service_role key pada halaman GitHub Pages.</p>
-        <div class="field"><label>SUPABASE URL</label><input id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
+        <div class="field"><label>SETUP URL</label><input id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
         <div class="field" style="margin-top:10px"><label>ANON PUBLIC KEY</label><input id="sbKey" placeholder="eyJ..."></div>
         <div class="row" style="margin-top:12px">
           <button class="btn primary" id="saveConfigBtn">Simpan Konfigurasi</button>
@@ -1000,9 +1045,9 @@ let REWARDS = [
   {p:30, name:"Minyak 500 ml"}
 ];
 
-const SUPABASE_URL = "https://dguqxtxhfvuoobwraywp.supabase.co";
-const SUPABASE_KEY = "sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SETUP_URL = "https://dguqxtxhfvuoobwraywp.supabase.co";
+const SETUP_KEY = "sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj";
+const supabaseClient = window.supabase.createClient(SETUP_URL, SETUP_KEY);
 
 let members = [];
 let transactions = [];
@@ -1030,6 +1075,85 @@ function memberId(){
 
 function fmtDate(ts){
   return new Intl.DateTimeFormat("id-ID",{dateStyle:"medium",timeStyle:"short"}).format(new Date(ts));
+}
+
+
+function rewardIsCurrentlyActive(r){
+  if(r.active===false) return false;
+  const now=Date.now();
+  const start=r.start_at?new Date(r.start_at).getTime():null;
+  const end=r.end_at?new Date(r.end_at).getTime():null;
+  if(start && now<start) return false;
+  if(end && now>end) return false;
+  return true;
+}
+
+function renderRewardManager(){
+  const box=document.getElementById("rewardManagerList");
+  if(!box) return;
+  const rows=[...rewards].sort((a,b)=>Number(a.points_required)-Number(b.points_required));
+  box.innerHTML=rows.length?rows.map(r=>{
+    const active=rewardIsCurrentlyActive(r);
+    const period=(r.start_at||r.end_at)
+      ? `${r.start_at?new Date(r.start_at).toLocaleDateString("id-ID"):"-"} s/d ${r.end_at?new Date(r.end_at).toLocaleDateString("id-ID"):"-"}`
+      : "Tanpa periode";
+    return `<div class="item">
+      <div>
+        <strong>${escapeHtml(r.reward_name)}</strong><br>
+        <small>${Number(r.points_required)} poin • ${escapeHtml(r.reward_type||"reward")} • ${period}</small><br>
+        <small>${escapeHtml(r.description||"")}</small>
+      </div>
+      <div class="row">
+        <button class="btn soft" style="width:auto" onclick="toggleRewardActive(${r.id},${r.active===false})">${r.active===false?"Aktifkan":"Nonaktifkan"}</button>
+        ${isAdminRole()?`<button class="btn danger" style="width:auto" onclick="deleteReward(${r.id})">Hapus</button>`:""}
+      </div>
+    </div>`;
+  }).join(""):'<div class="empty">Belum ada reward/promo.</div>';
+}
+
+async function addRewardManual(){
+  const name=document.getElementById("rewardNameInput").value.trim();
+  const pts=Number(document.getElementById("rewardPointsInput").value||0);
+  const type=document.getElementById("rewardTypeInput").value;
+  const start=document.getElementById("rewardStartInput").value||null;
+  const end=document.getElementById("rewardEndInput").value||null;
+  const desc=document.getElementById("rewardDescInput").value.trim()||null;
+
+  if(!name) return alert("Nama reward/promo wajib diisi.");
+  if(pts<0) return alert("Poin tidak valid.");
+
+  const {error}=await supabaseClient.from("rewards").insert({
+    points_required:pts,
+    reward_name:name,
+    reward_type:type,
+    description:desc,
+    start_at:start,
+    end_at:end,
+    active:true
+  });
+  if(error) return alert("Gagal menambah reward/promo: "+error.message);
+
+  await createAudit("reward_created",null,{name,points:pts,type});
+  await loadSupabaseData();
+  document.getElementById("rewardNameInput").value="";
+  document.getElementById("rewardDescInput").value="";
+  alert("Reward/promo berhasil ditambahkan.");
+}
+
+async function toggleRewardActive(id,makeActive){
+  const {error}=await supabaseClient.from("rewards").update({active:makeActive}).eq("id",id);
+  if(error) return alert("Gagal mengubah status reward: "+error.message);
+  await createAudit(makeActive?"reward_activated":"reward_deactivated",null,{reward_id:id});
+  await loadSupabaseData();
+}
+
+async function deleteReward(id){
+  if(!isAdminRole()) return alert("Hanya admin yang boleh menghapus reward.");
+  if(!confirm("Hapus reward/promo ini?")) return;
+  const {error}=await supabaseClient.from("rewards").delete().eq("id",id);
+  if(error) return alert("Gagal menghapus reward: "+error.message);
+  await createAudit("reward_deleted",null,{reward_id:id});
+  await loadSupabaseData();
 }
 
 function rewardInfo(points){
@@ -1079,7 +1203,7 @@ async function loadSupabaseData(){
   auditLogs=(aRes.data||[]).map(a=>({...a,created_at:new Date(a.created_at).getTime()}));
   currentProfile=pRes.data||{role:"operator"};
   applyRoleUI();
-  setConnectionStatus("SUPABASE ONLINE");
+  setConnectionStatus("SETUP ONLINE");
   setConnectionUI(true,"Supabase connected");
   document.getElementById("offlineView")?.classList.add("hidden");
   refresh();
@@ -1492,6 +1616,7 @@ function refresh(){
   syncQrMemberOptions();
   syncClaimOptions();
   syncPrintOptions();
+  renderRewardManager();
 }
 
 document.getElementById("addMemberBtn").onclick = async ()=>{
@@ -1845,15 +1970,20 @@ async function toggleMemberActive(id,makeActive){
 }
 
 function setConnectionUI(online,detail=""){
-  const strip=document.getElementById("connectionStrip");
   const dot=document.getElementById("connectionDot");
   const text=document.getElementById("connectionText");
   const det=document.getElementById("connectionDetail");
-  if(!strip) return;
-  strip.classList.remove("hidden");
-  dot.className="connection-dot "+(online?"conn-online":"conn-offline");
-  text.textContent=online?"ONLINE":"OFFLINE";
-  det.textContent=detail || (online?"Supabase connected":"Connection unavailable");
+
+  if(dot) dot.className="connection-dot "+(online?"conn-online":"conn-offline");
+  if(text) text.textContent=online?"ONLINE":"OFFLINE";
+  if(det) det.textContent=detail || (online?"Supabase connected":"Connection unavailable");
+
+  const sdot=document.getElementById("setupConnectionDot");
+  const stext=document.getElementById("setupConnectionText");
+  const sdet=document.getElementById("setupConnectionDetail");
+  if(sdot) sdot.className="connection-dot "+(online?"conn-online":"conn-offline");
+  if(stext) stext.textContent=online?"ONLINE":"OFFLINE";
+  if(sdet) sdet.textContent=detail || (online?"Supabase connected":"Connection unavailable");
 }
 
 function showOfflineMode(){
@@ -1904,8 +2034,8 @@ document.querySelectorAll(".bottom-nav button").forEach(btn=>{
   btn.onclick=()=>activateTab(btn.dataset.tab);
 });
 
-document.getElementById("sbUrl").value=SUPABASE_URL;
-document.getElementById("sbKey").value=SUPABASE_KEY;
+document.getElementById("sbUrl").value=SETUP_URL;
+document.getElementById("sbKey").value=SETUP_KEY;
 document.getElementById("sbUrl").readOnly=true;
 document.getElementById("sbKey").readOnly=true;
 document.getElementById("saveConfigBtn").textContent="Supabase Terhubung";
@@ -2057,6 +2187,10 @@ window.addEventListener("online",()=>{setConnectionUI(true,"Internet kembali ter
 window.addEventListener("offline",()=>{setConnectionUI(false,"Perangkat sedang offline"); showOfflineMode();});
 document.getElementById("retryConnectionBtn").onclick=()=>refreshAuthUI();
 document.getElementById("offlineRetryBtn").onclick=()=>refreshAuthUI();
+
+
+document.getElementById("setupRetryConnectionBtn")?.addEventListener("click",()=>refreshAuthUI());
+document.getElementById("addRewardManualBtn")?.addEventListener("click",addRewardManual);
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
 
