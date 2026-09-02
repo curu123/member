@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V13</title>
+  <title>RK CELL Member V14 QR Link</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -791,7 +791,7 @@ body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)
         <div class="scan-panel">
           <div class="scan-box">
             <strong style="font-size:14px">1. Pilih member dengan scan</strong>
-            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR/barcode kartu member. Isi QR/barcode cukup berupa ID member, misalnya <b>RK-2026-0001</b>. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
+            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR member. QR boleh berisi <b>ID langsung</b> atau <b>link halaman member</b> seperti <b>https://curu123.github.io/member/?id=RK-2026-0001</b>. Sistem otomatis mengambil ID member dari link. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
 
             <div class="scan-actions">
               <button class="btn primary" id="startScanBtn">📷 Scan QR / Barcode</button>
@@ -1536,8 +1536,30 @@ function updateSelectedMember(id){
   updateCooldownDisplay(m.id);
 }
 
+
+function extractMemberIdFromQrPayload(payload){
+  const raw=String(payload||"").trim();
+
+  // QR lama: langsung berisi ID member.
+  if(/^RK-\d{4}-\d+$/i.test(raw)){
+    return raw;
+  }
+
+  // QR baru: berisi link seperti:
+  // https://curu123.github.io/member/?id=RK-2026-0001
+  try{
+    const url=new URL(raw);
+    const id=url.searchParams.get("id");
+    if(id) return id.trim();
+  }catch(e){}
+
+  // Fallback: cari pola ID di dalam teks/link.
+  const match=raw.match(/RK-\d{4}-\d+/i);
+  return match ? match[0] : raw;
+}
+
 function selectMemberById(id, source="manual"){
-  const clean = String(id || "").trim();
+  const clean = extractMemberIdFromQrPayload(id);
   const m = members.find(x=>x.id.toLowerCase()===clean.toLowerCase());
 
   if(!m){
@@ -1593,8 +1615,8 @@ async function startScanner(){
       preferred.id,
       {fps:10, qrbox:{width:240,height:160}},
       decodedText=>{
-        status.textContent = `Terbaca: ${decodedText}`;
-        selectMemberById(decodedText, "scan");
+        status.textContent = `QR terbaca. Memeriksa member...`;
+        selectMemberById(decodedText, "qr");
       },
       ()=>{}
     );
@@ -1756,44 +1778,92 @@ async function showMemberPage(id){
   document.getElementById("bottomNav").classList.add("hidden");
   document.getElementById("publicView").classList.remove("hidden");
 
-  let m=members.find(x=>x.id===id);
-  let publicData=null;
-
-  if(!m){
-    publicData=await loadPublicMember(id);
-    if(publicData){
-      m={
-        id:publicData.id,
-        name:publicData.name,
-        points:Number(publicData.points||0),
-        active:publicData.active!==false,
-        created_at:publicData.created_at ? new Date(publicData.created_at).getTime() : Date.now()
-      };
-    }
-  }
-
+  const publicData=await loadPublicMember(id);
   const box=document.getElementById("publicMember");
-  if(!m){
+
+  if(!publicData){
     box.innerHTML='<div class="card public-safe"><div class="empty">Member tidak ditemukan.</div></div>';
     return;
   }
 
-  const rw=rewardInfo(Number(m.points)||0);
+  const m={
+    id:publicData.id,
+    name:publicData.name,
+    points:Number(publicData.points||0),
+    active:publicData.active!==false,
+    created_at:publicData.created_at ? new Date(publicData.created_at).getTime() : Date.now()
+  };
+
+  const rw=rewardInfo(m.points);
   const next=rw.next;
-  const pct=next?Math.min(100,Math.round((Number(m.points)||0)/next.p*100)):100;
-  const claims=(publicData?.claims||[]);
+  const pct=next?Math.min(100,Math.round(m.points/next.p*100)):100;
+  const claims=publicData.claims||[];
+  const history=publicData.history||[];
 
   box.innerHTML=`<div class="card member-card public-safe">
     <div class="member-head">
-      <div><div class="member-id">${escapeHtml(m.id)}</div><h2>${escapeHtml(m.name)}</h2></div>
-      <span class="badge">${m.active===false?"MEMBER NONAKTIF":"RK CELL MEMBER"}</span>
+      <div>
+        <div class="member-id">${escapeHtml(m.id)}</div>
+        <h2>${escapeHtml(m.name)}</h2>
+      </div>
+      <span class="badge">${m.active?"RK CELL MEMBER":"MEMBER NONAKTIF"}</span>
     </div>
-    <div class="points">${Number(m.points)||0} <small>POIN</small></div>
+
+    <div class="points">${m.points} <small>POIN</small></div>
     <div class="progress"><div style="width:${pct}%"></div></div>
-    <div class="reward">${next?`${next.p-(Number(m.points)||0)} poin lagi menuju <b>${escapeHtml(next.name)}</b>`:"Reward utama telah tercapai."}</div>
-    <div class="section-title" style="margin-top:16px"><h2>REWARD DIKLAIM</h2><span>Riwayat aman</span></div>
-    ${claims.length?claims.map(c=>`<div class="item"><div><strong>${escapeHtml(c.reward_name)}</strong><small>${new Date(c.claimed_at).toLocaleString("id-ID")}</small></div><span class="reward-state reward-claimed">DIKLAIM</span></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}
-    <p class="note" style="margin-top:12px">Halaman ini hanya menampilkan informasi member yang diperlukan. Data anggota lain dan transaksi internal RK CELL tidak ditampilkan.</p>
+
+    <div class="reward">
+      ${next
+        ? `${next.p-m.points} poin lagi menuju <b>${escapeHtml(next.name)}</b>`
+        : "Semua reward utama saat ini sudah tercapai."}
+    </div>
+
+    <div class="section-title" style="margin-top:16px">
+      <h2>REWARD TERSEDIA</h2><span>Progress member</span>
+    </div>
+
+    ${REWARDS.map(r=>{
+      const reached=m.points>=r.p;
+      const claimed=claims.some(c=>Number(c.points_required)===Number(r.p));
+      const state=claimed?"SUDAH DIKLAIM":reached?"SIAP DIKLAIM":"BELUM TERCAPAI";
+      const cls=claimed?"reward-claimed":reached?"reward-ready":"reward-locked";
+      return `<div class="item">
+        <div><strong>${r.p} Poin — ${escapeHtml(r.name)}</strong></div>
+        <span class="reward-state ${cls}">${state}</span>
+      </div>`;
+    }).join("")}
+
+    <div class="section-title" style="margin-top:16px">
+      <h2>RIWAYAT MEMBER</h2><span>Aktivitas terbaru</span>
+    </div>
+
+    ${history.length
+      ? history.map(t=>`<div class="item">
+          <div>
+            <strong>${escapeHtml(t.category||"Transaksi")}</strong><br>
+            <small>${new Date(t.created_at).toLocaleString("id-ID")}${t.note?" • "+escapeHtml(t.note):""}</small>
+          </div>
+          <strong>${Number(t.points)>0?"+":""}${Number(t.points)||0}</strong>
+        </div>`).join("")
+      : '<div class="empty">Belum ada riwayat transaksi.</div>'}
+
+    <div class="section-title" style="margin-top:16px">
+      <h2>RIWAYAT KLAIM</h2><span>Reward yang pernah diambil</span>
+    </div>
+
+    ${claims.length
+      ? claims.map(c=>`<div class="item">
+          <div>
+            <strong>${escapeHtml(c.reward_name)}</strong><br>
+            <small>${new Date(c.claimed_at).toLocaleString("id-ID")}</small>
+          </div>
+          <span class="reward-state reward-claimed">DIKLAIM</span>
+        </div>`).join("")
+      : '<div class="empty">Belum ada reward yang diklaim.</div>'}
+
+    <p class="note" style="margin-top:14px">
+      Data yang tampil hanya milik member pada QR ini. Nomor WhatsApp, alamat, dan data member lain tidak ditampilkan.
+    </p>
   </div>`;
 }
 
