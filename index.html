@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V20</title>
+  <title>RK CELL Member V21 Admin Split</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -1027,6 +1027,13 @@ body.light-mode .history-premium{
   .v20-reward .rn{font-size:6px}
 }
 
+
+/* V21 strict admin/public separation */
+.public-route-hidden{display:none!important}
+#adminModeBanner{border-color:rgba(0,245,255,.28);background:linear-gradient(135deg,rgba(0,245,255,.05),rgba(139,92,246,.04))}
+#publicView:not(.hidden) ~ #adminView,
+#publicView:not(.hidden) ~ #bottomNav{display:none!important}
+
 </style>
 </head>
 <body>
@@ -1047,8 +1054,8 @@ body.light-mode .history-premium{
       </div>
     </div>
     <div class="hero-copy">
-      <h2>MEMBER SYSTEM // RK CELL</h2>
-      <p>Sistem loyalitas digital RK CELL untuk member, poin, reward, dan layanan pelanggan.</p>
+      <h2>ADMIN SYSTEM // RK CELL</h2>
+      <p>Panel admin RK CELL untuk mengelola member, transaksi, poin, reward, dan laporan.</p>
     </div>
   </header>
 
@@ -1105,6 +1112,17 @@ body.light-mode .history-premium{
   <div id="connectionStrip" class="connection-strip hidden">
     <div><strong><span id="connectionDot" class="connection-dot conn-online"></span><span id="connectionText">ONLINE</span></strong><br><small id="connectionDetail">Supabase connected</small></div>
     <button class="btn soft" id="retryConnectionBtn" type="button" style="width:auto">Retry</button>
+  </div>
+
+  
+  <div id="adminModeBanner" class="card section hidden" style="margin-top:0">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <strong style="font-size:13px;color:var(--cyan)">🛠 ADMIN PANEL RK CELL</strong><br>
+        <small style="color:#6f899e">Kelola member, transaksi, reward, laporan, dan pengaturan.</small>
+      </div>
+      <span class="badge">STAFF ONLY</span>
+    </div>
   </div>
 
   <div id="adminView" class="hidden">
@@ -1250,7 +1268,7 @@ body.light-mode .history-premium{
 
     <div class="card section">
       <div class="tabs">
-        <button class="tab active" data-tab="memberTab">Member</button>
+        <button class="tab active" data-tab="memberTab">Admin</button>
         <button class="tab" data-tab="txTab">Transaksi</button>
         <button class="tab" data-tab="rewardTab">Reward</button>
         <button class="tab" data-tab="setupTab">Supabase</button>
@@ -1258,7 +1276,7 @@ body.light-mode .history-premium{
     </div>
 
     <div id="memberTab" class="tabPage section">
-      <div class="section-title"><h2>Tambah Member Baru</h2><span>Data pelanggan</span></div>
+      <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
       <div class="card">
         <div class="row">
           <div class="field"><label>NAMA MEMBER</label><input id="name" placeholder="Contoh: Andi"></div>
@@ -1271,7 +1289,7 @@ body.light-mode .history-premium{
       </div>
 
       <div class="section">
-        <div class="section-title"><h2>Daftar Member</h2><span>Pencarian cepat</span></div>
+        <div class="section-title"><h2>ADMIN • Kelola Member</h2><span>Data member</span></div>
         <div class="card">
           <div class="field"><label>CARI MEMBER</label><input id="searchMember" placeholder="Cari nama, ID, atau WhatsApp"></div>
           <div id="memberList" class="list" style="margin-top:10px"></div>
@@ -1419,7 +1437,7 @@ body.light-mode .history-premium{
 </div>
 
 <div class="bottom-nav" id="bottomNav">
-  <button class="active" data-tab="memberTab"><span>👥</span>Member</button>
+  <button class="active" data-tab="memberTab"><span>🛠</span>Admin</button>
   <button data-tab="txTab"><span>🧾</span>Transaksi</button>
   <button class="center-scan-btn" id="centerScanBtn" type="button"><span>▣</span><b>SCAN</b></button>
   <button data-tab="rewardTab"><span>🎁</span>Reward</button>
@@ -2275,12 +2293,16 @@ function openMember(id){
 }
 
 async function showMemberPage(id){
+  document.getElementById("adminModeBanner")?.classList.add("hidden");
   document.getElementById("adminView")?.classList.add("hidden");
   document.getElementById("authGate")?.classList.add("hidden");
   document.getElementById("adminBar")?.classList.add("hidden");
   document.getElementById("connectionStrip")?.classList.add("hidden");
   document.getElementById("bottomNav")?.classList.add("hidden");
   document.getElementById("offlineView")?.classList.add("hidden");
+  document.querySelectorAll(".tabPage,.tabs,.utility-row,.stats,.section-title").forEach(el=>{
+    if(!el.closest("#publicView")) el.classList.add("public-route-hidden");
+  });
   document.getElementById("publicView")?.classList.remove("hidden");
 
   const d=await loadPublicMember(id);
@@ -2469,6 +2491,7 @@ async function refreshAuthUI(){
 
   if(memberParam){
     document.getElementById("authGate").classList.add("hidden");
+    document.getElementById("adminModeBanner")?.classList.add("hidden");
     document.getElementById("adminView").classList.add("hidden");
     document.getElementById("adminBar").classList.add("hidden");
     document.getElementById("bottomNav").classList.add("hidden");
@@ -2480,6 +2503,7 @@ async function refreshAuthUI(){
 
   if(session){
     document.getElementById("authGate").classList.add("hidden");
+    document.getElementById("adminModeBanner")?.classList.remove("hidden");
     document.getElementById("adminView").classList.remove("hidden");
     document.getElementById("adminBar").classList.remove("hidden");
     document.getElementById("bottomNav").classList.remove("hidden");
