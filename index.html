@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V29 Rewards</title>
+  <title>RK CELL Admin V30 Clean Tabs</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -591,6 +591,9 @@ body.light-mode .center-scan-btn{
 .premium-id{display:inline-block;margin-top:3px;padding:5px 18px;border:1px solid rgba(0,245,255,.38);border-radius:20px;color:var(--cyan);font:900 12px ui-monospace,monospace}
 .premium-thanks{margin-top:10px;font-size:10px;font-style:italic;color:#61dfff}
 
+/* V30 clean separation */
+#adminHome.hidden{display:none!important}
+#adminHome{display:block}
 </style>
 <script>
 (function(){
@@ -651,24 +654,9 @@ body.light-mode .center-scan-btn{
     <button class="btn danger" id="logoutBtn" style="width:auto">Logout</button>
   </div>
 
-  <div id="connectionStrip" class="connection-strip hidden" style="display:none!important">
-    <div><strong><span id="connectionDot" class="connection-dot conn-online"></span><span id="connectionText">ONLINE</span></strong><br><small id="connectionDetail">Supabase connected</small></div>
-    <button class="btn soft" id="retryConnectionBtn" type="button" style="width:auto">Retry</button>
-  </div>
-
-  
-  <div id="adminModeBanner" class="card section hidden" style="margin-top:0">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
-      <div>
-        <strong style="font-size:13px;color:var(--cyan)">🛠 ADMIN PANEL RK CELL</strong><br>
-        <small style="color:#6f899e">Kelola member, transaksi, reward, laporan, dan pengaturan.</small>
-      </div>
-      <span class="badge">STAFF ONLY</span>
-    </div>
-  </div>
-
   <div id="adminView" class="hidden">
-    <div class="section-title"><h2>SYSTEM OVERVIEW</h2><span>LIVE MEMBER DATA</span></div>
+    <div id="adminHome">
+<div class="section-title"><h2>SYSTEM OVERVIEW</h2><span>LIVE MEMBER DATA</span></div>
     <div class="stats">
       <div class="card stat-card">
         <div class="stat-icon">👥</div>
@@ -703,8 +691,7 @@ body.light-mode .center-scan-btn{
         <div class="kpi-box"><strong id="kpiTodayClaims">0</strong><span>Reward Diklaim</span></div>
       </div>
     </div>
-
-
+    </div>
 
     <div id="memberTab" class="tabPage section">
       <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
@@ -728,7 +715,7 @@ body.light-mode .center-scan-btn{
       </div>
     </div>
 
-    <div id="txTab" class="tabPage section hidden">
+    <div id="txTab" class="tabPage section hidden"><div class="section-title"><h2>TRANSAKSI</h2><span>Operasional member</span></div>
       <div class="section-title"><h2>Tambah Poin Member</h2><span>Scan QR / Barcode atau cari nama</span></div>
 
       <div class="card">
@@ -801,7 +788,7 @@ body.light-mode .center-scan-btn{
       </div>
     </div>
 
-    <div id="rewardTab" class="tabPage section hidden">
+    <div id="rewardTab" class="tabPage section hidden"><div class="section-title"><h2>REWARD & PROMO</h2><span>Kelola loyalty</span></div>
       <div class="card">
         <div class="section-title"><h2>KELOLA REWARD & PROMO</h2><span>Tambah manual</span></div>
         <div class="row">
@@ -855,7 +842,7 @@ body.light-mode .center-scan-btn{
       </div>
     </div>
 
-    <div id="setupTab" class="tabPage section hidden">
+    <div id="setupTab" class="tabPage section hidden"><div class="section-title"><h2>SETUP</h2><span>Pengaturan sistem</span></div>
       <div class="card section">
         <div class="section-title"><h2>KONEKSI SUPABASE</h2><span>Status database</span></div>
         <div class="connection-strip" style="display:flex!important;margin:0">
@@ -1970,20 +1957,13 @@ async function toggleMemberActive(id,makeActive){
 }
 
 function setConnectionUI(online,detail=""){
-  const dot=document.getElementById("connectionDot");
-  const text=document.getElementById("connectionText");
-  const det=document.getElementById("connectionDetail");
+  const dot=document.getElementById("setupConnectionDot");
+  const text=document.getElementById("setupConnectionText");
+  const det=document.getElementById("setupConnectionDetail");
 
   if(dot) dot.className="connection-dot "+(online?"conn-online":"conn-offline");
   if(text) text.textContent=online?"ONLINE":"OFFLINE";
   if(det) det.textContent=detail || (online?"Supabase connected":"Connection unavailable");
-
-  const sdot=document.getElementById("setupConnectionDot");
-  const stext=document.getElementById("setupConnectionText");
-  const sdet=document.getElementById("setupConnectionDetail");
-  if(sdot) sdot.className="connection-dot "+(online?"conn-online":"conn-offline");
-  if(stext) stext.textContent=online?"ONLINE":"OFFLINE";
-  if(sdet) sdet.textContent=detail || (online?"Supabase connected":"Connection unavailable");
 }
 
 function showOfflineMode(){
@@ -2019,10 +1999,22 @@ document.getElementById("searchMember").addEventListener("input",renderMembers);
 
 function activateTab(tabId){
   document.querySelectorAll(".tabPage").forEach(p=>p.classList.add("hidden"));
-  document.getElementById(tabId).classList.remove("hidden");
 
-  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.tab===tabId));
-  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.toggle("active", b.dataset.tab===tabId));
+  const target=document.getElementById(tabId);
+  if(target) target.classList.remove("hidden");
+
+  const adminHome=document.getElementById("adminHome");
+  if(adminHome){
+    adminHome.classList.toggle("hidden",tabId!=="memberTab");
+  }
+
+  document.querySelectorAll(".tab").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===tabId);
+  });
+
+  document.querySelectorAll(".bottom-nav button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===tabId);
+  });
 
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -2097,6 +2089,7 @@ function setPageMode(mode){
     banner?.classList.remove("hidden");
     bar?.classList.remove("hidden");
     nav?.classList.remove("hidden");
+    setTimeout(()=>activateTab("memberTab"),0);
   }else if(mode==="login"){
     auth?.classList.remove("hidden");
   }else if(mode==="offline"){
