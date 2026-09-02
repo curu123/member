@@ -250,7 +250,7 @@ async function init(){
    <div class="section"><strong>RIWAYAT REWARD</strong><span>${claims.length} klaim</span></div>
    ${claims.length?claims.slice(0,6).map(c=>`<div class="history"><div class="hleft"><div class="hicon">🎁</div><div class="hmain"><b>${esc(c.reward_name)}</b><small>Reward diklaim</small></div></div><div class="date">${new Date(c.claimed_at).toLocaleString("id-ID")}</div></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}
 
-   <a class="contact-admin" href="https://wa.me/6285148495045?text=${encodeURIComponent(`Halo Admin RK CELL, saya ${d.name} (${d.id}). Saya ingin meminta bantuan terkait member/reward.`)}" target="_blank" rel="noopener">
+   <a class="contact-admin" href="https://wa.me/6281271012313?text=${encodeURIComponent(`Halo Admin RK CELL, saya ${d.name} (${d.id}). Saya ingin meminta bantuan terkait member/reward.`)}" target="_blank" rel="noopener">
      <span style="font-size:20px">💬</span>
      <span>HUBUNGI ADMIN<br><small>Bantuan member, poin, atau klaim reward</small></span>
    </a>
