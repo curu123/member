@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V30 Clean Tabs</title>
+  <title>RK CELL Admin V31 Final</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -2012,7 +2012,7 @@ function activateTab(tabId){
     b.classList.toggle("active",b.dataset.tab===tabId);
   });
 
-  document.querySelectorAll(".bottom-nav button").forEach(b=>{
+  document.querySelectorAll(".bottom-nav button[data-tab]").forEach(b=>{
     b.classList.toggle("active",b.dataset.tab===tabId);
   });
 
@@ -2022,7 +2022,7 @@ function activateTab(tabId){
 document.querySelectorAll(".tab").forEach(btn=>{
   btn.onclick=()=>activateTab(btn.dataset.tab);
 });
-document.querySelectorAll(".bottom-nav button").forEach(btn=>{
+document.querySelectorAll(".bottom-nav button[data-tab]").forEach(btn=>{
   btn.onclick=()=>activateTab(btn.dataset.tab);
 });
 
@@ -2258,15 +2258,25 @@ document.getElementById("openMemberLinkBtn").onclick=()=>{
 
 const centerScanBtn=document.getElementById("centerScanBtn");
 if(centerScanBtn){
-  centerScanBtn.onclick=async()=>{
+  centerScanBtn.onclick=async(event)=>{
+    event?.preventDefault();
+    event?.stopPropagation();
+
     const overlay=document.getElementById("directScanOverlay");
-    overlay?.classList.remove("hidden");
+    if(!overlay) return alert("Panel scanner tidak ditemukan.");
+
+    overlay.classList.remove("hidden");
     document.body.style.overflow="hidden";
 
     const status=document.getElementById("directScanStatus");
     if(status) status.textContent="Membuka kamera...";
 
-    await startScanner("directScanReader","directScanStatus");
+    try{
+      await startScanner("directScanReader","directScanStatus");
+    }catch(err){
+      console.error(err);
+      if(status) status.textContent="Kamera gagal dibuka. Periksa izin kamera.";
+    }
   };
 }
 
