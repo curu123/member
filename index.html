@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Member V14 QR Link</title>
+  <title>RK CELL Member V16</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -541,6 +541,39 @@ body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)
 .offline-page h2{margin:0 0 8px}
 .offline-icon{font-size:42px;margin-bottom:10px}
 
+
+/* V16 center scanner shortcut */
+.bottom-nav{
+  overflow:visible!important;
+  align-items:center;
+}
+.center-scan-btn{
+  flex:0 0 66px!important;
+  width:66px!important;
+  height:66px!important;
+  min-width:66px;
+  margin-top:-30px;
+  border-radius:50%!important;
+  border:4px solid #03050b!important;
+  background:linear-gradient(135deg,var(--cyan),var(--purple))!important;
+  color:#001014!important;
+  display:flex!important;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  box-shadow:0 10px 26px rgba(0,245,255,.25),0 0 18px rgba(255,43,214,.14);
+}
+.center-scan-btn span{font-size:21px!important;line-height:1}
+.center-scan-btn b{font-size:8px;letter-spacing:.6px}
+body.light-mode .center-scan-btn{
+  border-color:#eef4f8!important;
+}
+.public-safe{
+  max-width:620px;
+  margin:14px auto 28px;
+}
+
 </style>
 </head>
 <body>
@@ -906,6 +939,11 @@ body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)
   </div>
 
   
+  
+  <div id="publicView" class="hidden">
+    <div id="publicMember"></div>
+  </div>
+
   <div id="offlineView" class="hidden">
     <div class="card offline-page">
       <div class="offline-icon">📡</div>
@@ -921,11 +959,12 @@ body.light-mode .card-preview{background:linear-gradient(135deg,#f2fbff,#f8f4ff)
 <div class="bottom-nav" id="bottomNav">
   <button class="active" data-tab="memberTab"><span>👥</span>Member</button>
   <button data-tab="txTab"><span>🧾</span>Transaksi</button>
+  <button class="center-scan-btn" id="centerScanBtn" type="button"><span>▣</span><b>SCAN</b></button>
   <button data-tab="rewardTab"><span>🎁</span>Reward</button>
   <button data-tab="setupTab"><span>⚙️</span>Setup</button>
 </div>
 
-<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src=<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -1587,7 +1626,7 @@ function selectMemberById(id, source="manual"){
   updateSelectedMember(m.id);
   document.getElementById("scanStatus").textContent =
     source === "qr"
-      ? `QR valid: ${m.name} (${m.id}). Siap tambah poin.`
+      ? `QR valid: ${m.name} (${m.id}). Member otomatis dipilih.`
       : `Member ditemukan: ${m.name} (${m.id})`;
 
   if(source==="qr"){
@@ -1775,7 +1814,11 @@ function openMember(id){
 
 async function showMemberPage(id){
   document.getElementById("adminView").classList.add("hidden");
+  document.getElementById("authGate")?.classList.add("hidden");
+  document.getElementById("adminBar")?.classList.add("hidden");
+  document.getElementById("connectionStrip")?.classList.add("hidden");
   document.getElementById("bottomNav").classList.add("hidden");
+  document.getElementById("offlineView")?.classList.add("hidden");
   document.getElementById("publicView").classList.remove("hidden");
 
   const publicData=await loadPublicMember(id);
@@ -1950,6 +1993,7 @@ async function refreshAuthUI(){
     document.getElementById("adminBar").classList.add("hidden");
     document.getElementById("bottomNav").classList.add("hidden");
     await loadSupabaseData();
+    document.getElementById("connectionStrip")?.classList.add("hidden");
     await showMemberPage(memberParam);
     return;
   }
@@ -2086,6 +2130,19 @@ document.getElementById("openMemberLinkBtn").onclick=()=>{
   if(!id) return alert("Pilih member terlebih dahulu.");
   window.open(`https://curu123.github.io/member/?id=${encodeURIComponent(id)}`,"_blank");
 };
+
+
+const centerScanBtn=document.getElementById("centerScanBtn");
+if(centerScanBtn){
+  centerScanBtn.onclick=async()=>{
+    activateTab("txTab");
+    setTimeout(()=>{
+      const scanSection=document.getElementById("scanReader");
+      if(scanSection) scanSection.scrollIntoView({behavior:"smooth",block:"center"});
+      startScanner();
+    },250);
+  };
+}
 
 refreshAuthUI();
 if("serviceWorker" in navigator && location.protocol==="https:"){
