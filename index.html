@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#071a2b" />
+  <title>RK CELL Member</title>
+  <style>
+:root{
+  --bg:#03050b;
+  --panel:#090d18;
+  --panel2:#0d1322;
+  --text:#e9fbff;
+  --muted:#7f94a8;
+  --line:#183246;
+  --cyan:#00f5ff;
+  --cyan2:#00b8d4;
+  --pink:#ff2bd6;
+  --purple:#8b5cf6;
+  --yellow:#ffe600;
+  --green:#00ff9c;
+  --danger:#ff3158;
+  --shadow:0 0 28px rgba(0,245,255,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  background:
+    linear-gradient(rgba(0,245,255,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,245,255,.025) 1px,transparent 1px),
+    radial-gradient(circle at 90% 0%,rgba(255,43,214,.12),transparent 28%),
+    radial-gradient(circle at 5% 15%,rgba(0,245,255,.10),transparent 30%),
+    #03050b;
+  background-size:28px 28px,28px 28px,auto,auto,auto;
+}
+body:before{
+  content:"";
+  pointer-events:none;
+  position:fixed;inset:0;z-index:1000;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0,rgba(255,255,255,.012) 1px,transparent 1px,transparent 4px);
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:980px;margin:auto;min-height:100vh;padding:16px 14px 106px}
+
+.hero{
+  position:relative;overflow:hidden;
+  padding:20px;
+  margin-bottom:16px;
+  border:1px solid rgba(0,245,255,.32);
+  border-radius:8px 26px 8px 26px;
+  background:
+    linear-gradient(120deg,rgba(0,245,255,.08),transparent 42%),
+    linear-gradient(300deg,rgba(255,43,214,.08),transparent 42%),
+    #070b14;
+  box-shadow:0 0 0 1px rgba(255,43,214,.06),0 0 32px rgba(0,245,255,.09);
+}
+.hero:after{
+  content:"RK // MEMBER SYSTEM";
+  position:absolute;right:14px;bottom:7px;
+  color:rgba(0,245,255,.15);font:700 9px ui-monospace,monospace;letter-spacing:2px;
+}
+.hero:before{
+  content:"";
+  position:absolute;top:0;left:0;width:120px;height:2px;
+  background:linear-gradient(90deg,var(--pink),var(--cyan));
+  box-shadow:0 0 12px var(--cyan);
+}
+.brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:2}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo{
+  width:49px;height:49px;display:grid;place-items:center;
+  background:#03070e;
+  color:var(--cyan);
+  border:1px solid var(--cyan);
+  border-radius:4px 15px 4px 15px;
+  font-size:18px;font-weight:950;
+  text-shadow:0 0 10px var(--cyan);
+  box-shadow:inset 0 0 18px rgba(0,245,255,.10),0 0 16px rgba(0,245,255,.12);
+}
+.brand-title{
+  margin:0;color:white;font-size:20px;font-weight:950;letter-spacing:1px;
+  text-shadow:2px 0 0 rgba(255,43,214,.45),-2px 0 0 rgba(0,245,255,.35);
+}
+.brand-sub{margin-top:3px;color:#7895a9;font:700 10px ui-monospace,monospace;letter-spacing:1.2px;text-transform:uppercase}
+.status-pill{
+  display:inline-flex;align-items:center;gap:7px;padding:7px 10px;
+  border:1px solid rgba(0,255,156,.35);
+  background:rgba(0,255,156,.05);
+  color:var(--green);
+  border-radius:4px;font:800 10px ui-monospace,monospace;
+}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+.hero-copy{margin-top:20px;position:relative;z-index:2}
+.hero-copy h2{margin:0 0 7px;font-size:25px;line-height:1.15}
+.hero-copy h2:before{content:"> ";color:var(--pink)}
+.hero-copy p{margin:0;color:#91a6b7;font-size:12px;line-height:1.65;max-width:650px}
+
+.section{margin-top:14px}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 2px 8px}
+.section-title h2{
+  margin:0;font-size:13px;text-transform:uppercase;letter-spacing:.9px;
+}
+.section-title h2:before{content:"// ";color:var(--cyan)}
+.section-title span{color:#647b8e;font:700 9px ui-monospace,monospace;text-transform:uppercase}
+
+.card{
+  position:relative;
+  padding:15px;
+  border:1px solid rgba(0,245,255,.16);
+  border-radius:5px 18px 5px 18px;
+  background:linear-gradient(145deg,rgba(13,19,34,.96),rgba(6,10,18,.97));
+  box-shadow:var(--shadow);
+}
+.card:before{
+  content:"";position:absolute;top:-1px;left:18px;width:42px;height:2px;
+  background:var(--cyan);box-shadow:0 0 8px var(--cyan);
+}
+
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.stat-card{min-height:110px;overflow:hidden}
+.stat-icon{
+  width:36px;height:36px;display:grid;place-items:center;
+  border:1px solid rgba(0,245,255,.24);border-radius:3px 11px 3px 11px;
+  background:rgba(0,245,255,.045);font-size:17px;margin-bottom:12px;
+}
+.stat-card strong{
+  display:block;font:900 25px ui-monospace,monospace;color:#fff;
+  text-shadow:0 0 12px rgba(0,245,255,.25)
+}
+.stat-card span{display:block;color:#71899c;font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+.stat-card:after{
+  content:"";position:absolute;right:-24px;bottom:-24px;width:65px;height:65px;
+  border:1px solid rgba(255,43,214,.10);transform:rotate(45deg)
+}
+
+.tabs{display:flex;gap:7px;overflow:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:0 0 auto;border:1px solid #19374b;background:#080d17;color:#728ca0;
+  border-radius:3px 10px 3px 10px;padding:9px 12px;font-size:10px;font-weight:900;
+  text-transform:uppercase;letter-spacing:.6px;
+}
+.tab.active{
+  color:#001114;background:var(--cyan);border-color:var(--cyan);
+  box-shadow:0 0 14px rgba(0,245,255,.30);
+}
+.row{display:flex;gap:9px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;flex:1;min-width:145px}
+label{
+  color:#6f899e;font:800 9px ui-monospace,monospace;letter-spacing:1px
+}
+input,select,textarea{
+  width:100%;outline:none;
+  padding:12px 12px;color:#dffbff;
+  border:1px solid #17364a;border-radius:3px 11px 3px 11px;
+  background:#050a12;
+}
+input::placeholder{color:#405568}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 2px rgba(0,245,255,.07),0 0 14px rgba(0,245,255,.08);
+}
+select option{background:#07101b;color:#e9fbff}
+.btn{
+  border:1px solid transparent;border-radius:3px 11px 3px 11px;
+  padding:11px 14px;font-weight:900;font-size:11px;letter-spacing:.3px;
+  transition:.15s ease;
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.08)}
+.btn.primary{
+  background:var(--cyan);color:#001014;border-color:var(--cyan);
+  box-shadow:0 0 16px rgba(0,245,255,.18)
+}
+.btn.soft{background:rgba(0,245,255,.06);color:var(--cyan);border-color:rgba(0,245,255,.25)}
+.btn.danger{background:rgba(255,49,88,.06);color:#ff6480;border-color:rgba(255,49,88,.22)}
+.btn.warn{background:rgba(255,230,0,.06);color:var(--yellow);border-color:rgba(255,230,0,.22)}
+
+.list{display:flex;flex-direction:column;gap:7px}
+.item{
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid #142536;
+}
+.item:last-child{border-bottom:0}
+.item strong{font-size:12px}
+.item small{color:#667f92;font-size:10px;line-height:1.5}
+
+.member-card{
+  color:white;border-color:rgba(255,43,214,.32);
+  background:
+    linear-gradient(120deg,rgba(0,245,255,.07),transparent 42%),
+    linear-gradient(300deg,rgba(255,43,214,.11),transparent 45%),
+    #070b14;
+  box-shadow:0 0 28px rgba(255,43,214,.07),0 0 28px rgba(0,245,255,.07);
+}
+.member-card:before{background:var(--pink);box-shadow:0 0 10px var(--pink)}
+.member-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.member-id{color:#7691a4;font:800 10px ui-monospace,monospace;letter-spacing:1px}
+.member-card h2{margin:6px 0 0;font-size:22px;text-shadow:1px 0 var(--pink),-1px 0 var(--cyan)}
+.badge{
+  display:inline-flex;align-items:center;border:1px solid rgba(255,43,214,.30);
+  background:rgba(255,43,214,.06);color:#ff75e6;
+  border-radius:3px 9px 3px 9px;padding:6px 9px;
+  font:900 9px ui-monospace,monospace
+}
+.points{font:950 39px ui-monospace,monospace;color:var(--cyan);margin-top:20px;text-shadow:0 0 14px rgba(0,245,255,.35)}
+.points small{font-size:11px;color:#7893a7}
+.progress{height:8px;background:#111d2b;border:1px solid #173246;border-radius:1px;overflow:hidden;margin-top:9px}
+.progress>div{height:100%;background:linear-gradient(90deg,var(--pink),var(--cyan));box-shadow:0 0 12px var(--cyan)}
+.reward{
+  margin-top:12px;padding:11px 12px;border:1px solid #18384c;
+  border-radius:3px 11px 3px 11px;background:rgba(0,245,255,.035);
+  color:#a8c1d0;font-size:11px;line-height:1.5
+}
+.note{font-size:10px;color:#647e91;line-height:1.65}
+.hidden{display:none!important}
+
+.scan-panel{display:grid;grid-template-columns:1fr;gap:10px}
+.scan-box{
+  border:1px dashed rgba(0,245,255,.30);
+  background:rgba(0,245,255,.025);
+  border-radius:4px 15px 4px 15px;padding:13px;
+}
+.scan-box strong{color:#dffcff}
+.scan-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.scan-status{
+  margin-top:10px;padding:10px 11px;border:1px solid #18384c;
+  border-radius:3px 10px 3px 10px;background:#050a12;
+  color:#7594a9;font:700 10px ui-monospace,monospace
+}
+.member-selected{
+  margin-top:10px;border:1px solid rgba(0,255,156,.28);
+  background:rgba(0,255,156,.035);border-radius:3px 11px 3px 11px;padding:11px
+}
+.member-selected strong{display:block;color:var(--green);font-size:13px}
+.member-selected small{color:#688798;font-size:10px}
+.cooldown-box{
+  margin-top:10px;border-radius:3px 11px 3px 11px;padding:10px 11px;
+  font:800 10px ui-monospace,monospace;line-height:1.5
+}
+.cooldown-ok{background:rgba(0,255,156,.04);color:var(--green);border:1px solid rgba(0,255,156,.25)}
+.cooldown-wait{background:rgba(255,230,0,.04);color:var(--yellow);border:1px solid rgba(255,230,0,.25)}
+.manual-results{
+  margin-top:8px;border:1px solid #17364a;border-radius:3px 11px 3px 11px;
+  overflow:hidden;background:#050a12
+}
+.manual-result{padding:10px 11px;border-bottom:1px solid #142536;cursor:pointer}
+.manual-result:last-child{border-bottom:0}
+.manual-result:hover{background:rgba(0,245,255,.04)}
+.empty{text-align:center;color:#587184;padding:26px 8px;font-size:11px}
+
+.bottom-nav{
+  position:fixed;left:50%;transform:translateX(-50%);bottom:10px;
+  width:min(620px,calc(100% - 18px));z-index:50;
+  display:flex;gap:5px;padding:7px;
+  border:1px solid rgba(0,245,255,.22);
+  border-radius:5px 18px 5px 18px;
+  background:rgba(4,8,15,.96);
+  box-shadow:0 0 26px rgba(0,245,255,.10);
+  backdrop-filter:blur(14px);
+}
+.bottom-nav button{
+  flex:1;border:1px solid transparent;background:transparent;color:#607c91;
+  border-radius:3px 10px 3px 10px;padding:8px 4px 7px;
+  font-size:9px;font-weight:900;text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:3px
+}
+.bottom-nav button span{font-size:16px}
+.bottom-nav button.active{
+  color:var(--cyan);background:rgba(0,245,255,.06);
+  border-color:rgba(0,245,255,.18);
+  text-shadow:0 0 8px rgba(0,245,255,.4)
+}
+.footer{
+  text-align:center;color:#405b70;font:700 9px ui-monospace,monospace;
+  letter-spacing:1px;padding:24px 0 2px;text-transform:uppercase
+}
+
+#scanReader{
+  overflow:hidden;border-radius:4px 14px 4px 14px;
+  color:white!important
+}
+#scanReader video{border-radius:4px 14px 4px 14px}
+#scanReader button{background:var(--cyan)!important;color:#001014!important;border:0!important;padding:8px 10px!important}
+#scanReader a{color:var(--cyan)!important}
+
+@media(min-width:760px){
+  .stats{grid-template-columns:repeat(5,1fr)}
+  .bottom-nav{display:none}
+  .app{padding-bottom:28px}
+}
+@media(max-width:560px){
+  .app{padding-left:11px;padding-right:11px}
+  .hero{padding:16px}
+  .hero-copy h2{font-size:21px}
+  .hero-copy p{font-size:11px}
+  .status-pill{padding:6px 8px}
+  .brand-title{font-size:17px}
+  .brand-sub{font-size:8px}
+  .logo{width:43px;height:43px}
+  .card{padding:13px}
+  .btn{width:100%}
+  .item{align-items:flex-start}
+  .item>.row{width:auto}
+  .item .btn{width:auto;padding:8px 9px}
+}
+
+body.light-mode{
+  --bg:#eef4f8;
+  --panel:#ffffff;
+  --panel2:#f7fbfd;
+  --text:#102033;
+  --muted:#60758a;
+  --line:#cbd9e3;
+  --cyan:#007f8a;
+  --cyan2:#00a8b6;
+  --pink:#c81ea9;
+  --purple:#6d4cf0;
+  --yellow:#b18a00;
+  --green:#008f5b;
+  --danger:#c81f45;
+  --shadow:0 10px 28px rgba(16,32,51,.08);
+  background:
+    linear-gradient(rgba(0,127,138,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,127,138,.04) 1px,transparent 1px),
+    radial-gradient(circle at 90% 0%,rgba(200,30,169,.08),transparent 28%),
+    radial-gradient(circle at 5% 15%,rgba(0,127,138,.07),transparent 30%),
+    #eef4f8;
+  background-size:28px 28px,28px 28px,auto,auto,auto;
+  color:var(--text);
+}
+body.light-mode .hero{
+  background:
+    linear-gradient(120deg,rgba(0,127,138,.08),transparent 42%),
+    linear-gradient(300deg,rgba(200,30,169,.07),transparent 42%),
+    #ffffff;
+  color:#102033;
+  border-color:rgba(0,127,138,.28);
+  box-shadow:0 10px 30px rgba(16,32,51,.08);
+}
+body.light-mode .hero-copy p,
+body.light-mode .brand-sub,
+body.light-mode .section-title span,
+body.light-mode .note,
+body.light-mode .item small,
+body.light-mode .member-selected small,
+body.light-mode .scan-status{color:#60758a}
+body.light-mode .brand-title,
+body.light-mode .hero-copy h2,
+body.light-mode .card,
+body.light-mode .member-card h2{color:#102033;text-shadow:none}
+body.light-mode .logo{background:#f4fbfc}
+body.light-mode .card{
+  background:rgba(255,255,255,.97);
+  border-color:#d7e3eb;
+  box-shadow:0 10px 28px rgba(16,32,51,.07);
+}
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea,
+body.light-mode .scan-status,
+body.light-mode .manual-results{
+  background:#ffffff;color:#102033;border-color:#cbd9e3;
+}
+body.light-mode select option{background:#ffffff;color:#102033}
+body.light-mode .tab{background:#ffffff;color:#5b7185;border-color:#d4e0e8}
+body.light-mode .bottom-nav{
+  background:rgba(255,255,255,.97);
+  border-color:#c9dce7;
+  box-shadow:0 10px 30px rgba(16,32,51,.12);
+}
+body.light-mode .bottom-nav button{color:#647b8e}
+body.light-mode .bottom-nav button.active{color:#007f8a;background:rgba(0,127,138,.07);border-color:rgba(0,127,138,.18)}
+body.light-mode .member-card{
+  background:
+    linear-gradient(120deg,rgba(0,127,138,.05),transparent 42%),
+    linear-gradient(300deg,rgba(200,30,169,.06),transparent 45%),
+    #ffffff;
+  color:#102033;
+}
+body.light-mode .points{color:#007f8a;text-shadow:none}
+body.light-mode .reward{color:#4d677b;background:#f7fbfd;border-color:#d3e2ea}
+body.light-mode .scan-box{background:#f8fcfd;border-color:rgba(0,127,138,.28)}
+body.light-mode .manual-result:hover{background:#f2f8fa}
+body.light-mode .footer{color:#6c8394}
+
+.utility-row{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+}
+.utility-btn{
+  min-height:74px;
+  text-align:left;
+  align-items:flex-start;
+  flex-direction:column;
+}
+.utility-btn strong{font-size:12px}
+.utility-btn small{font-size:9px;opacity:.72;font-weight:700}
+.qr-card{
+  text-align:center;
+}
+.qr-box{
+  margin:10px auto 0;
+  width:190px;height:190px;
+  background:white;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  padding:10px;
+}
+.qr-box img{max-width:100%;max-height:100%;display:block}
+.activity-log{
+  max-height:290px;
+  overflow:auto;
+}
+.activity-line{
+  padding:9px 0;
+  border-bottom:1px solid #142536;
+}
+.activity-line:last-child{border-bottom:0}
+.activity-line strong{display:block;font-size:11px}
+.activity-line small{font-size:9px;color:#667f92}
+body.light-mode .activity-line{border-color:#e2ebf0}
+
+@media(min-width:760px){
+  .utility-row{grid-template-columns:repeat(4,1fr)}
+}
+
+
+.auth-gate{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:48vh;
+}
+.auth-card{
+  width:min(460px,100%);
+  padding:18px;
+}
+.auth-card h2{margin:0 0 6px}
+.auth-card p{margin:0 0 14px}
+.auth-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.admin-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin:0 0 14px;
+  padding:10px 12px;
+  border:1px solid rgba(0,255,156,.22);
+  border-radius:4px 14px 4px 14px;
+  background:rgba(0,255,156,.035);
+}
+.admin-bar strong{font-size:11px;color:var(--green)}
+.admin-bar small{font-size:9px;color:#668095}
+body.light-mode .admin-bar{
+  background:#f2fbf7;
+  border-color:#cce8db;
+}
+body.light-mode .admin-bar strong{color:#008f5b}
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="hero">
+    <div class="brand-row">
+      <div class="logo-wrap">
+        <div class="logo">RK</div>
+        <div>
+          <h1 class="brand-title">RK CELL MEMBER</h1>
+          <div class="brand-sub">LOYALTY // REWARD // SYSTEM</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+        <button class="status-pill" id="themeToggle" type="button" style="cursor:pointer">☀/☾ THEME</button>
+        <div class="status-pill"><span class="status-dot"></span><span id="modePill">MODE DEMO</span></div>
+      </div>
+    </div>
+    <div class="hero-copy">
+      <h2>MEMBER SYSTEM // RK CELL</h2>
+      <p>Sistem loyalitas digital RK CELL untuk identifikasi member, scan QR/barcode, transaksi, poin, dan reward.</p>
+    </div>
+  </header>
+
+  <div id="authGate" class="auth-gate hidden">
+    <div class="card auth-card">
+      <div class="section-title"><h2>ADMIN LOGIN</h2><span>Secure access</span></div>
+      <p class="note">Login diperlukan untuk menambah member, menambah poin, scan QR, menghapus member, dan mengelola transaksi.</p>
+      <div class="field">
+        <label>EMAIL ADMIN</label>
+        <input id="adminEmail" type="email" placeholder="admin@email.com" autocomplete="username">
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>PASSWORD</label>
+        <input id="adminPassword" type="password" placeholder="Password admin" autocomplete="current-password">
+      </div>
+      <div class="auth-actions">
+        <button class="btn primary" id="loginBtn">LOGIN ADMIN</button>
+      </div>
+      <div id="loginStatus" class="scan-status" style="margin-top:10px">Belum login.</div>
+    </div>
+  </div>
+
+  <div id="adminBar" class="admin-bar hidden">
+    <div>
+      <strong>ADMIN SESSION ACTIVE</strong><br>
+      <small id="adminIdentity">-</small>
+    </div>
+    <button class="btn danger" id="logoutBtn" style="width:auto">Logout</button>
+  </div>
+
+
+  <div id="memberView" class="hidden">
+    <div class="card member-card">
+      <div class="member-head">
+        <div>
+          <div class="member-id" id="mvId">ID -</div>
+          <h2 id="mvName">Member RK CELL</h2>
+        </div>
+        <span class="badge">★ MEMBER AKTIF</span>
+      </div>
+      <div class="points"><span id="mvPoints">0</span> <small>POIN</small></div>
+      <div class="progress"><div id="mvProgress"></div></div>
+      <div class="reward" id="mvReward">Belum ada reward aktif.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><h2>Riwayat Transaksi</h2><span>Aktivitas terbaru</span></div>
+      <div class="card">
+        <div id="mvHistory" class="list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminView" class="hidden">
+    <div class="section-title"><h2>SYSTEM OVERVIEW</h2><span>LIVE MEMBER DATA</span></div>
+    <div class="stats">
+      <div class="card stat-card">
+        <div class="stat-icon">👥</div>
+        <strong id="statMembers">0</strong><span>Total Member</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">🧾</div>
+        <strong id="statTx">0</strong><span>Transaksi</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">⭐</div>
+        <strong id="statPoints">0</strong><span>Total Poin</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">🎁</div>
+        <strong id="statRewards">0</strong><span>Reward Tercapai</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">⚡</div>
+        <strong id="statToday">0</strong><span>Transaksi Hari Ini</span>
+      </div>
+    </div>
+
+
+    <div class="section">
+      <div class="section-title"><h2>QUICK TOOLS</h2><span>Operator utilities</span></div>
+      <div class="utility-row">
+        <button class="btn soft utility-btn" id="exportBtn">
+          <strong>⬇ Export Data</strong>
+          <small>Backup member & transaksi ke JSON</small>
+        </button>
+        <button class="btn soft utility-btn" id="importBtn">
+          <strong>⬆ Import Data</strong>
+          <small>Restore backup JSON</small>
+        </button>
+        <button class="btn soft utility-btn" id="memberQrBtn">
+          <strong>▦ QR Member</strong>
+          <small>Buat QR dari member terpilih</small>
+        </button>
+        <button class="btn soft utility-btn" id="activityBtn">
+          <strong>☰ Activity Log</strong>
+          <small>Lihat aktivitas terbaru</small>
+        </button>
+      </div>
+      <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+    </div>
+
+    <div id="qrToolPanel" class="card section hidden qr-card">
+      <div class="section-title"><h2>MEMBER QR</h2><span>Generated identity</span></div>
+      <div class="field"><label>PILIH MEMBER</label><select id="qrMemberSelect"></select></div>
+      <div id="qrBox" class="qr-box"><span style="color:#334155;font-size:12px">Pilih member</span></div>
+      <div class="note" id="qrLabel" style="margin-top:8px">QR berisi ID member.</div>
+    </div>
+
+    <div id="activityPanel" class="card section hidden">
+      <div class="section-title"><h2>ACTIVITY LOG</h2><span>Recent operations</span></div>
+      <div id="activityLog" class="activity-log"></div>
+    </div>
+
+    <div class="card section">
+      <div class="tabs">
+        <button class="tab active" data-tab="memberTab">Member</button>
+        <button class="tab" data-tab="txTab">Transaksi</button>
+        <button class="tab" data-tab="rewardTab">Reward</button>
+        <button class="tab" data-tab="setupTab">Supabase</button>
+      </div>
+    </div>
+
+    <div id="memberTab" class="tabPage section">
+      <div class="section-title"><h2>Tambah Member Baru</h2><span>Data pelanggan</span></div>
+      <div class="card">
+        <div class="row">
+          <div class="field"><label>NAMA MEMBER</label><input id="name" placeholder="Contoh: Andi"></div>
+          <div class="field"><label>WHATSAPP</label><input id="wa" placeholder="08xxxxxxxxxx"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field"><label>ALAMAT / KETERANGAN</label><input id="address" placeholder="Opsional"></div>
+          <div style="display:flex;align-items:end"><button class="btn primary" id="addMemberBtn">＋ Tambah Member</button></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Daftar Member</h2><span>Pencarian cepat</span></div>
+        <div class="card">
+          <div class="field"><label>CARI MEMBER</label><input id="searchMember" placeholder="Cari nama, ID, atau WhatsApp"></div>
+          <div id="memberList" class="list" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="txTab" class="tabPage section hidden">
+      <div class="section-title"><h2>Tambah Poin Member</h2><span>Scan QR / Barcode atau cari nama</span></div>
+
+      <div class="card">
+        <div class="scan-panel">
+          <div class="scan-box">
+            <strong style="font-size:14px">1. Pilih member dengan scan</strong>
+            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR/barcode kartu member. Isi QR/barcode cukup berupa ID member, misalnya <b>RK-2026-0001</b>. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
+
+            <div class="scan-actions">
+              <button class="btn primary" id="startScanBtn">📷 Scan QR / Barcode</button>
+              <button class="btn soft" id="stopScanBtn">■ Stop Kamera</button>
+            </div>
+
+            <div id="scanReader" style="margin-top:10px"></div>
+            <div class="scan-status" id="scanStatus">Scanner belum aktif.</div>
+          </div>
+
+          <div class="scan-box">
+            <strong style="font-size:14px">2. Jika kartu lupa dibawa</strong>
+            <p class="note" style="margin:6px 0 8px">Cari berdasarkan nama, ID member, atau nomor WhatsApp.</p>
+            <div class="field">
+              <input id="manualMemberSearch" placeholder="Contoh: Andi / RK-2026-0001 / 08xxxx">
+            </div>
+            <div id="manualMemberResults" class="manual-results hidden"></div>
+          </div>
+        </div>
+
+        <div id="selectedMemberBox" class="member-selected hidden">
+          <strong id="selectedMemberName">Member terpilih</strong>
+          <small id="selectedMemberMeta">-</small>
+        </div>
+        <div id="qrCooldownBox" class="cooldown-box cooldown-ok hidden">
+          QR siap digunakan.
+        </div>
+      </div>
+
+      <div class="card section">
+        <div class="row">
+          <div class="field"><label>MEMBER TERPILIH</label><select id="txMember"></select></div>
+          <div class="field"><label>KATEGORI</label>
+            <select id="txCategory">
+              <option>Service</option>
+              <option>Transfer</option>
+              <option>Tarik Tunai</option>
+              <option>Voucher</option>
+              <option>Aksesoris</option>
+              <option>Lainnya</option>
+            </select>
+          </div>
+          <div class="field"><label>POIN</label><input id="txPoints" type="number" value="1" min="-99" max="99"></div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <div class="field"><label>CATATAN</label><input id="txNote" placeholder="Opsional"></div>
+          <div style="display:flex;align-items:end"><button class="btn primary" id="addTxBtn">✓ Tambah Poin & Simpan</button></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>Riwayat Terbaru</h2><span>30 transaksi terakhir</span></div>
+        <div class="card"><div id="txList" class="list"></div></div>
+      </div>
+    </div>
+
+    <div id="rewardTab" class="tabPage section hidden">
+      <div class="section-title"><h2>Program Reward</h2><span>Loyalty RK CELL</span></div>
+      <div class="card">
+        <div class="list">
+          <div class="item">
+            <div><strong>10 Poin</strong><br><small>Reward: Free Admin</small></div>
+            <span class="badge">🎁 REWARD 1</span>
+          </div>
+          <div class="item">
+            <div><strong>20 Poin</strong><br><small>Reward: Free Deterjen</small></div>
+            <span class="badge">🎁 REWARD 2</span>
+          </div>
+          <div class="item">
+            <div><strong>30 Poin</strong><br><small>Reward: Minyak 500 ml</small></div>
+            <span class="badge">🎁 REWARD 3</span>
+          </div>
+        </div>
+        <p class="note">Reward bisa diubah pada tahap berikutnya. Sistem saat ini menghitung pencapaian berdasarkan total poin member.</p>
+      </div>
+    </div>
+
+    <div id="setupTab" class="tabPage section hidden">
+      <div class="section-title"><h2>Konfigurasi Supabase</h2><span>Koneksi database online</span></div>
+      <div class="card">
+        <p class="note">Gunakan Project URL dan anon public key. Jangan pernah menaruh service_role key pada halaman GitHub Pages.</p>
+        <div class="field"><label>SUPABASE URL</label><input id="sbUrl" placeholder="https://xxxx.supabase.co"></div>
+        <div class="field" style="margin-top:10px"><label>ANON PUBLIC KEY</label><input id="sbKey" placeholder="eyJ..."></div>
+        <div class="row" style="margin-top:12px">
+          <button class="btn primary" id="saveConfigBtn">Simpan Konfigurasi</button>
+          <button class="btn danger" id="clearConfigBtn">Hapus Konfigurasi</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title"><h2>SQL Awal Supabase</h2><span>Database setup</span></div>
+        <div class="card">
+          <textarea id="sqlBox" readonly style="min-height:360px;font-family:ui-monospace,Consolas,monospace;font-size:11px"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">RK CELL // MEMBER NETWORK // SYSTEM ONLINE</div>
+</div>
+
+<div class="bottom-nav" id="bottomNav">
+  <button class="active" data-tab="memberTab"><span>👥</span>Member</button>
+  <button data-tab="txTab"><span>🧾</span>Transaksi</button>
+  <button data-tab="rewardTab"><span>🎁</span>Reward</button>
+  <button data-tab="setupTab"><span>⚙️</span>Setup</button>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+let REWARDS = [
+  {p:10, name:"Free Admin"},
+  {p:20, name:"Free Deterjen"},
+  {p:30, name:"Minyak 500 ml"}
+];
+
+const SUPABASE_URL = "https://dguqxtxhfvuoobwraywp.supabase.co";
+const SUPABASE_KEY = "sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let members = [];
+let transactions = [];
+let rewards = [];
+const QR_COOLDOWN_MS = 5 * 60 * 1000;
+let selectedMemberSource = "manual";
+let cooldownTimer = null;
+
+function saveLocal(){
+  // Data utama disimpan di Supabase. localStorage hanya dipakai untuk tema/config UI.
+}
+
+function memberId(){
+  const y = new Date().getFullYear();
+  const nums = members
+    .map(m => String(m.id||"").match(/^RK-\d{4}-(\d+)$/))
+    .filter(Boolean)
+    .map(m => Number(m[1])||0);
+  const next = (nums.length ? Math.max(...nums) : 0) + 1;
+  return `RK-${y}-${String(next).padStart(4,"0")}`;
+}
+
+function fmtDate(ts){
+  return new Intl.DateTimeFormat("id-ID",{dateStyle:"medium",timeStyle:"short"}).format(new Date(ts));
+}
+
+function rewardInfo(points){
+  if(rewards.length){
+    REWARDS = rewards.map(r=>({p:Number(r.points_required),name:r.reward_name}));
+  }
+  const reached = REWARDS.filter(r=>points>=r.p);
+  const next = REWARDS.find(r=>points<r.p);
+  return {reached, next};
+}
+
+
+async function loadSupabaseData(){
+  setConnectionStatus("SYNC...");
+  const [mRes, tRes, rRes] = await Promise.all([
+    supabaseClient.from("members").select("*").order("created_at",{ascending:true}),
+    supabaseClient.from("transactions").select("*").order("created_at",{ascending:false}),
+    supabaseClient.from("rewards").select("*").eq("active",true).order("points_required",{ascending:true})
+  ]);
+
+  if(mRes.error || tRes.error || rRes.error){
+    console.error(mRes.error, tRes.error, rRes.error);
+    setConnectionStatus("DB ERROR");
+    alert("Gagal membaca database Supabase. Cek koneksi atau policy RLS.");
+    return;
+  }
+
+  members = (mRes.data || []).map(m=>({
+    ...m,
+    created_at: new Date(m.created_at).getTime()
+  }));
+
+  transactions = (tRes.data || []).map(t=>({
+    ...t,
+    created_at: new Date(t.created_at).getTime()
+  }));
+
+  rewards = rRes.data || [];
+  setConnectionStatus("SUPABASE ONLINE");
+  refresh();
+}
+
+function setConnectionStatus(text){
+  const el=document.getElementById("modePill");
+  if(el) el.textContent=text;
+}
+
+async function insertMemberToSupabase(member){
+  const payload={
+    id:member.id,
+    name:member.name,
+    wa:member.wa || null,
+    address:member.address || null,
+    points:member.points || 0
+  };
+  const {error}=await supabaseClient.from("members").insert(payload);
+  if(error) throw error;
+}
+
+async function insertTransactionToSupabase(tx){
+  const payload={
+    member_id:tx.member_id,
+    category:tx.category,
+    points:tx.points,
+    note:tx.note || null,
+    source:tx.source || "manual"
+  };
+  const {error}=await supabaseClient.from("transactions").insert(payload);
+  if(error) throw error;
+}
+
+async function updateMemberPointsSupabase(memberId,newPoints){
+  const {error}=await supabaseClient
+    .from("members")
+    .update({points:newPoints})
+    .eq("id",memberId);
+  if(error) throw error;
+}
+
+async function deleteMemberSupabase(memberId){
+  const {error}=await supabaseClient.from("members").delete().eq("id",memberId);
+  if(error) throw error;
+}
+
+function renderStats(){
+  document.getElementById("statMembers").textContent = members.length;
+  document.getElementById("statTx").textContent = transactions.length;
+  document.getElementById("statPoints").textContent = members.reduce((a,b)=>a+(Number(b.points)||0),0);
+  document.getElementById("statRewards").textContent = members.reduce((sum,m)=>sum+rewardInfo(Number(m.points)||0).reached.length,0);
+}
+
+function renderMembers(){
+  const q = document.getElementById("searchMember").value.trim().toLowerCase();
+  const list = document.getElementById("memberList");
+  const filtered = members.filter(m => [m.id,m.name,m.wa].join(" ").toLowerCase().includes(q));
+  list.innerHTML = filtered.length ? filtered.map(m=>`
+    <div class="item">
+      <div>
+        <strong>${escapeHtml(m.name)}</strong><br>
+        <small>${m.id} • ${escapeHtml(m.wa || "-")} • ${m.points||0} poin</small>
+      </div>
+      <div class="row">
+        <button class="btn soft" onclick="openMember('${m.id}')">Lihat</button>
+        <button class="btn danger" onclick="deleteMember('${m.id}')">Hapus</button>
+      </div>
+    </div>`).join("") : '<div class="empty">Belum ada member.</div>';
+
+  const sel = document.getElementById("txMember");
+  const current = sel.value;
+  sel.innerHTML = members.length ? '<option value="">-- Pilih member --</option>' + members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} — ${m.id}</option>`).join("") : '<option value="">Belum ada member</option>';
+  if(current && members.some(m=>m.id===current)) sel.value=current;
+  updateSelectedMember(sel.value);
+}
+
+function renderTransactions(){
+  const list = document.getElementById("txList");
+  const rows = [...transactions].sort((a,b)=>b.created_at-a.created_at).slice(0,30);
+  list.innerHTML = rows.length ? rows.map(t=>{
+    const m=members.find(x=>x.id===t.member_id);
+    return `<div class="item"><div><strong>${escapeHtml(m?.name||t.member_id)}</strong><br><small>${escapeHtml(t.category)} • ${fmtDate(t.created_at)}${t.note ? " • "+escapeHtml(t.note):""}</small></div><strong>${t.points>0?"+":""}${t.points}</strong></div>`
+  }).join("") : '<div class="empty">Belum ada transaksi.</div>';
+}
+
+
+function isSameLocalDay(tsA, tsB=Date.now()){
+  const a=new Date(tsA), b=new Date(tsB);
+  return a.getFullYear()===b.getFullYear() &&
+         a.getMonth()===b.getMonth() &&
+         a.getDate()===b.getDate();
+}
+
+function renderTodayStat(){
+  const el=document.getElementById("statToday");
+  if(el) el.textContent=transactions.filter(t=>isSameLocalDay(t.created_at)).length;
+}
+
+function buildActivityLog(){
+  const el=document.getElementById("activityLog");
+  if(!el) return;
+  const rows=[...transactions].sort((a,b)=>b.created_at-a.created_at).slice(0,40);
+  el.innerHTML=rows.length ? rows.map(t=>{
+    const m=members.find(x=>x.id===t.member_id);
+    return `<div class="activity-line">
+      <strong>${escapeHtml(m?.name||t.member_id)} • ${t.points>0?"+":""}${t.points} poin</strong>
+      <small>${escapeHtml(t.category)} • ${fmtDate(t.created_at)} • ${escapeHtml(t.source||"manual")}</small>
+    </div>`;
+  }).join("") : '<div class="empty">Belum ada aktivitas.</div>';
+}
+
+function syncQrMemberOptions(){
+  const sel=document.getElementById("qrMemberSelect");
+  if(!sel) return;
+  const current=sel.value;
+  sel.innerHTML=members.length
+    ? '<option value="">-- Pilih member --</option>'+members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} — ${m.id}</option>`).join("")
+    : '<option value="">Belum ada member</option>';
+  if(current && members.some(m=>m.id===current)) sel.value=current;
+}
+
+async function renderMemberQr(id){
+  const box=document.getElementById("qrBox");
+  const label=document.getElementById("qrLabel");
+  if(!id){
+    box.innerHTML='<span style="color:#334155;font-size:12px">Pilih member</span>';
+    label.textContent="QR berisi ID member.";
+    return;
+  }
+  const m=members.find(x=>x.id===id);
+  if(!m) return;
+  box.innerHTML="";
+  const canvas=document.createElement("canvas");
+  box.appendChild(canvas);
+  if(window.QRCode && QRCode.toCanvas){
+    try{
+      await QRCode.toCanvas(canvas,m.id,{width:170,margin:1});
+      label.textContent=`${m.name} • ${m.id}`;
+    }catch(e){
+      box.innerHTML='<span style="color:#b91c1c;font-size:12px">Gagal membuat QR</span>';
+    }
+  }else{
+    box.innerHTML='<span style="color:#b91c1c;font-size:12px">Library QR belum termuat</span>';
+  }
+}
+
+function exportBackup(){
+  const payload={
+    app:"RK CELL MEMBER",
+    version:6,
+    exported_at:new Date().toISOString(),
+    members,
+    transactions
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`rk-cell-member-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importBackupFile(file){
+  const reader=new FileReader();
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!Array.isArray(data.members)||!Array.isArray(data.transactions)) throw new Error("Format tidak valid");
+      if(!confirm("Import akan mengganti data lokal saat ini. Lanjutkan?")) return;
+      members=data.members;
+      transactions=data.transactions;
+      saveLocal();
+      refresh();
+      alert("Backup berhasil di-import.");
+    }catch(e){
+      alert("File backup tidak valid.");
+    }
+  };
+  reader.readAsText(file);
+}
+
+function applyTheme(mode){
+  document.body.classList.toggle("light-mode",mode==="light");
+  localStorage.setItem("rk_theme",mode);
+  const btn=document.getElementById("themeToggle");
+  if(btn) btn.textContent=mode==="light" ? "☾ DARK" : "☀ LIGHT";
+}
+
+function refresh(){
+  renderStats(); renderTodayStat(); renderMembers(); renderTransactions(); buildActivityLog(); syncQrMemberOptions();
+}
+
+document.getElementById("addMemberBtn").onclick = async ()=>{
+  const name=document.getElementById("name").value.trim();
+  if(!name) return alert("Nama member wajib diisi.");
+
+  const m={
+    id:memberId(),
+    name,
+    wa:document.getElementById("wa").value.trim(),
+    address:document.getElementById("address").value.trim(),
+    points:0,
+    created_at:Date.now()
+  };
+
+  try{
+    setConnectionStatus("SAVING...");
+    await insertMemberToSupabase(m);
+    await loadSupabaseData();
+    document.getElementById("name").value="";
+    document.getElementById("wa").value="";
+    document.getElementById("address").value="";
+    alert("Member berhasil dibuat: "+m.id);
+  }catch(err){
+    console.error(err);
+    setConnectionStatus("DB ERROR");
+    alert("Gagal menambah member ke Supabase: "+(err.message||err));
+  }
+};
+
+
+let html5QrCode = null;
+let scannerRunning = false;
+
+
+function getLastQrPointTime(memberId){
+  const qrTx = transactions
+    .filter(t => t.member_id === memberId && t.source === "qr" && Number(t.points) > 0)
+    .sort((a,b)=>b.created_at-a.created_at);
+  return qrTx.length ? Number(qrTx[0].created_at) : 0;
+}
+
+function getQrCooldownRemaining(memberId){
+  const last = getLastQrPointTime(memberId);
+  if(!last) return 0;
+  return Math.max(0, QR_COOLDOWN_MS - (Date.now() - last));
+}
+
+function formatRemaining(ms){
+  const total = Math.ceil(ms / 1000);
+  const min = Math.floor(total / 60);
+  const sec = total % 60;
+  return `${min}:${String(sec).padStart(2,"0")}`;
+}
+
+function updateCooldownDisplay(memberId){
+  const box = document.getElementById("qrCooldownBox");
+  if(!box) return;
+
+  clearInterval(cooldownTimer);
+
+  if(!memberId || selectedMemberSource !== "qr"){
+    box.classList.add("hidden");
+    return;
+  }
+
+  box.classList.remove("hidden");
+
+  const paint = ()=>{
+    const remaining = getQrCooldownRemaining(memberId);
+    if(remaining > 0){
+      box.className = "cooldown-box cooldown-wait";
+      box.textContent = `QR member ini masih dalam jeda. Bisa tambah poin via QR lagi dalam ${formatRemaining(remaining)}.`;
+    }else{
+      box.className = "cooldown-box cooldown-ok";
+      box.textContent = "QR siap digunakan untuk penambahan poin.";
+      clearInterval(cooldownTimer);
+    }
+  };
+
+  paint();
+  cooldownTimer = setInterval(paint,1000);
+}
+
+function updateSelectedMember(id){
+  const box = document.getElementById("selectedMemberBox");
+  if(!box) return;
+  const m = members.find(x=>x.id===id);
+  if(!m){
+    box.classList.add("hidden");
+    return;
+  }
+  box.classList.remove("hidden");
+  document.getElementById("selectedMemberName").textContent = m.name;
+  document.getElementById("selectedMemberMeta").textContent = `${m.id} • ${m.wa || "-"} • ${m.points || 0} poin`;
+  updateCooldownDisplay(m.id);
+}
+
+function selectMemberById(id, source="manual"){
+  const clean = String(id || "").trim();
+  const m = members.find(x=>x.id.toLowerCase()===clean.toLowerCase());
+
+  if(!m){
+    document.getElementById("scanStatus").textContent = `Member dengan ID "${clean}" tidak ditemukan.`;
+    return false;
+  }
+
+  if(source === "qr"){
+    const remaining = getQrCooldownRemaining(m.id);
+    if(remaining > 0){
+      selectedMemberSource = "qr";
+      const sel = document.getElementById("txMember");
+      sel.value = m.id;
+      updateSelectedMember(m.id);
+      document.getElementById("scanStatus").textContent =
+        `QR ${m.name} belum bisa digunakan. Tunggu ${formatRemaining(remaining)} lagi.`;
+      stopScanner();
+      return false;
+    }
+  }
+
+  selectedMemberSource = source;
+  const sel = document.getElementById("txMember");
+  sel.value = m.id;
+  updateSelectedMember(m.id);
+  document.getElementById("scanStatus").textContent =
+    source === "qr"
+      ? `QR valid: ${m.name} (${m.id}). Siap tambah poin.`
+      : `Member ditemukan: ${m.name} (${m.id})`;
+
+  if(source==="qr"){
+    stopScanner();
+  }
+  return true;
+}
+
+async function startScanner(){
+  if(scannerRunning) return;
+  const status = document.getElementById("scanStatus");
+  if(typeof Html5Qrcode === "undefined"){
+    status.textContent = "Library scanner gagal dimuat. Pastikan perangkat terhubung internet.";
+    return;
+  }
+  html5QrCode = new Html5Qrcode("scanReader");
+  try{
+    const cameras = await Html5Qrcode.getCameras();
+    if(!cameras || !cameras.length){
+      status.textContent = "Kamera tidak ditemukan.";
+      return;
+    }
+    const preferred = cameras.find(c=>/back|rear|environment/i.test(c.label)) || cameras[cameras.length-1];
+    await html5QrCode.start(
+      preferred.id,
+      {fps:10, qrbox:{width:240,height:160}},
+      decodedText=>{
+        status.textContent = `Terbaca: ${decodedText}`;
+        selectMemberById(decodedText, "scan");
+      },
+      ()=>{}
+    );
+    scannerRunning = true;
+    status.textContent = "Scanner aktif. Arahkan kamera ke QR/barcode member.";
+  }catch(err){
+    status.textContent = "Kamera gagal dibuka. Pastikan izin kamera diberikan dan halaman menggunakan HTTPS.";
+  }
+}
+
+async function stopScanner(){
+  if(!html5QrCode || !scannerRunning) return;
+  try{
+    await html5QrCode.stop();
+    await html5QrCode.clear();
+  }catch(e){}
+  scannerRunning = false;
+  document.getElementById("scanStatus").textContent = "Scanner dihentikan.";
+}
+
+document.getElementById("startScanBtn").onclick = startScanner;
+document.getElementById("stopScanBtn").onclick = stopScanner;
+
+document.getElementById("txMember").addEventListener("change", e=>{
+  selectedMemberSource = "manual";
+  updateSelectedMember(e.target.value);
+});
+
+document.getElementById("manualMemberSearch").addEventListener("input", e=>{
+  const q = e.target.value.trim().toLowerCase();
+  const box = document.getElementById("manualMemberResults");
+  if(!q){
+    box.classList.add("hidden");
+    box.innerHTML="";
+    return;
+  }
+  const rows = members.filter(m=>[m.name,m.id,m.wa].join(" ").toLowerCase().includes(q)).slice(0,8);
+  box.classList.remove("hidden");
+  box.innerHTML = rows.length ? rows.map(m=>`
+    <div class="manual-result" data-id="${m.id}">
+      <strong>${escapeHtml(m.name)}</strong><br>
+      <small>${m.id} • ${escapeHtml(m.wa || "-")} • ${m.points || 0} poin</small>
+    </div>`).join("") : '<div class="empty">Member tidak ditemukan.</div>';
+
+  box.querySelectorAll(".manual-result").forEach(el=>{
+    el.onclick=()=>{
+      selectMemberById(el.dataset.id, "manual");
+      e.target.value = members.find(m=>m.id===el.dataset.id)?.name || el.dataset.id;
+      box.classList.add("hidden");
+    };
+  });
+});
+
+
+document.getElementById("addTxBtn").onclick = async ()=>{
+  const member_id=document.getElementById("txMember").value;
+  const points=Number(document.getElementById("txPoints").value||0);
+
+  if(!member_id) return alert("Pilih member terlebih dahulu.");
+
+  const m=members.find(x=>x.id===member_id);
+  if(!m) return alert("Member tidak ditemukan.");
+
+  try{
+    setConnectionStatus("SAVING...");
+
+    const {data,error}=await supabaseClient.rpc("add_member_points",{
+      p_member_id:member_id,
+      p_category:document.getElementById("txCategory").value,
+      p_points:points,
+      p_note:document.getElementById("txNote").value.trim() || null,
+      p_source:selectedMemberSource
+    });
+
+    if(error) throw error;
+
+    await loadSupabaseData();
+    document.getElementById("txNote").value="";
+
+    if(selectedMemberSource === "qr" && points > 0){
+      updateCooldownDisplay(member_id);
+      alert("Poin berhasil ditambahkan via QR. QR member ini bisa digunakan lagi setelah 5 menit.");
+    }else{
+      alert("Transaksi berhasil disimpan.");
+    }
+  }catch(err){
+    console.error(err);
+    setConnectionStatus("DB ERROR");
+    const msg=String(err.message||err);
+    if(msg.includes("QR_COOLDOWN")){
+      const secMatch=msg.match(/QR_COOLDOWN:(\d+)/);
+      const sec=secMatch ? Number(secMatch[1]) : 0;
+      alert(sec ? `QR belum bisa dipakai. Tunggu sekitar ${formatRemaining(sec*1000)} lagi.` : "QR masih dalam jeda 5 menit.");
+    }else{
+      alert("Gagal menyimpan transaksi: "+msg);
+    }
+  }
+};
+
+async function deleteMember(id){
+  if(!confirm("Hapus member dan seluruh transaksinya?")) return;
+  try{
+    setConnectionStatus("DELETING...");
+    await deleteMemberSupabase(id);
+    await loadSupabaseData();
+  }catch(err){
+    console.error(err);
+    setConnectionStatus("DB ERROR");
+    alert("Gagal menghapus member. Policy DELETE mungkin belum dibuat.");
+  }
+}
+
+function openMember(id){
+  const url = new URL(location.href);
+  url.searchParams.set("id",id);
+  location.href=url.toString();
+}
+
+function showMemberPage(id){
+  const m=members.find(x=>x.id===id);
+  document.getElementById("adminView").classList.add("hidden");
+  document.getElementById("memberView").classList.remove("hidden");
+  document.getElementById("bottomNav").classList.add("hidden");
+
+  if(!m){
+    document.getElementById("mvName").textContent="Member tidak ditemukan";
+    document.getElementById("mvId").textContent=id;
+    return;
+  }
+  document.getElementById("mvId").textContent=m.id;
+  document.getElementById("mvName").textContent=m.name;
+  document.getElementById("mvPoints").textContent=m.points||0;
+
+  const ri=rewardInfo(Number(m.points)||0);
+  const target=ri.next?.p || 30;
+  document.getElementById("mvProgress").style.width=Math.min(100,(m.points/target)*100)+"%";
+  document.getElementById("mvReward").textContent = ri.next
+    ? `${target-(m.points||0)} poin lagi menuju ${ri.next.name}`
+    : "Semua reward utama sudah tercapai 🎉";
+
+  const tx=transactions.filter(t=>t.member_id===id).sort((a,b)=>b.created_at-a.created_at);
+  document.getElementById("mvHistory").innerHTML = tx.length ? tx.map(t=>`
+    <div class="item">
+      <div><strong>${escapeHtml(t.category)}</strong><br><small>${fmtDate(t.created_at)}${t.note?" • "+escapeHtml(t.note):""}</small></div>
+      <strong>${t.points>0?"+":""}${t.points}</strong>
+    </div>
+  `).join("") : '<div class="empty">Belum ada transaksi.</div>';
+}
+
+function escapeHtml(s){
+  return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+}
+
+document.getElementById("searchMember").addEventListener("input",renderMembers);
+
+function activateTab(tabId){
+  document.querySelectorAll(".tabPage").forEach(p=>p.classList.add("hidden"));
+  document.getElementById(tabId).classList.remove("hidden");
+
+  document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.tab===tabId));
+  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.toggle("active", b.dataset.tab===tabId));
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.onclick=()=>activateTab(btn.dataset.tab);
+});
+document.querySelectorAll(".bottom-nav button").forEach(btn=>{
+  btn.onclick=()=>activateTab(btn.dataset.tab);
+});
+
+document.getElementById("sbUrl").value=SUPABASE_URL;
+document.getElementById("sbKey").value=SUPABASE_KEY;
+document.getElementById("sbUrl").readOnly=true;
+document.getElementById("sbKey").readOnly=true;
+document.getElementById("saveConfigBtn").textContent="Supabase Terhubung";
+document.getElementById("saveConfigBtn").disabled=true;
+document.getElementById("clearConfigBtn").classList.add("hidden");
+
+document.getElementById("sqlBox").value = `create table public.members (
+  id text primary key,
+  name text not null,
+  wa text,
+  address text,
+  points integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create table public.transactions (
+  id uuid primary key default gen_random_uuid(),
+  member_id text not null references public.members(id) on delete cascade,
+  category text not null,
+  points integer not null default 0,
+  note text,
+  created_at timestamptz not null default now()
+);
+
+create table public.rewards (
+  id bigint generated by default as identity primary key,
+  points_required integer not null,
+  reward_name text not null,
+  active boolean not null default true
+);
+
+insert into public.rewards (points_required, reward_name) values
+(10, 'Free Admin'),
+(20, 'Free Deterjen'),
+(30, 'Minyak 500 ml');
+
+alter table public.members enable row level security;
+alter table public.transactions enable row level security;
+alter table public.rewards enable row level security;`;
+
+
+
+let currentSession = null;
+
+async function refreshAuthUI(){
+  const {data:{session}} = await supabaseClient.auth.getSession();
+  currentSession = session;
+
+  const params=new URLSearchParams(location.search);
+  const memberParam=params.get("id");
+
+  if(memberParam){
+    document.getElementById("authGate").classList.add("hidden");
+    document.getElementById("adminView").classList.add("hidden");
+    document.getElementById("adminBar").classList.add("hidden");
+    document.getElementById("bottomNav").classList.add("hidden");
+    await loadSupabaseData();
+    showMemberPage(memberParam);
+    return;
+  }
+
+  if(session){
+    document.getElementById("authGate").classList.add("hidden");
+    document.getElementById("adminView").classList.remove("hidden");
+    document.getElementById("adminBar").classList.remove("hidden");
+    document.getElementById("bottomNav").classList.remove("hidden");
+    document.getElementById("adminIdentity").textContent=session.user.email || session.user.id;
+    setConnectionStatus("ADMIN ONLINE");
+    await loadSupabaseData();
+  }else{
+    document.getElementById("authGate").classList.remove("hidden");
+    document.getElementById("adminView").classList.add("hidden");
+    document.getElementById("adminBar").classList.add("hidden");
+    document.getElementById("bottomNav").classList.add("hidden");
+    setConnectionStatus("LOGIN REQUIRED");
+  }
+}
+
+document.getElementById("loginBtn").onclick=async()=>{
+  const email=document.getElementById("adminEmail").value.trim();
+  const password=document.getElementById("adminPassword").value;
+  const status=document.getElementById("loginStatus");
+
+  if(!email || !password){
+    status.textContent="Email dan password wajib diisi.";
+    return;
+  }
+
+  status.textContent="Memeriksa akun...";
+  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error){
+    status.textContent="Login gagal: "+error.message;
+    return;
+  }
+
+  status.textContent="Login berhasil.";
+  await refreshAuthUI();
+};
+
+document.getElementById("logoutBtn").onclick=async()=>{
+  await supabaseClient.auth.signOut();
+  await refreshAuthUI();
+};
+
+supabaseClient.auth.onAuthStateChange(()=>{
+  refreshAuthUI();
+});
+
+applyTheme(localStorage.getItem("rk_theme") || "dark");
+
+document.getElementById("themeToggle").onclick=()=>{
+  const next=document.body.classList.contains("light-mode") ? "dark" : "light";
+  applyTheme(next);
+};
+
+document.getElementById("exportBtn").onclick=exportBackup;
+document.getElementById("importBtn").onclick=()=>alert("Import langsung ke Supabase belum diaktifkan di V7 agar data online tidak tertimpa tanpa sengaja.");
+document.getElementById("importFile").addEventListener("change",e=>{
+  if(e.target.files?.[0]) importBackupFile(e.target.files[0]);
+  e.target.value="";
+});
+
+document.getElementById("memberQrBtn").onclick=()=>{
+  document.getElementById("qrToolPanel").classList.toggle("hidden");
+  document.getElementById("activityPanel").classList.add("hidden");
+};
+document.getElementById("activityBtn").onclick=()=>{
+  document.getElementById("activityPanel").classList.toggle("hidden");
+  document.getElementById("qrToolPanel").classList.add("hidden");
+  buildActivityLog();
+};
+document.getElementById("qrMemberSelect").addEventListener("change",e=>renderMemberQr(e.target.value));
+
+refreshAuthUI();
+</script>
+</body>
+</html>
