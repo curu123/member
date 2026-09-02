@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V36 Safe Point Adjustment</title>
+  <title>RK CELL Admin V37 Unified Admin</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -592,8 +592,6 @@ body.light-mode .center-scan-btn{
 .premium-thanks{margin-top:10px;font-size:10px;font-style:italic;color:#61dfff}
 
 /* V30 clean separation */
-#adminHome.hidden{display:none!important}
-#adminHome{display:block}
 
 /* Claim reward priority */
 #rewardTab .section:has(#claimMemberSelect){
@@ -612,6 +610,12 @@ body.light-mode .center-scan-btn{
 .point-quick-grid .btn{width:100%;font-size:14px}
 #pointModeSubtract.active{background:linear-gradient(135deg,#ff334f,#b7102b)!important;color:#fff!important;border-color:#ff546b!important}
 .point-minus-warning{margin:8px 0 0;padding:8px 10px;border:1px solid rgba(255,70,90,.25);border-radius:10px;background:rgba(255,50,70,.04);color:#ff9baa;font-size:9px}
+
+
+/* V37 Admin unified page */
+#memberTab:not(.hidden){display:block!important}
+.admin-overview-block{display:block!important;margin-bottom:14px}
+#memberTab .admin-overview-block + .section-title{margin-top:14px}
 
 </style>
 <script>
@@ -674,7 +678,10 @@ body.light-mode .center-scan-btn{
   </div>
 
   <div id="adminView" class="hidden">
-    <div id="adminHome">
+    
+
+    <div id="memberTab" class="tabPage section">
+      <div class="admin-overview-block">
 <div class="section-title"><h2>SYSTEM OVERVIEW</h2><span>LIVE MEMBER DATA</span></div>
     <div class="stats">
       <div class="card stat-card">
@@ -710,9 +717,8 @@ body.light-mode .center-scan-btn{
         <div class="kpi-box"><strong id="kpiTodayClaims">0</strong><span>Reward Diklaim</span></div>
       </div>
     </div>
-    </div>
+      </div>
 
-    <div id="memberTab" class="tabPage section">
       <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
       <div class="card">
         <div class="row">
@@ -1998,11 +2004,6 @@ function activateTab(tabId){
   const target=document.getElementById(tabId);
   if(target) target.classList.remove("hidden");
 
-  const adminHome=document.getElementById("adminHome");
-  if(adminHome){
-    adminHome.classList.toggle("hidden",tabId!=="memberTab");
-  }
-
   document.querySelectorAll(".tab").forEach(b=>{
     b.classList.toggle("active",b.dataset.tab===tabId);
   });
@@ -2011,7 +2012,7 @@ function activateTab(tabId){
     b.classList.toggle("active",b.dataset.tab===tabId);
   });
 
-  window.scrollTo({top:0,behavior:"smooth"});
+  window.scrollTo({top:0,left:0,behavior:"smooth"});
 }
 
 document.querySelectorAll(".tab").forEach(btn=>{
@@ -2217,6 +2218,11 @@ document.getElementById("txPoints")?.addEventListener("input",e=>{
   const v=Number(e.target.value||0);
   if(v<0 && pointAdjustmentMode!=="subtract") setPointAdjustmentMode("subtract");
   if(v>0 && pointAdjustmentMode!=="add") setPointAdjustmentMode("add");
+});
+
+
+document.querySelector('.bottom-nav button[data-tab="memberTab"]')?.addEventListener("click",()=>{
+  activateTab("memberTab");
 });
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
