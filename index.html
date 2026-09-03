@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#071a2b" name="theme-color"/>
-<title>RK CELL Admin Femme Pink Nav Contrast</title>
+<title>RK CELL Admin Femme Pink Stable CRUD</title>
 <link href="manifest.webmanifest" rel="manifest"/>
 <style>
 :root{
@@ -1940,10 +1940,17 @@ async function deleteMemberSupabase(memberId){
 }
 
 function renderStats(){
-  document.getElementById("statMembers").textContent = members.length;
-  document.getElementById("statTx").textContent = transactions.length;
-  document.getElementById("statPoints").textContent = members.reduce((a,b)=>a+(Number(b.points)||0),0);
-  document.getElementById("statRewards").textContent = members.reduce((sum,m)=>sum+rewardInfo(Number(m.points)||0).reached.length,0);
+  const statMembers=document.getElementById("statMembers");
+  const statTx=document.getElementById("statTx");
+  const statPoints=document.getElementById("statPoints");
+  const statRewards=document.getElementById("statRewards");
+
+  if(statMembers) statMembers.textContent=members.length;
+  if(statTx) statTx.textContent=transactions.length;
+  if(statPoints) statPoints.textContent=members.reduce((a,b)=>a+(Number(b.points)||0),0);
+  if(statRewards) statRewards.textContent=members.reduce(
+    (sum,m)=>sum+rewardInfo(Number(m.points)||0).reached.length,0
+  );
 }
 
 function renderMembers(){
@@ -2297,28 +2304,42 @@ function preparePrintCard(memberId){
 }
 
 function refresh(){
-  renderStats();
-  renderTodayStat();
-  renderDailyPulse();
-  renderMembers();
-  renderTransactions();
-  buildActivityLog();
-  syncQrMemberOptions();
-  syncClaimOptions();
-  syncPrintOptions();
+  const jobs=[
+    renderStats,
+    renderTodayStat,
+    renderDailyPulse,
+    renderMembers,
+    renderTransactions,
+    buildActivityLog,
+    syncQrMemberOptions,
+    syncClaimOptions,
+    syncPrintOptions
+  ];
+
+  jobs.forEach(fn=>{
+    try{ fn(); }
+    catch(err){ console.warn(`UI refresh ${fn.name} dilewati:`,err); }
+  });
+
+  const renderReward=()=>{
+    try{ renderRewardManager(); }
+    catch(err){ console.warn("Reward manager refresh dilewati:",err); }
+  };
+
   if("requestIdleCallback" in window){
-    requestIdleCallback(()=>renderRewardManager(),{timeout:500});
+    requestIdleCallback(renderReward,{timeout:500});
   }else{
-    setTimeout(renderRewardManager,80);
+    setTimeout(renderReward,80);
   }
 }
 
 document.getElementById("addMemberBtn").onclick = async ()=>{
-  const name=document.getElementById("name").value.trim();
+  const name=document.getElementById("name")?.value.trim()||"";
   if(!name) return alert("Nama member wajib diisi.");
 
-  const waInput=document.getElementById("wa").value.trim();
+  const waInput=document.getElementById("wa")?.value.trim()||"";
   const normalizedWa=normalizePhone(waInput);
+
   if(normalizedWa){
     const duplicate=members.find(x=>normalizePhone(x.wa)===normalizedWa);
     if(duplicate){
@@ -2330,7 +2351,7 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
     id:memberId(),
     name,
     wa:waInput,
-    address:document.getElementById("address").value.trim(),
+    address:document.getElementById("address")?.value.trim()||"",
     points:0,
     active:true,
     created_at:Date.now()
@@ -2339,17 +2360,30 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
   try{
     setConnectionStatus("SAVING...");
     await insertMemberToSupabase(m);
-    await createAudit("member_created",m.id,{name:m.name,wa:m.wa});
-    await loadSupabaseData();
-    document.getElementById("name").value="";
-    document.getElementById("wa").value="";
-    document.getElementById("address").value="";
-    alert("Member berhasil dibuat: "+m.id);
   }catch(err){
-    console.error(err);
+    console.error("ADD MEMBER DB ERROR:",err);
     setConnectionStatus("DB ERROR");
-    alert("Gagal menambah member ke Supabase: "+(err.message||err));
+    return alert("Gagal menambah member ke Supabase: "+(err.message||err));
   }
+
+  // Insert sudah sukses. Audit dan refresh bersifat non-kritis.
+  await createAudit("member_created",m.id,{name:m.name,wa:m.wa});
+
+  try{
+    await loadSupabaseData();
+  }catch(err){
+    console.warn("Refresh setelah tambah member gagal:",err);
+  }
+
+  const nameEl=document.getElementById("name");
+  const waEl=document.getElementById("wa");
+  const addressEl=document.getElementById("address");
+  if(nameEl) nameEl.value="";
+  if(waEl) waEl.value="";
+  if(addressEl) addressEl.value="";
+
+  setConnectionStatus("SETUP ONLINE");
+  alert("Member berhasil dibuat: "+m.id);
 };
 
 
@@ -2447,7 +2481,7 @@ function selectMemberById(id, source="manual"){
   const m = members.find(x=>x.id.toLowerCase()===clean.toLowerCase());
 
   if(!m){
-    document.getElementById("scanStatus").textContent = `Member dengan ID "${clean}" tidak ditemukan.`;
+    if(document.getElementById("scanStatus")) document.getElementById("scanStatus").textContent = `Member dengan ID "${clean}" tidak ditemukan.`;
     return false;
   }
 
@@ -2458,7 +2492,7 @@ function selectMemberById(id, source="manual"){
       const sel = document.getElementById("txMember");
       sel.value = m.id;
       updateSelectedMember(m.id);
-      document.getElementById("scanStatus").textContent =
+      if(document.getElementById("scanStatus")) document.getElementById("scanStatus").textContent =
         `QR ${m.name} belum bisa digunakan. Tunggu ${formatRemaining(remaining)} lagi.`;
       stopScanner();
       return false;
@@ -2469,7 +2503,7 @@ function selectMemberById(id, source="manual"){
   const sel = document.getElementById("txMember");
   sel.value = m.id;
   updateSelectedMember(m.id);
-  document.getElementById("scanStatus").textContent =
+  if(document.getElementById("scanStatus")) document.getElementById("scanStatus").textContent =
     source === "qr"
       ? `QR valid: ${m.name} (${m.id}). Member otomatis dipilih.`
       : `Member ditemukan: ${m.name} (${m.id})`;
@@ -2673,16 +2707,27 @@ function showOfflineMode(){
 async function deleteMember(id){
   if(!isAdminRole()) return alert("Hanya Admin yang boleh menghapus member.");
   if(!confirm("Hapus member dan seluruh transaksinya?")) return;
+
   try{
     setConnectionStatus("DELETING...");
-    await createAudit("member_deleted",id,{});
     await deleteMemberSupabase(id);
+  }catch(err){
+    console.error("DELETE MEMBER ERROR:",err);
+    setConnectionStatus("DB ERROR");
+    return alert("Gagal menghapus member dari Supabase: "+(err.message||err));
+  }
+
+  // Database sudah berhasil dihapus. Audit/UI tidak boleh mengubah status keberhasilan.
+  await createAudit("member_deleted",id,{});
+
+  try{
     await loadSupabaseData();
   }catch(err){
-    console.error(err);
-    setConnectionStatus("DB ERROR");
-    alert("Gagal menghapus member. Policy DELETE mungkin belum dibuat.");
+    console.warn("Refresh setelah delete gagal:",err);
   }
+
+  setConnectionStatus("SETUP ONLINE");
+  alert("Member berhasil dihapus.");
 }
 
 function openMember(id){
