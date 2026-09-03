@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#071a2b" name="theme-color"/>
-<title>RK CELL Admin Femme Pink Stable CRUD</title>
+<title>RK CELL Admin NFC Edition</title>
 <link href="manifest.webmanifest" rel="manifest"/>
 <style>
 :root{
@@ -1341,6 +1341,46 @@ body:not(.dark-mode) .center-scan-btn{
   border-color:#0b0b10!important;
 }
 
+
+/* NFC MEMBER V1 */
+.scan-mode-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:10px;
+}
+.scan-mode-btn{width:100%!important}
+.nfc-reader-visual{
+  min-height:260px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:10px;
+  text-align:center;
+  border:1px dashed rgba(255,95,171,.38);
+  border-radius:18px;
+  background:linear-gradient(145deg,rgba(255,95,171,.06),rgba(168,117,255,.08));
+}
+.nfc-reader-visual .nfc-wave{
+  width:92px;height:92px;border-radius:50%;
+  display:grid;place-items:center;
+  font-size:42px;
+  background:linear-gradient(135deg,rgba(255,95,171,.18),rgba(168,117,255,.18));
+  border:1px solid rgba(255,95,171,.35);
+  animation:nfcPulse 1.8s ease-in-out infinite;
+}
+.nfc-reader-visual strong{font-size:15px}
+.nfc-reader-visual small{font-size:9px;color:var(--muted)}
+@keyframes nfcPulse{
+  0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(255,95,171,.18)}
+  50%{transform:scale(1.05);box-shadow:0 0 0 15px rgba(255,95,171,0)}
+}
+#nfcToolPanel .row .btn{flex:1}
+@media(max-width:430px){
+  .nfc-reader-visual{min-height:220px}
+}
+
 </style>
 <script>
 (function(){
@@ -1551,6 +1591,10 @@ body:not(.dark-mode) .center-scan-btn{
 <strong>▦ QR Member</strong>
 <small>Buat QR halaman member</small>
 </button>
+<button class="btn soft utility-btn" id="nfcWriterBtn" type="button">
+<strong>📡 NFC Member</strong>
+<small>Baca / tulis kartu NFC</small>
+</button>
 <button class="btn soft utility-btn" id="printCardBtn">
 <strong>🪪 Cetak Kartu</strong>
 <small>Kartu member ukuran ATM</small>
@@ -1566,6 +1610,17 @@ body:not(.dark-mode) .center-scan-btn{
 </div>
 <input accept=".json,application/json" class="hidden" id="importFile" type="file"/>
 </div>
+<div class="card section hidden" id="nfcToolPanel">
+<div class="section-title"><h2>NFC MEMBER</h2><span>NFC bawaan HP</span></div>
+<p class="note">Pilih member lalu tempel kartu NFC untuk menulis link member. Bisa juga membaca kartu untuk mengetes isi kartu.</p>
+<div class="field"><label>PILIH MEMBER</label><select id="nfcMemberSelect"></select></div>
+<div class="row" style="margin-top:10px">
+<button class="btn primary" id="writeNfcBtn" type="button">📡 Tulis Kartu NFC</button>
+<button class="btn soft" id="testNfcBtn" type="button">🔎 Tes Baca NFC</button>
+</div>
+<div class="scan-status" id="nfcWriterStatus" style="margin-top:10px">NFC siap digunakan jika browser mendukung Web NFC.</div>
+</div>
+
 <div class="card section hidden qr-card" id="qrToolPanel">
 <div class="section-title"><h2>MEMBER QR</h2><span>GitHub Pages Member Link</span></div>
 <div class="field"><label>PILIH MEMBER</label><select id="qrMemberSelect"></select></div>
@@ -1702,16 +1757,31 @@ body:not(.dark-mode) .center-scan-btn{
 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px">
 <div>
 <strong style="font-size:18px;color:#fff">SCAN MEMBER</strong><br/>
-<small style="color:#7893a7">Arahkan kamera ke QR member</small>
+<small style="color:#7893a7">Pilih QR atau NFC member</small>
 </div>
 <button class="btn soft" id="directScanClose" style="width:auto" type="button">✕ Tutup</button>
 </div>
-<div class="card">
+<div class="scan-mode-grid">
+<button class="btn primary scan-mode-btn" id="scanModeQrBtn" type="button">📷 SCAN QR</button>
+<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">📡 TEMPEL NFC</button>
+</div>
+
+<div class="card" id="qrScanPanel">
 <div id="directCameraBox" style="position:relative;background:#000;border-radius:16px;overflow:hidden;min-height:320px;display:grid;place-items:center">
 <video autoplay="" id="directCameraVideo" muted="" playsinline="" style="width:100%;max-height:68vh;object-fit:cover"></video>
 <div style="position:absolute;width:230px;height:230px;border:3px solid #45dfff;border-radius:18px;box-shadow:0 0 0 9999px rgba(0,0,0,.20);pointer-events:none"></div>
 </div>
-<div class="scan-status" id="directScanStatus" style="margin-top:10px">Menunggu kamera...</div>
+<div class="scan-status" id="directScanStatus" style="margin-top:10px">Pilih QR atau NFC.</div>
+</div>
+
+<div class="card hidden" id="nfcScanPanel">
+<div class="nfc-reader-visual">
+<div class="nfc-wave">📡</div>
+<strong>TEMPELKAN KARTU MEMBER</strong>
+<small>Tempel kartu NFC di bagian belakang HP</small>
+</div>
+<div class="scan-status" id="nfcScanStatus">NFC belum dimulai.</div>
+<button class="btn soft" id="stopNfcBtn" type="button" style="margin-top:10px;width:100%">■ Stop NFC</button>
 </div>
 </div>
 </div>
@@ -2313,7 +2383,8 @@ function refresh(){
     buildActivityLog,
     syncQrMemberOptions,
     syncClaimOptions,
-    syncPrintOptions
+    syncPrintOptions,
+    syncNfcMemberOptions
   ];
 
   jobs.forEach(fn=>{
@@ -3102,6 +3173,50 @@ document.getElementById("showMoreTxBtn")?.addEventListener("click",()=>{
   document.getElementById("showMoreTxBtn")?.classList.add("hidden");
 });
 
+
+document.getElementById("scanModeQrBtn")?.addEventListener("click",async()=>{
+  await stopNfcScan();
+  showScanMode("qr");
+  await openDirectCamera();
+});
+
+document.getElementById("scanModeNfcBtn")?.addEventListener("click",async()=>{
+  await closeDirectCamera();
+  const overlay=document.getElementById("directScanOverlay");
+  overlay?.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+  showScanMode("nfc");
+  await startMemberNfcScan("nfcScanStatus",true);
+});
+
+document.getElementById("stopNfcBtn")?.addEventListener("click",async()=>{
+  await stopNfcScan();
+  const status=document.getElementById("nfcScanStatus");
+  if(status) status.textContent="NFC dihentikan.";
+});
+
+document.getElementById("nfcWriterBtn")?.addEventListener("click",()=>{
+  document.getElementById("nfcToolPanel")?.classList.toggle("hidden");
+  document.getElementById("qrToolPanel")?.classList.add("hidden");
+  document.getElementById("printToolPanel")?.classList.add("hidden");
+  document.getElementById("reportPanel")?.classList.add("hidden");
+  document.getElementById("activityPanel")?.classList.add("hidden");
+  syncNfcMemberOptions();
+
+  const status=document.getElementById("nfcWriterStatus");
+  if(status && !webNfcSupported()){
+    status.textContent="Web NFC tidak tersedia di browser/HP ini. Gunakan Chrome Android + HTTPS.";
+  }
+});
+
+document.getElementById("writeNfcBtn")?.addEventListener("click",writeMemberNfc);
+
+document.getElementById("testNfcBtn")?.addEventListener("click",async()=>{
+  const status=document.getElementById("nfcWriterStatus");
+  if(status) status.textContent="Tempel kartu NFC untuk mengetes...";
+  await startMemberNfcScan("nfcWriterStatus",false);
+});
+
 applyTheme(localStorage.getItem("rk_theme") || "light");
 
 document.getElementById("themeToggle")?.addEventListener("click",()=>{
@@ -3173,6 +3288,175 @@ document.getElementById("openMemberLinkBtn").onclick=()=>{
 };
 
 
+
+
+let activeNfcReader=null;
+let nfcAbortController=null;
+
+function webNfcSupported(){
+  return "NDEFReader" in window && window.isSecureContext;
+}
+
+function decodeNdefRecord(record){
+  try{
+    if(record.recordType==="text"){
+      return new TextDecoder(record.encoding || "utf-8").decode(record.data);
+    }
+    if(record.recordType==="url" || record.recordType==="absolute-url"){
+      return new TextDecoder().decode(record.data);
+    }
+    if(record.data){
+      return new TextDecoder().decode(record.data);
+    }
+  }catch(e){}
+  return "";
+}
+
+function extractNfcPayload(message){
+  for(const record of message.records || []){
+    const value=decodeNdefRecord(record).trim();
+    if(value) return value;
+  }
+  return "";
+}
+
+async function stopNfcScan(){
+  try{ nfcAbortController?.abort(); }catch(e){}
+  nfcAbortController=null;
+  activeNfcReader=null;
+}
+
+async function startMemberNfcScan(statusId="nfcScanStatus",autoOpenTransaction=true){
+  const status=document.getElementById(statusId);
+
+  if(!window.isSecureContext){
+    if(status) status.textContent="NFC memerlukan HTTPS.";
+    return;
+  }
+  if(!("NDEFReader" in window)){
+    if(status) status.textContent="Web NFC tidak didukung browser/HP ini. Gunakan Chrome Android atau QR.";
+    return;
+  }
+
+  await stopNfcScan();
+
+  try{
+    const controller=new AbortController();
+    const reader=new NDEFReader();
+    nfcAbortController=controller;
+    activeNfcReader=reader;
+
+    if(status) status.textContent="Minta izin NFC... Tempel kartu setelah izin diberikan.";
+    await reader.scan({signal:controller.signal});
+    if(status) status.textContent="NFC aktif. Tempel kartu member ke belakang HP...";
+
+    reader.addEventListener("readingerror",()=>{
+      if(status) status.textContent="Kartu terdeteksi tetapi isi tidak dapat dibaca. Coba tempel ulang.";
+    });
+
+    reader.addEventListener("reading",async event=>{
+      const payload=extractNfcPayload(event.message);
+      if(!payload){
+        if(status) status.textContent=`NFC terbaca${event.serialNumber?` (${event.serialNumber})`:""}, tetapi kartu belum berisi ID/link member.`;
+        return;
+      }
+
+      if(status) status.textContent="NFC terbaca. Memeriksa member...";
+      const found=selectMemberById(payload,"nfc");
+
+      if(found){
+        if(status) status.textContent="Member ditemukan melalui NFC.";
+        await stopNfcScan();
+
+        if(autoOpenTransaction){
+          document.getElementById("directScanOverlay")?.classList.add("hidden");
+          document.body.style.overflow="";
+          activateTab("txTab");
+          setTimeout(()=>document.getElementById("selectedMemberBox")?.scrollIntoView({behavior:"smooth",block:"center"}),100);
+        }
+      }else{
+        if(status) status.textContent=`Isi NFC terbaca: ${payload} — member tidak ditemukan.`;
+      }
+    });
+  }catch(err){
+    console.error("NFC scan error",err);
+    if(status){
+      if(err?.name==="NotAllowedError") status.textContent="Izin NFC ditolak. Aktifkan NFC dan izinkan browser.";
+      else if(err?.name==="AbortError") status.textContent="NFC dihentikan.";
+      else status.textContent="NFC gagal: "+(err?.message||err);
+    }
+  }
+}
+
+async function writeMemberNfc(){
+  const status=document.getElementById("nfcWriterStatus");
+  const memberId=document.getElementById("nfcMemberSelect")?.value;
+
+  if(!memberId){
+    if(status) status.textContent="Pilih member terlebih dahulu.";
+    return;
+  }
+
+  if(!webNfcSupported()){
+    if(status) status.textContent="Web NFC tidak didukung. Gunakan Chrome Android melalui HTTPS.";
+    return;
+  }
+
+  const member=members.find(m=>m.id===memberId);
+  if(!member){
+    if(status) status.textContent="Member tidak ditemukan.";
+    return;
+  }
+
+  const url=`https://curu123.github.io/member/member.html?id=${encodeURIComponent(member.id)}`;
+
+  try{
+    const writer=new NDEFReader();
+    if(status) status.textContent=`Tempel kartu NFC untuk ${member.name}...`;
+
+    await writer.write({
+      records:[
+        {recordType:"url",data:url},
+        {recordType:"text",data:member.id,lang:"id"}
+      ]
+    });
+
+    if(status) status.textContent=`✓ Kartu NFC ${member.name} berhasil ditulis.`;
+    await createAudit("nfc_card_written",member.id,{url});
+  }catch(err){
+    console.error("NFC write error",err);
+    if(status){
+      if(err?.name==="NotAllowedError") status.textContent="Izin menulis NFC ditolak.";
+      else status.textContent="Gagal menulis NFC: "+(err?.message||err);
+    }
+  }
+}
+
+function syncNfcMemberOptions(){
+  const sel=document.getElementById("nfcMemberSelect");
+  if(!sel) return;
+  const current=sel.value;
+  sel.innerHTML=members.length
+    ? '<option value="">-- Pilih member --</option>'+members.map(m=>`<option value="${m.id}">${escapeHtml(m.name)} — ${m.id}</option>`).join("")
+    : '<option value="">Belum ada member</option>';
+  if(current && members.some(m=>m.id===current)) sel.value=current;
+}
+
+function showScanMode(mode){
+  const qr=document.getElementById("qrScanPanel");
+  const nfc=document.getElementById("nfcScanPanel");
+  const qrBtn=document.getElementById("scanModeQrBtn");
+  const nfcBtn=document.getElementById("scanModeNfcBtn");
+
+  const isNfc=mode==="nfc";
+  qr?.classList.toggle("hidden",isNfc);
+  nfc?.classList.toggle("hidden",!isNfc);
+
+  qrBtn?.classList.toggle("primary",!isNfc);
+  qrBtn?.classList.toggle("soft",isNfc);
+  nfcBtn?.classList.toggle("primary",isNfc);
+  nfcBtn?.classList.toggle("soft",!isNfc);
+}
 
 let directCameraStream=null;
 let directCameraRAF=null;
@@ -3290,14 +3574,24 @@ if(centerScanBtn){
   centerScanBtn.addEventListener("click",async(event)=>{
     event.preventDefault();
     event.stopPropagation();
+
     await closeDirectCamera();
+    await stopNfcScan();
+
+    const overlay=document.getElementById("directScanOverlay");
+    overlay?.classList.remove("hidden");
+    document.body.style.overflow="hidden";
+
+    showScanMode("qr");
     const status=document.getElementById("directScanStatus");
-    if(status) status.textContent="Tombol SCAN aktif. Membuka kamera...";
-    await openDirectCamera();
+    if(status) status.textContent="Pilih SCAN QR atau TEMPEL NFC.";
+
+    // Jangan membuka kamera sebelum tombol QR ditekan.
   });
 }
 
 document.getElementById("directScanClose")?.addEventListener("click",async()=>{
+  await stopNfcScan();
   try{await stopScanner();}catch(e){}
   await closeDirectCamera();
 });
