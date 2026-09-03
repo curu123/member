@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#071a2b" name="theme-color"/>
-<title>RK CELL Admin Flexible NFC UID Reward Scan</title>
+<title>RK CELL Admin Flexible NFC UID Sync Fixed</title>
 <link href="manifest.webmanifest" rel="manifest"/>
 <style>
 :root{
@@ -1929,8 +1929,12 @@ body:not(.dark-mode) .center-scan-btn{
     </div>
 
     <div class="card" id="claimQrPanel">
-      <div id="claimQrReader" style="width:100%"></div>
-      <div class="scan-status" id="claimQrStatus">Arahkan QR member ke kamera.</div>
+      <div style="position:relative;background:#000;border-radius:14px;overflow:hidden;min-height:260px;display:grid;place-items:center">
+        <video id="claimQrVideo" playsinline autoplay muted style="width:100%;max-height:62vh;object-fit:cover"></video>
+        <div style="position:absolute;width:190px;height:190px;border:2px solid #ff5fab;border-radius:16px;box-shadow:0 0 0 9999px rgba(0,0,0,.18);pointer-events:none"></div>
+      </div>
+      <div id="claimQrReaderFallback" class="hidden" style="width:100%"></div>
+      <div class="scan-status" id="claimQrStatus" style="margin-top:8px">Arahkan QR member ke kamera.</div>
     </div>
 
     <div class="card hidden" id="claimNfcPanel">
@@ -2170,7 +2174,12 @@ function normalizeNfcUid(value){
 
 function findMemberByNfcUid(uid){
   const clean=normalizeNfcUid(uid);
-  return members.find(m=>normalizeNfcUid(m.nfc_uid)===clean) || null;
+  if(!clean) return null;
+
+  return members.find(m=>{
+    const saved=normalizeNfcUid(m?.nfc_uid);
+    return saved && saved===clean;
+  }) || null;
 }
 
 async function saveNfcUidToMember(memberId,uid){
@@ -2259,7 +2268,26 @@ async function registerNfcUidForNewMember(member){
     const uid=await scanNfcUidOnce("nfcWriterStatus");
     const clean=await saveNfcUidToMember(member.id,uid);
 
-    await createAudit("nfc_uid_registered",member.id,{nfc_uid:clean,source:"member_create"});
+    await createAudit("nfc_uid_registered",member.id,{
+      nfc_uid:clean,
+      source:"member_create"
+    });
+
+    // Penting: refresh cache member lokal setelah UID berhasil disimpan.
+    try{
+      await loadSupabaseData();
+    }catch(refreshErr){
+      console.warn("Refresh data setelah simpan UID gagal:",refreshErr);
+
+      // Fallback supaya sesi saat ini tetap mengenali kartu tanpa menunggu reload halaman.
+      const localMember=members.find(m=>m.id===member.id);
+      if(localMember) localMember.nfc_uid=clean;
+    }
+
+    // Pastikan cache lokal punya UID walaupun refresh Supabase gagal.
+    const refreshedMember=members.find(m=>m.id===member.id);
+    if(refreshedMember) refreshedMember.nfc_uid=clean;
+
     alert(`✓ Kartu NFC berhasil didaftarkan.\nUID: ${clean}\nMember: ${member.name}`);
     return true;
   }catch(err){
@@ -2275,7 +2303,7 @@ function selectMemberByNfcUid(uid){
   const status=document.getElementById("nfcScanStatus");
 
   if(!m){
-    if(status) status.textContent=`UID ${clean||"-"} belum terdaftar ke member.`;
+    if(status) status.textContent=`UID ${clean||"-"} belum terdaftar ke member. Coba refresh data atau cek kolom nfc_uid di Supabase.`;
     return false;
   }
 
@@ -3660,6 +3688,7 @@ function chooseClaimMember(memberId,source="manual"){
 }
 
 async function closeClaimScanner(){
+  try{ await stopClaimCamera(); }catch(e){}
   try{
     if(typeof claimQrScanner!=="undefined" && claimQrScanner){
       try{ await claimQrScanner.stop(); }catch(e){}
@@ -3673,62 +3702,185 @@ async function closeClaimScanner(){
   document.body.style.overflow="";
 }
 
+
 let claimQrScanner=null;
+let claimCameraStream=null;
+let claimCameraRAF=null;
+let claimBarcodeDetector=null;
+let claimDetectBusy=false;
+
+async function stopClaimCamera(){
+  if(claimCameraRAF){
+    cancelAnimationFrame(claimCameraRAF);
+    claimCameraRAF=null;
+  }
+  if(claimCameraStream){
+    claimCameraStream.getTracks().forEach(t=>t.stop());
+    claimCameraStream=null;
+  }
+  const video=document.getElementById("claimQrVideo");
+  if(video) video.srcObject=null;
+
+  if(claimQrScanner){
+    try{ await claimQrScanner.stop(); }catch(e){}
+    try{ await claimQrScanner.clear(); }catch(e){}
+    claimQrScanner=null;
+  }
+}
+
+async function claimDetectLoop(){
+  const video=document.getElementById("claimQrVideo");
+  const status=document.getElementById("claimQrStatus");
+
+  if(!video || !claimCameraStream) return;
+
+  if(claimBarcodeDetector && video.readyState>=2 && !claimDetectBusy){
+    claimDetectBusy=true;
+    try{
+      const codes=await claimBarcodeDetector.detect(video);
+      if(codes?.length){
+        const decoded=codes[0].rawValue||"";
+        const id=extractMemberIdFromQrPayload(decoded);
+        const member=members.find(x=>x.id.toLowerCase()===String(id).toLowerCase());
+
+        if(member){
+          chooseClaimMember(member.id,"qr");
+          await closeClaimScanner();
+          claimDetectBusy=false;
+          return;
+        }
+
+        if(status) status.textContent="QR terbaca tetapi member tidak ditemukan.";
+      }
+    }catch(e){}
+    claimDetectBusy=false;
+  }
+
+  claimCameraRAF=requestAnimationFrame(claimDetectLoop);
+}
 
 async function openClaimQrScanner(){
-  await closeClaimScanner();
+  // Pastikan tidak ada scanner/kamera lain yang masih memegang camera device.
+  try{ await closeDirectCamera(); }catch(e){}
+  try{ await stopScanner(); }catch(e){}
+  try{ await stopNfcScan(); }catch(e){}
+  try{ await stopClaimCamera(); }catch(e){}
 
   const overlay=document.getElementById("claimScanOverlay");
   const qrPanel=document.getElementById("claimQrPanel");
   const nfcPanel=document.getElementById("claimNfcPanel");
   const status=document.getElementById("claimQrStatus");
   const label=document.getElementById("claimScanOverlayLabel");
+  const video=document.getElementById("claimQrVideo");
 
   overlay?.classList.remove("hidden");
   qrPanel?.classList.remove("hidden");
   nfcPanel?.classList.add("hidden");
   document.body.style.overflow="hidden";
   if(label) label.textContent="SCAN QR MEMBER";
-  if(status) status.textContent="Meminta izin kamera...";
 
-  if(typeof Html5Qrcode==="undefined"){
-    if(status) status.textContent="Scanner QR gagal dimuat.";
+  if(!window.isSecureContext){
+    if(status) status.textContent="Kamera memerlukan HTTPS.";
+    return;
+  }
+  if(!navigator.mediaDevices?.getUserMedia){
+    if(status) status.textContent="Browser tidak mendukung akses kamera.";
     return;
   }
 
+  if(status) status.textContent="Meminta izin kamera...";
+
   try{
-    claimQrScanner=new Html5Qrcode("claimQrReader");
+    claimCameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{
+        facingMode:{ideal:"environment"},
+        width:{ideal:1280},
+        height:{ideal:720}
+      },
+      audio:false
+    });
+
+    if(!video) throw new Error("Video scanner tidak ditemukan.");
+
+    video.srcObject=claimCameraStream;
+    await video.play();
+
+    if("BarcodeDetector" in window){
+      try{
+        claimBarcodeDetector=new BarcodeDetector({formats:["qr_code"]});
+        if(status) status.textContent="Kamera aktif. Arahkan QR member ke kotak.";
+        claimCameraRAF=requestAnimationFrame(claimDetectLoop);
+        return;
+      }catch(e){
+        claimBarcodeDetector=null;
+      }
+    }
+
+    // Fallback ke html5-qrcode hanya bila BarcodeDetector tidak tersedia.
+    claimCameraStream.getTracks().forEach(t=>t.stop());
+    claimCameraStream=null;
+    video.srcObject=null;
+
+    if(typeof Html5Qrcode==="undefined"){
+      if(status) status.textContent="Decoder QR tidak tersedia.";
+      return;
+    }
+
+    const reader=document.getElementById("claimQrReaderFallback");
+    if(!reader){
+      if(status) status.textContent="Area scanner fallback tidak ditemukan.";
+      return;
+    }
+
+    reader.classList.remove("hidden");
+    video.classList.add("hidden");
+
+    claimQrScanner=new Html5Qrcode("claimQrReaderFallback");
     const cameras=await Html5Qrcode.getCameras();
     if(!cameras?.length){
       if(status) status.textContent="Kamera tidak ditemukan.";
       return;
     }
 
-    const preferred=cameras.find(c=>/back|rear|environment/i.test(c.label))||cameras[cameras.length-1];
+    const preferred=
+      cameras.find(c=>/back|rear|environment/i.test(c.label)) ||
+      cameras[cameras.length-1];
 
     await claimQrScanner.start(
       preferred.id,
       {fps:8,qrbox:{width:210,height:210},aspectRatio:1},
       async decoded=>{
         const id=extractMemberIdFromQrPayload(decoded);
-        const m=members.find(x=>x.id.toLowerCase()===String(id).toLowerCase());
+        const member=members.find(x=>x.id.toLowerCase()===String(id).toLowerCase());
 
-        if(!m){
+        if(!member){
           if(status) status.textContent="QR terbaca tetapi member tidak ditemukan.";
           return;
         }
 
-        chooseClaimMember(m.id,"qr");
+        chooseClaimMember(member.id,"qr");
         await closeClaimScanner();
       }
     );
 
-    if(status) status.textContent="Arahkan QR member ke kamera.";
+    if(status) status.textContent="Kamera aktif. Arahkan QR member.";
   }catch(err){
-    console.error(err);
-    if(status) status.textContent="Kamera gagal: "+(err?.message||err);
+    console.error("CLAIM CAMERA ERROR:",err);
+
+    if(status){
+      if(err?.name==="NotAllowedError"){
+        status.textContent="Izin kamera ditolak. Izinkan Camera untuk situs ini lalu coba lagi.";
+      }else if(err?.name==="NotReadableError"){
+        status.textContent="Kamera sedang dipakai aplikasi/scanner lain. Tutup kamera lain lalu coba lagi.";
+      }else if(err?.name==="NotFoundError"){
+        status.textContent="Kamera belakang tidak ditemukan.";
+      }else{
+        status.textContent="Kamera gagal: "+(err?.message||err);
+      }
+    }
   }
 }
+
 
 async function openClaimNfcScanner(){
   await closeClaimScanner();
