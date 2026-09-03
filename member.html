@@ -4,8 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member V9 WA Corner</title>
+<title>RK CELL Member V10 QR Download</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root{
   --cyan:#45dfff;--green:#00df86;--text:#f4fbff;--muted:#7fa1b3;
@@ -388,6 +389,57 @@ body{padding:3px 0!important}
   transform:translateY(0)!important;
 }
 
+
+/* V10 QR Member Download */
+.qr-download-toggle{
+  position:fixed;
+  top:10px;
+  left:10px;
+  z-index:80;
+  width:38px;
+  height:38px;
+  padding:0;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(69,223,255,.55);
+  background:linear-gradient(135deg,#0879e9,#45dfff);
+  color:#fff;
+  box-shadow:0 5px 16px rgba(0,0,0,.30);
+  cursor:pointer;
+}
+.qr-download-toggle svg{width:21px;height:21px;display:block}
+.qr-download-toggle:active{transform:scale(.96)}
+.qr-download-toast{
+  position:fixed;
+  left:50%;
+  bottom:62px;
+  transform:translateX(-50%) translateY(10px);
+  z-index:100;
+  padding:7px 11px;
+  border-radius:12px;
+  background:rgba(5,19,27,.96);
+  border:1px solid rgba(69,223,255,.35);
+  color:#b9f5ff;
+  font:800 7px ui-monospace,monospace;
+  opacity:0;
+  pointer-events:none;
+  transition:.18s ease;
+  white-space:nowrap;
+}
+.qr-download-toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+#qrMemberRenderSource{
+  position:fixed;
+  left:-9999px;
+  top:-9999px;
+  width:420px;
+  height:420px;
+  background:#fff;
+}
+
 </style>
 </head>
 <body>
@@ -412,6 +464,205 @@ function rewardIcon(name){
  if(n.includes("admin")) return "🧾";
  return "🎁";
 }
+
+
+let currentMemberData = null;
+
+function showQrToast(text){
+  const el=document.getElementById("qrDownloadToast");
+  if(!el) return;
+  el.textContent=text;
+  el.classList.add("show");
+  clearTimeout(window.__qrToastTimer);
+  window.__qrToastTimer=setTimeout(()=>el.classList.remove("show"),1800);
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  const rr=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+rr,y);
+  ctx.arcTo(x+w,y,x+w,y+h,rr);
+  ctx.arcTo(x+w,y+h,x,y+h,rr);
+  ctx.arcTo(x,y+h,x,y,rr);
+  ctx.arcTo(x,y,x+w,y,rr);
+  ctx.closePath();
+}
+
+function fitCanvasText(ctx,text,maxWidth,startSize,minSize=24){
+  let size=startSize;
+  while(size>minSize){
+    ctx.font=`900 ${size}px Arial, sans-serif`;
+    if(ctx.measureText(text).width<=maxWidth) break;
+    size-=2;
+  }
+  return size;
+}
+
+async function downloadMemberQrCard(){
+  const d=currentMemberData;
+  if(!d) return showQrToast("Data member belum siap");
+
+  if(typeof QRCode==="undefined"){
+    return showQrToast("Library QR belum termuat");
+  }
+
+  showQrToast("Menyiapkan kartu QR...");
+
+  const source=document.getElementById("qrMemberRenderSource");
+  if(!source) return;
+
+  source.innerHTML="";
+  const memberUrl=`https://curu123.github.io/member/member.html?id=${encodeURIComponent(d.id)}`;
+
+  new QRCode(source,{
+    text:memberUrl,
+    width:420,
+    height:420,
+    colorDark:"#06111d",
+    colorLight:"#ffffff",
+    correctLevel:QRCode.CorrectLevel.H
+  });
+
+  await new Promise(resolve=>setTimeout(resolve,180));
+
+  const qrCanvas=source.querySelector("canvas");
+  const qrImg=source.querySelector("img");
+
+  const canvas=document.createElement("canvas");
+  canvas.width=1080;
+  canvas.height=1350;
+  const ctx=canvas.getContext("2d");
+
+  // Background.
+  const bg=ctx.createLinearGradient(0,0,1080,1350);
+  bg.addColorStop(0,"#071426");
+  bg.addColorStop(.52,"#07101d");
+  bg.addColorStop(1,"#0b2440");
+  ctx.fillStyle=bg;
+  ctx.fillRect(0,0,1080,1350);
+
+  // Decorative glow.
+  const glow=ctx.createRadialGradient(160,130,10,160,130,430);
+  glow.addColorStop(0,"rgba(69,223,255,.28)");
+  glow.addColorStop(1,"rgba(69,223,255,0)");
+  ctx.fillStyle=glow;
+  ctx.fillRect(0,0,1080,700);
+
+  const glow2=ctx.createRadialGradient(970,1200,10,970,1200,450);
+  glow2.addColorStop(0,"rgba(118,71,255,.25)");
+  glow2.addColorStop(1,"rgba(118,71,255,0)");
+  ctx.fillStyle=glow2;
+  ctx.fillRect(500,750,580,600);
+
+  // Outer premium frame.
+  roundRect(ctx,38,38,1004,1274,42);
+  ctx.strokeStyle="#45dfff";
+  ctx.lineWidth=6;
+  ctx.stroke();
+
+  roundRect(ctx,58,58,964,1234,34);
+  ctx.strokeStyle="rgba(118,71,255,.55)";
+  ctx.lineWidth=3;
+  ctx.stroke();
+
+  // Logo.
+  const logoGrad=ctx.createLinearGradient(95,95,235,235);
+  logoGrad.addColorStop(0,"#45dfff");
+  logoGrad.addColorStop(1,"#0879e9");
+  ctx.fillStyle=logoGrad;
+  ctx.beginPath();
+  ctx.arc(170,165,72,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#04111d";
+  ctx.font="1000 52px Arial, sans-serif";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText("RK",170,166);
+
+  ctx.textAlign="left";
+  ctx.textBaseline="alphabetic";
+  ctx.fillStyle="#ffffff";
+  ctx.font="1000 62px Arial, sans-serif";
+  ctx.fillText("RK CELL",280,158);
+  ctx.fillStyle="#45dfff";
+  ctx.font="800 28px Arial, sans-serif";
+  ctx.fillText("MEMBER LOYALTY SYSTEM",282,202);
+
+  // Member card headline.
+  ctx.textAlign="center";
+  ctx.fillStyle="#ffffff";
+  let nameSize=fitCanvasText(ctx,String(d.name||"MEMBER RK CELL").toUpperCase(),860,58,30);
+  ctx.font=`1000 ${nameSize}px Arial, sans-serif`;
+  ctx.fillText(String(d.name||"MEMBER RK CELL").toUpperCase(),540,325);
+
+  // Member ID chip.
+  roundRect(ctx,310,355,460,72,36);
+  ctx.fillStyle="rgba(38,121,255,.22)";
+  ctx.fill();
+  ctx.strokeStyle="rgba(69,223,255,.70)";
+  ctx.lineWidth=2;
+  ctx.stroke();
+  ctx.fillStyle="#b9f5ff";
+  ctx.font="900 28px Arial, sans-serif";
+  ctx.fillText(String(d.id||""),540,402);
+
+  // QR white panel.
+  roundRect(ctx,230,485,620,620,42);
+  ctx.fillStyle="#ffffff";
+  ctx.fill();
+  ctx.strokeStyle="#45dfff";
+  ctx.lineWidth=8;
+  ctx.stroke();
+
+  // QR itself.
+  if(qrCanvas){
+    ctx.drawImage(qrCanvas,310,565,460,460);
+  }else if(qrImg){
+    await new Promise((resolve,reject)=>{
+      if(qrImg.complete) resolve();
+      else{
+        qrImg.onload=resolve;
+        qrImg.onerror=reject;
+      }
+    }).catch(()=>{});
+    if(qrImg.complete) ctx.drawImage(qrImg,310,565,460,460);
+  }
+
+  // Corner labels around QR.
+  ctx.fillStyle="#45dfff";
+  ctx.font="900 24px Arial, sans-serif";
+  ctx.textAlign="center";
+  ctx.fillText("SCAN QR MEMBER",540,1157);
+
+  ctx.fillStyle="#9ec7d8";
+  ctx.font="600 22px Arial, sans-serif";
+  ctx.fillText("Scan untuk membuka halaman member RK CELL",540,1196);
+
+  // Footer divider.
+  const footGrad=ctx.createLinearGradient(160,0,920,0);
+  footGrad.addColorStop(0,"rgba(69,223,255,0)");
+  footGrad.addColorStop(.5,"rgba(69,223,255,.8)");
+  footGrad.addColorStop(1,"rgba(69,223,255,0)");
+  ctx.fillStyle=footGrad;
+  ctx.fillRect(170,1230,740,2);
+
+  ctx.fillStyle="#7fa1b3";
+  ctx.font="700 20px Arial, sans-serif";
+  ctx.fillText("Terima kasih telah menjadi member RK CELL",540,1274);
+
+  // Download.
+  const safeName=String(d.name||"member").replace(/[^a-z0-9_-]+/gi,"_").replace(/^_+|_+$/g,"");
+  const link=document.createElement("a");
+  link.download=`RK_CELL_MEMBER_${safeName||d.id}.png`;
+  link.href=canvas.toDataURL("image/png");
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  showQrToast("Kartu QR berhasil dibuat");
+}
+
 
 let memberVoiceName = "";
 let voiceHasPlayed = false;
@@ -501,6 +752,7 @@ async function init(){
    document.getElementById("app").innerHTML='<div class="error">Member tidak ditemukan.</div>';
    return;
  }
+ currentMemberData=d;
  const pts=Number(d.points||0),claims=d.claims||[],hist=d.history||[];
  const availableRewards=REWARDS.filter(r=>pts>=Number(r.p) && !claims.some(c=>Number(c.points_required)===Number(r.p)));
  const next=REWARDS.find(r=>pts<r.p);
@@ -568,6 +820,16 @@ async function init(){
    <div class="section"><strong>RIWAYAT REWARD</strong><span>${claims.length} klaim</span></div>
    <div class="history-strip">${claims.length?claims.slice(0,6).map(c=>`<div class="history"><div class="hleft"><div class="hicon">🎁</div><div class="hmain"><b>${esc(c.reward_name)}</b><small>Reward diklaim</small></div></div><div class="date">${new Date(c.claimed_at).toLocaleString("id-ID")}</div></div>`).join(""):'<div class="empty">Belum ada reward yang diklaim.</div>'}</div>
  </div>
+
+ <button class="qr-download-toggle" id="qrDownloadBtn" type="button" onclick="downloadMemberQrCard()" aria-label="Download QR Member" title="Download QR Member">
+   <svg viewBox="0 0 32 32" aria-hidden="true">
+     <path fill="#fff" d="M4 4h10v10H4V4Zm3 3v4h4V7H7Zm11-3h10v10H18V4Zm3 3v4h4V7h-4ZM4 18h10v10H4V18Zm3 3v4h4v-4H7Zm11-3h4v4h-4v-4Zm6 0h4v4h-4v-4Zm-6 6h4v4h-4v-4Zm6 0h4v4h-4v-4Z"/>
+     <path fill="#fff" d="M15 12h3v4h4v3h-7v-7Z" opacity=".9"/>
+   </svg>
+ </button>
+
+ <div id="qrMemberRenderSource" aria-hidden="true"></div>
+ <div class="qr-download-toast" id="qrDownloadToast">Menyiapkan QR...</div>
 
  <button class="admin-contact-toggle" id="adminContactToggle" type="button" onclick="toggleAdminContact()" aria-label="Hubungi Admin via WhatsApp" title="Hubungi Admin">
    <svg class="wa-icon" viewBox="0 0 32 32" aria-hidden="true">
