@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#071a2b" />
-  <title>RK CELL Admin V34 Reward Priority</title>
+  <title>RK CELL Admin Performance Edition</title>
   <link rel="manifest" href="manifest.webmanifest">
   <style>
 :root{
@@ -604,6 +604,154 @@ body.light-mode .center-scan-btn{
   box-shadow:0 8px 22px rgba(0,0,0,.12);
 }
 
+
+/* Compact System Overview */
+#adminHome{margin-bottom:8px}
+#adminHome>.section-title{margin-bottom:5px}
+#adminHome>.section-title h2{font-size:11px}
+#adminHome>.section-title span{font-size:7px}
+#adminHome .stats{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+#adminHome .stat-card{min-height:64px;padding:7px 8px;border-radius:4px 12px 4px 12px}
+#adminHome .stat-icon{width:24px;height:24px;margin-bottom:4px;font-size:12px;border-radius:3px 8px 3px 8px}
+#adminHome .stat-card strong{font-size:17px;line-height:1}
+#adminHome .stat-card span{margin-top:3px;font-size:7px;line-height:1.15}
+#adminHome .section{margin-top:7px}
+#adminHome .section .section-title{margin-bottom:5px}
+#adminHome .kpi-mini{grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+#adminHome .kpi-box{padding:6px 7px;border-radius:4px 10px 4px 10px}
+#adminHome .kpi-box strong{font-size:14px;line-height:1}
+#adminHome .kpi-box span{margin-top:3px;font-size:6.5px;line-height:1.15}
+@media(max-width:430px){
+ #adminHome .stat-card{min-height:58px;padding:6px 4px;text-align:center}
+ #adminHome .stat-icon{width:21px;height:21px;margin:0 auto 4px;font-size:11px}
+ #adminHome .stat-card strong{font-size:15px}
+ #adminHome .stat-card span{font-size:6px;letter-spacing:0}
+ #adminHome .kpi-box{padding:6px 3px;text-align:center}
+ #adminHome .kpi-box strong{font-size:13px}
+ #adminHome .kpi-box span{font-size:5.8px;letter-spacing:0}
+}
+
+
+/* Setup Analytics Chart */
+.analytics-card{
+  margin-top:12px;
+}
+.analytics-toolbar{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:10px;
+}
+.analytics-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin-bottom:8px;
+}
+.analytics-mini{
+  padding:7px 8px;
+  border:1px solid rgba(0,245,255,.14);
+  border-radius:4px 10px 4px 10px;
+  background:rgba(0,245,255,.025);
+}
+.analytics-mini strong{
+  display:block;
+  font:900 15px ui-monospace,monospace;
+  color:var(--cyan);
+}
+.analytics-mini span{
+  display:block;
+  margin-top:2px;
+  color:#688196;
+  font-size:6.5px;
+  text-transform:uppercase;
+}
+.analytics-chart-wrap{
+  position:relative;
+  height:220px;
+  padding:7px;
+  border:1px solid #17364a;
+  border-radius:5px 14px 5px 14px;
+  background:#050a12;
+  overflow:hidden;
+}
+#analyticsChart{
+  width:100%;
+  height:100%;
+  display:block;
+}
+.analytics-legend{
+  margin-top:6px;
+  color:#698295;
+  font-size:7px;
+  text-align:center;
+}
+body.light-mode .analytics-chart-wrap{
+  background:#fff;
+  border-color:#d5e2ea;
+}
+body.light-mode .analytics-mini{
+  background:#f7fbfd;
+  border-color:#d5e2ea;
+}
+@media(max-width:430px){
+  .analytics-chart-wrap{height:185px}
+  .analytics-toolbar{grid-template-columns:1fr 1fr}
+}
+
+
+/* V35 PERFORMANCE EDITION */
+@media(max-width:760px){
+  body:before{display:none!important}
+  .hero,.card,.bottom-nav{
+    backdrop-filter:none!important;
+    box-shadow:none!important;
+  }
+  .btn{transition:none!important}
+  .btn:hover{transform:none!important}
+  .stat-card strong,.brand-title,.points{text-shadow:none!important}
+}
+
+/* Transaction list renders only a compact recent slice */
+#txList .item:nth-child(n+21){display:none}
+
+/* Lightweight content visibility for offscreen setup panels */
+#setupTab .card,
+#rewardTab .card{
+  content-visibility:auto;
+  contain-intrinsic-size:180px;
+}
+
+
+/* Clean admin header */
+.hero{padding-top:10px!important;padding-bottom:10px!important}
+.hero .hero-copy:empty{display:none!important}
+
+
+/* Final clean header: remove orphan header remnants */
+.hero .eyebrow:empty,
+.hero .hero-copy:empty{display:none!important}
+
+
+/* Clean top controls */
+.logout-top{
+  cursor:pointer;
+  color:#ff8da3;
+  border-color:rgba(255,49,88,.28);
+}
+.logout-top:hover{
+  color:#fff;
+  border-color:rgba(255,49,88,.65);
+}
+@media(max-width:560px){
+  .brand-row{align-items:flex-start}
+  .brand-row>div:last-child{gap:5px!important}
+  #themeToggle,.logout-top,.brand-row .status-pill{
+    padding:6px 7px;
+    font-size:7px;
+  }
+}
+
 </style>
 <script>
 (function(){
@@ -629,12 +777,10 @@ body.light-mode .center-scan-btn{
       <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         <button class="status-pill" id="themeToggle" type="button" style="cursor:pointer">☀/☾ THEME</button>
         <div class="status-pill"><span class="status-dot"></span><span id="modePill">MODE DEMO</span></div>
+        <button class="status-pill logout-top hidden" id="logoutBtn" type="button">↪ LOGOUT</button>
       </div>
     </div>
-    <div class="hero-copy">
-      <h2>ADMIN SYSTEM // RK CELL</h2>
-      <p>Panel admin RK CELL untuk mengelola member, transaksi, poin, reward, dan laporan.</p>
-    </div>
+    
   </header>
 
   <div id="authGate" class="auth-gate hidden">
@@ -655,40 +801,6 @@ body.light-mode .center-scan-btn{
       <div id="loginStatus" class="scan-status" style="margin-top:10px">Belum login.</div>
     </div>
   </div>
-
-  <div id="adminBar" class="admin-bar hidden">
-    <div>
-      <strong>ADMIN SESSION ACTIVE</strong><br>
-      <small id="adminIdentity">-</small><span class="role-pill" id="adminRole">ROLE</span>
-    </div>
-    <button class="btn danger" id="logoutBtn" style="width:auto">Logout</button>
-  </div>
-
-  <div id="adminView" class="hidden">
-    <div id="adminHome">
-<div class="section-title"><h2>SYSTEM OVERVIEW</h2><span>LIVE MEMBER DATA</span></div>
-    <div class="stats">
-      <div class="card stat-card">
-        <div class="stat-icon">👥</div>
-        <strong id="statMembers">0</strong><span>Total Member</span>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-icon">🧾</div>
-        <strong id="statTx">0</strong><span>Transaksi</span>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-icon">⭐</div>
-        <strong id="statPoints">0</strong><span>Total Poin</span>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-icon">🎁</div>
-        <strong id="statRewards">0</strong><span>Reward Tercapai</span>
-      </div>
-      <div class="card stat-card">
-        <div class="stat-icon">⚡</div>
-        <strong id="statToday">0</strong><span>Transaksi Hari Ini</span>
-      </div>
-    </div>
 
 
 
@@ -735,11 +847,11 @@ body.light-mode .center-scan-btn{
             <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR member. QR boleh berisi <b>ID langsung</b> atau <b>link halaman member</b> seperti <b>https://curu123.github.io/member/member.html?id=RK-2026-0001</b>. Sistem otomatis mengambil ID member dari link. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
 
             <div class="scan-actions">
-              <button class="btn primary" id="startScanBtn">📷 Scan QR / Barcode</button>
-              <button class="btn soft" id="stopScanBtn">■ Stop Kamera</button>
+              
+              
             </div>
 
-            <div id="scanReader" style="margin-top:10px"></div>
+            
             <div class="scan-status" id="scanStatus">Scanner belum aktif.</div>
           </div>
 
@@ -794,7 +906,10 @@ body.light-mode .center-scan-btn{
 
       <div class="section">
         <div class="section-title"><h2>Riwayat Terbaru</h2><span>30 transaksi terakhir</span></div>
-        <div class="card"><div id="txList" class="list"></div></div>
+        <div class="card">
+          <div id="txList" class="list"></div>
+          <button class="btn soft" id="showMoreTxBtn" type="button" style="margin-top:10px;width:100%">Tampilkan Lebih Banyak</button>
+        </div>
       </div>
     </div>
 
@@ -964,6 +1079,43 @@ body.light-mode .center-scan-btn{
       <div class="section-title"><h2>ACTIVITY LOG</h2><span>Recent operations</span></div>
       <div id="activityLog" class="activity-log"></div>
     </div>
+
+      
+      <div class="card section analytics-card">
+        <div class="section-title">
+          <h2>GRAFIK ANALITIK</h2>
+          <span>Data Supabase</span>
+        </div>
+
+        <div class="analytics-toolbar">
+          <div class="field">
+            <label>JENIS GRAFIK</label>
+            <select id="analyticsMetric">
+              <option value="transactions">Transaksi</option>
+              <option value="members">Pertumbuhan Member</option>
+              <option value="points">Poin Diberikan</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>PERIODE</label>
+            <select id="analyticsRange">
+              <option value="7">7 Hari</option>
+              <option value="30" selected>30 Hari</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="analytics-summary">
+          <div class="analytics-mini"><strong id="analyticsTotal">0</strong><span>Total Periode</span></div>
+          <div class="analytics-mini"><strong id="analyticsAvg">0</strong><span>Rata-rata / Hari</span></div>
+          <div class="analytics-mini"><strong id="analyticsPeak">0</strong><span>Tertinggi / Hari</span></div>
+        </div>
+
+        <div class="analytics-chart-wrap">
+          <canvas id="analyticsChart"></canvas>
+        </div>
+        <div class="analytics-legend" id="analyticsLegend">Grafik transaksi 30 hari terakhir.</div>
+      </div>
 
       <div class="section-title"><h2>KONEKSI SUPABASE</h2><span>Hanya di Setup</span></div>
       <div class="card">
@@ -1608,7 +1760,11 @@ function refresh(){
   syncQrMemberOptions();
   syncClaimOptions();
   syncPrintOptions();
-  renderRewardManager();
+  if("requestIdleCallback" in window){
+    requestIdleCallback(()=>renderRewardManager(),{timeout:500});
+  }else{
+    setTimeout(renderRewardManager,80);
+  }
 }
 
 document.getElementById("addMemberBtn").onclick = async ()=>{
@@ -1988,13 +2144,26 @@ function openMember(id){
 }
 
 
+
+function rkDebounce(fn,wait=180){
+  let t;
+  return (...args)=>{
+    clearTimeout(t);
+    t=setTimeout(()=>fn(...args),wait);
+  };
+}
+
 function escapeHtml(s){
   return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
 }
 
-document.getElementById("searchMember").addEventListener("input",renderMembers);
+document.getElementById("searchMember").addEventListener("input",rkDebounce(renderMembers,160));
+
+
+let rkActiveTab="memberTab";
 
 function activateTab(tabId){
+  rkActiveTab=tabId;
   document.querySelectorAll(".tabPage").forEach(p=>p.classList.add("hidden"));
 
   const target=document.getElementById(tabId);
@@ -2014,6 +2183,7 @@ function activateTab(tabId){
   });
 
   window.scrollTo({top:0,behavior:"smooth"});
+  if(tabId==="setupTab") setTimeout(renderAnalyticsChart,80);
 }
 
 document.querySelectorAll(".tab").forEach(btn=>{
@@ -2180,6 +2350,172 @@ document.getElementById("offlineRetryBtn")?.addEventListener("click",()=>refresh
 
 
 document.getElementById("addRewardManualBtn")?.addEventListener("click",addRewardManual);
+
+
+function analyticsDateKey(ts){
+  const d=new Date(ts);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
+function analyticsDays(n){
+  const days=[];
+  const now=new Date();
+  now.setHours(0,0,0,0);
+  for(let i=n-1;i>=0;i--){
+    const d=new Date(now);
+    d.setDate(now.getDate()-i);
+    days.push({
+      key:analyticsDateKey(d.getTime()),
+      label:`${d.getDate()}/${d.getMonth()+1}`
+    });
+  }
+  return days;
+}
+
+function getAnalyticsSeries(){
+  const metric=document.getElementById("analyticsMetric")?.value || "transactions";
+  const range=Number(document.getElementById("analyticsRange")?.value || 30);
+  const days=analyticsDays(range);
+  const map=Object.fromEntries(days.map(d=>[d.key,0]));
+
+  if(metric==="transactions"){
+    transactions.forEach(t=>{
+      const key=analyticsDateKey(t.created_at);
+      if(key in map) map[key]+=1;
+    });
+  }else if(metric==="members"){
+    members.forEach(m=>{
+      const key=analyticsDateKey(m.created_at);
+      if(key in map) map[key]+=1;
+    });
+  }else if(metric==="points"){
+    transactions.forEach(t=>{
+      const key=analyticsDateKey(t.created_at);
+      if(key in map && Number(t.points)>0) map[key]+=Number(t.points);
+    });
+  }
+
+  const values=days.map(d=>map[d.key]||0);
+  return {metric,range,days,values};
+}
+
+function renderAnalyticsChart(){
+  const canvas=document.getElementById("analyticsChart");
+  if(!canvas) return;
+
+  const {metric,range,days,values}=getAnalyticsSeries();
+  const total=values.reduce((a,b)=>a+b,0);
+  const avg=range?total/range:0;
+  const peak=Math.max(0,...values);
+
+  document.getElementById("analyticsTotal").textContent=total;
+  document.getElementById("analyticsAvg").textContent=avg.toFixed(avg<10?1:0);
+  document.getElementById("analyticsPeak").textContent=peak;
+
+  const labels={
+    transactions:"transaksi",
+    members:"pertumbuhan member",
+    points:"poin diberikan"
+  };
+  const legend=document.getElementById("analyticsLegend");
+  if(legend) legend.textContent=`Grafik ${labels[metric]} ${range} hari terakhir.`;
+
+  const rect=canvas.getBoundingClientRect();
+  const dpr=Math.max(1,window.devicePixelRatio||1);
+  canvas.width=Math.max(320,Math.floor(rect.width*dpr));
+  canvas.height=Math.max(180,Math.floor(rect.height*dpr));
+
+  const ctx=canvas.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const w=rect.width;
+  const h=rect.height;
+  const pad={l:30,r:10,t:12,b:25};
+  const cw=w-pad.l-pad.r;
+  const ch=h-pad.t-pad.b;
+  const max=Math.max(1,...values);
+
+  ctx.clearRect(0,0,w,h);
+
+  const light=document.body.classList.contains("light-mode");
+  const grid=light?"rgba(20,50,70,.12)":"rgba(120,190,220,.12)";
+  const text=light?"#60758a":"#6f899e";
+  const line=light?"#007f8a":"#00f5ff";
+  const fill=light?"rgba(0,127,138,.10)":"rgba(0,245,255,.08)";
+
+  ctx.lineWidth=1;
+  ctx.strokeStyle=grid;
+  ctx.fillStyle=text;
+  ctx.font="8px ui-monospace, monospace";
+
+  for(let i=0;i<=4;i++){
+    const y=pad.t+(ch/4)*i;
+    ctx.beginPath();
+    ctx.moveTo(pad.l,y);
+    ctx.lineTo(w-pad.r,y);
+    ctx.stroke();
+    const val=Math.round(max-(max/4)*i);
+    ctx.fillText(String(val),3,y+3);
+  }
+
+  const step=values.length>1?cw/(values.length-1):cw;
+
+  ctx.beginPath();
+  values.forEach((v,i)=>{
+    const x=pad.l+(values.length===1?cw/2:i*step);
+    const y=pad.t+ch-(v/max)*ch;
+    if(i===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+  ctx.lineTo(pad.l+cw,pad.t+ch);
+  ctx.lineTo(pad.l,pad.t+ch);
+  ctx.closePath();
+  ctx.fillStyle=fill;
+  ctx.fill();
+
+  ctx.beginPath();
+  values.forEach((v,i)=>{
+    const x=pad.l+(values.length===1?cw/2:i*step);
+    const y=pad.t+ch-(v/max)*ch;
+    if(i===0) ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle=line;
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  values.forEach((v,i)=>{
+    if(v<=0) return;
+    const x=pad.l+(values.length===1?cw/2:i*step);
+    const y=pad.t+ch-(v/max)*ch;
+    ctx.beginPath();
+    ctx.arc(x,y,2.5,0,Math.PI*2);
+    ctx.fillStyle=line;
+    ctx.fill();
+  });
+
+  const labelEvery=range<=7?1:5;
+  ctx.fillStyle=text;
+  ctx.font="7px ui-monospace, monospace";
+  days.forEach((d,i)=>{
+    if(i%labelEvery!==0 && i!==days.length-1) return;
+    const x=pad.l+(days.length===1?cw/2:i*step);
+    ctx.fillText(d.label,Math.max(pad.l-4,Math.min(w-26,x-9)),h-7);
+  });
+}
+
+document.getElementById("analyticsMetric")?.addEventListener("change",renderAnalyticsChart);
+document.getElementById("analyticsRange")?.addEventListener("change",renderAnalyticsChart);
+window.addEventListener("resize",()=>{
+  clearTimeout(window.__rkChartResize);
+  window.__rkChartResize=setTimeout(()=>{if(!document.getElementById("setupTab")?.classList.contains("hidden")) renderAnalyticsChart();},220);
+});
+
+
+document.getElementById("showMoreTxBtn")?.addEventListener("click",()=>{
+  document.querySelectorAll("#txList .item").forEach(el=>el.style.display="flex");
+  document.getElementById("showMoreTxBtn")?.classList.add("hidden");
+});
 
 applyTheme(localStorage.getItem("rk_theme") || "dark");
 
