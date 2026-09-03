@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#06111d">
-<title>RK CELL Member V10 QR Download</title>
+<title>RK CELL Member V10.1 QR WA Aligned</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
@@ -438,6 +438,32 @@ body{padding:3px 0!important}
   width:420px;
   height:420px;
   background:#fff;
+}
+
+
+/* V10.1 Top action alignment: QR + WhatsApp side by side */
+.qr-download-toggle{
+  top:10px!important;
+  left:auto!important;
+  right:56px!important;
+  width:38px!important;
+  height:38px!important;
+}
+.admin-contact-toggle{
+  top:10px!important;
+  right:10px!important;
+  width:38px!important;
+  height:38px!important;
+}
+@media(max-width:430px){
+  .qr-download-toggle{
+    top:8px!important;
+    right:54px!important;
+  }
+  .admin-contact-toggle{
+    top:8px!important;
+    right:8px!important;
+  }
 }
 
 </style>
