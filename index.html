@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#071a2b" name="theme-color"/>
-<title>RK CELL Admin NFC Edition</title>
+<title>RK CELL Admin Flexible Member Access</title>
 <link href="manifest.webmanifest" rel="manifest"/>
 <style>
 :root{
@@ -1381,6 +1381,80 @@ body:not(.dark-mode) .center-scan-btn{
   .nfc-reader-visual{min-height:220px}
 }
 
+
+/* Add Member method selector */
+.member-method-box{
+  margin-top:11px;
+  padding:10px;
+  border:1px solid rgba(255,95,171,.20);
+  border-radius:14px;
+  background:rgba(255,95,171,.025);
+}
+.member-method-title{
+  margin-bottom:7px;
+  color:var(--muted);
+  font:900 8px ui-monospace,monospace;
+  letter-spacing:.8px;
+}
+.member-method-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+.member-method-btn{
+  min-width:0;
+  padding:9px 5px;
+  border:1px solid rgba(255,95,171,.18);
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  text-align:center;
+}
+.member-method-btn span{
+  display:block;
+  font-size:19px;
+  margin-bottom:3px;
+}
+.member-method-btn strong{
+  display:block;
+  font-size:9px;
+}
+.member-method-btn small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:6px;
+}
+.member-method-btn.active{
+  border-color:#ff5fab;
+  background:linear-gradient(135deg,rgba(255,95,171,.16),rgba(168,117,255,.13));
+  box-shadow:0 0 0 2px rgba(255,95,171,.05);
+}
+.member-method-note{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:7px;
+  line-height:1.45;
+}
+
+
+.member-method-title:after{
+  content:" • BISA PILIH LEBIH DARI SATU";
+  color:#ff5fab;
+  font-size:6px;
+  margin-left:4px;
+}
+.member-method-btn.active:after{
+  content:"✓";
+  position:absolute;
+  top:5px;
+  right:7px;
+  font-size:9px;
+  font-weight:1000;
+  color:#ff5fab;
+}
+.member-method-btn{position:relative}
+
 </style>
 <script>
 (function(){
@@ -1444,7 +1518,26 @@ body:not(.dark-mode) .center-scan-btn{
 </div>
 <div class="row" style="margin-top:10px">
 <div class="field"><label>ALAMAT / KETERANGAN</label><input id="address" placeholder="Opsional"/></div>
-<div style="display:flex;align-items:end"><button class="btn primary" id="addMemberBtn">＋ Tambah Member</button></div>
+</div>
+
+<div class="member-method-box">
+  <div class="member-method-title">METODE AKSES MEMBER</div>
+  <div class="member-method-grid">
+    <button class="member-method-btn active" type="button" data-method="name" id="memberMethodName" aria-pressed="true">
+      <span>👤</span><strong>Nama</strong><small>Selalu aktif</small>
+    </button>
+    <button class="member-method-btn active" type="button" data-method="qr" id="memberMethodQr" aria-pressed="true">
+      <span>▦</span><strong>QR</strong><small>Bisa dipindai</small>
+    </button>
+    <button class="member-method-btn" type="button" data-method="nfc" id="memberMethodNfc" aria-pressed="false">
+      <span>📡</span><strong>NFC</strong><small>Kartu tempel</small>
+    </button>
+  </div>
+  <div class="member-method-note" id="memberMethodNote">Nama selalu tersedia. QR aktif secara default. NFC bisa ditambahkan jika member ingin kartu.</div>
+</div>
+
+<div style="margin-top:10px">
+  <button class="btn primary" id="addMemberBtn" style="width:100%">＋ Tambah Member</button>
 </div>
 </div>
 <div class="section">
@@ -2404,6 +2497,79 @@ function refresh(){
   }
 }
 
+
+
+let newMemberMethods=new Set(["name","qr"]);
+
+function updateMemberMethodUI(){
+  document.querySelectorAll(".member-method-btn").forEach(btn=>{
+    const method=btn.dataset.method;
+    const active=newMemberMethods.has(method);
+    btn.classList.toggle("active",active);
+    btn.setAttribute("aria-pressed",active?"true":"false");
+  });
+
+  const note=document.getElementById("memberMethodNote");
+  if(!note) return;
+
+  const labels=[];
+  if(newMemberMethods.has("name")) labels.push("Nama");
+  if(newMemberMethods.has("qr")) labels.push("QR");
+  if(newMemberMethods.has("nfc")) labels.push("NFC");
+
+  note.textContent=`Akses aktif: ${labels.join(" + ")}. Member bisa menggunakan metode mana pun yang tersedia.`;
+}
+
+function toggleNewMemberMethod(method){
+  // Nama selalu aktif sebagai fallback identitas member.
+  if(method==="name"){
+    newMemberMethods.add("name");
+    updateMemberMethodUI();
+    return;
+  }
+
+  if(newMemberMethods.has(method)) newMemberMethods.delete(method);
+  else newMemberMethods.add(method);
+
+  updateMemberMethodUI();
+}
+
+document.querySelectorAll(".member-method-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>toggleNewMemberMethod(btn.dataset.method));
+});
+
+updateMemberMethodUI();
+
+
+async function writeNewMemberNfc(member){
+  const url=`https://curu123.github.io/member/member.html?id=${encodeURIComponent(member.id)}`;
+
+  if(!window.isSecureContext || !("NDEFReader" in window)){
+    alert(`Member ${member.name} sudah berhasil dibuat, tetapi NFC tidak didukung browser/HP ini. Kartu NFC bisa dibuat nanti dari Setup.`);
+    return false;
+  }
+
+  try{
+    const writer=new NDEFReader();
+    alert(`Member ${member.name} berhasil dibuat.\n\nSekarang tempel kartu NFC ke belakang HP untuk menulis kartu member.`);
+
+    await writer.write({
+      records:[
+        {recordType:"url",data:url},
+        {recordType:"text",data:member.id,lang:"id"}
+      ]
+    });
+
+    await createAudit("nfc_card_written",member.id,{url,source:"member_create"});
+    alert(`✓ Member ${member.name} berhasil dibuat dan kartu NFC berhasil ditulis.`);
+    return true;
+  }catch(err){
+    console.error("WRITE NEW MEMBER NFC:",err);
+    alert(`Member ${member.name} sudah berhasil dibuat, tetapi penulisan NFC gagal: ${err?.message||err}\n\nKartu dapat ditulis ulang nanti dari Setup.`);
+    return false;
+  }
+}
+
 document.getElementById("addMemberBtn").onclick = async ()=>{
   const name=document.getElementById("name")?.value.trim()||"";
   if(!name) return alert("Nama member wajib diisi.");
@@ -2454,7 +2620,27 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
   if(addressEl) addressEl.value="";
 
   setConnectionStatus("SETUP ONLINE");
-  alert("Member berhasil dibuat: "+m.id);
+
+  const methodsUsed=new Set(newMemberMethods);
+
+  // Reset default untuk member berikutnya: Nama + QR.
+  newMemberMethods=new Set(["name","qr"]);
+  updateMemberMethodUI();
+
+  const accessLabels=["Nama"];
+  if(methodsUsed.has("qr")) accessLabels.push("QR");
+  if(methodsUsed.has("nfc")) accessLabels.push("NFC");
+
+  if(methodsUsed.has("nfc")){
+    const nfcOk=await writeNewMemberNfc(m);
+    if(nfcOk && methodsUsed.has("qr")){
+      alert(`Member aktif dengan akses: ${accessLabels.join(" + ")}.\n\nQR dapat dibuat/diunduh dari Setup → QR Member.`);
+    }
+  }else if(methodsUsed.has("qr")){
+    alert(`Member berhasil dibuat: ${m.id}\n\nAkses aktif: ${accessLabels.join(" + ")}.\nQR member dapat dibuat atau dicetak dari Setup → QR Member.`);
+  }else{
+    alert(`Member berhasil dibuat: ${m.id}\n\nAkses aktif: Nama.`);
+  }
 };
 
 
