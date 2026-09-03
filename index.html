@@ -592,6 +592,8 @@ body.light-mode .center-scan-btn{
 .premium-thanks{margin-top:10px;font-size:10px;font-style:italic;color:#61dfff}
 
 /* V30 clean separation */
+#adminHome.hidden{display:none!important}
+#adminHome{display:block}
 
 /* Claim reward priority */
 #rewardTab .section:has(#claimMemberSelect){
@@ -730,47 +732,6 @@ body.light-mode .analytics-mini{
 .hero .eyebrow:empty,
 .hero .hero-copy:empty{display:none!important}
 
-
-/* Clean top controls */
-.logout-top{
-  cursor:pointer;
-  color:#ff8da3;
-  border-color:rgba(255,49,88,.28);
-}
-.logout-top:hover{
-  color:#fff;
-  border-color:rgba(255,49,88,.65);
-}
-@media(max-width:560px){
-  .brand-row{align-items:flex-start}
-  .brand-row>div:last-child{gap:5px!important}
-  #themeToggle,.logout-top,.brand-row .status-pill{
-    padding:6px 7px;
-    font-size:7px;
-  }
-}
-
-
-/* Mobile Admin layout fix */
-@media(max-width:560px){
-  #memberTab>.section{
-    margin-top:0!important;
-    margin-bottom:9px!important;
-  }
-  #memberTab .kpi-mini{
-    display:grid!important;
-    grid-template-columns:repeat(4,minmax(0,1fr))!important;
-    gap:5px!important;
-  }
-  #memberTab .kpi-box{
-    min-height:54px!important;
-    padding:7px 3px!important;
-    text-align:center!important;
-  }
-  #memberTab .kpi-box strong{font-size:15px!important;line-height:1!important}
-  #memberTab .kpi-box span{font-size:5.5px!important;line-height:1.1!important;letter-spacing:0!important}
-}
-
 </style>
 <script>
 (function(){
@@ -796,7 +757,6 @@ body.light-mode .analytics-mini{
       <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
         <button class="status-pill" id="themeToggle" type="button" style="cursor:pointer">☀/☾ THEME</button>
         <div class="status-pill"><span class="status-dot"></span><span id="modePill">MODE DEMO</span></div>
-        <button class="status-pill logout-top hidden" id="logoutBtn" type="button">↪ LOGOUT</button>
       </div>
     </div>
     
@@ -821,13 +781,43 @@ body.light-mode .analytics-mini{
     </div>
   </div>
 
+  <div id="adminBar" class="admin-bar hidden">
+    <div>
+      <strong>ADMIN SESSION ACTIVE</strong><br>
+      <small id="adminIdentity">-</small><span class="role-pill" id="adminRole">ROLE</span>
+    </div>
+    <button class="btn danger" id="logoutBtn" style="width:auto">Logout</button>
+  </div>
 
-
-    
+  <div id="adminView" class="hidden">
+    <div id="adminHome">
+<div class="section-title"><h2>SYSTEM OVERVIEW</h2><span>LIVE MEMBER DATA</span></div>
+    <div class="stats">
+      <div class="card stat-card">
+        <div class="stat-icon">👥</div>
+        <strong id="statMembers">0</strong><span>Total Member</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">🧾</div>
+        <strong id="statTx">0</strong><span>Transaksi</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">⭐</div>
+        <strong id="statPoints">0</strong><span>Total Poin</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">🎁</div>
+        <strong id="statRewards">0</strong><span>Reward Tercapai</span>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon">⚡</div>
+        <strong id="statToday">0</strong><span>Transaksi Hari Ini</span>
+      </div>
     </div>
 
-    <div id="memberTab" class="tabPage section">
-      <div class="section">
+
+
+    <div class="section">
       <div class="section-title"><h2>DAILY PULSE</h2><span>Hari ini</span></div>
       <div class="kpi-mini">
         <div class="kpi-box"><strong id="kpiNewMembers">0</strong><span>Member Baru</span></div>
@@ -836,7 +826,9 @@ body.light-mode .analytics-mini{
         <div class="kpi-box"><strong id="kpiTodayClaims">0</strong><span>Reward Diklaim</span></div>
       </div>
     </div>
+    </div>
 
+    <div id="memberTab" class="tabPage section">
       <div class="section-title"><h2>ADMIN • Tambah Member</h2><span>Manajemen pelanggan</span></div>
       <div class="card">
         <div class="row">
@@ -861,7 +853,45 @@ body.light-mode .analytics-mini{
     <div id="txTab" class="tabPage section hidden"><div class="section-title"><h2>TRANSAKSI</h2><span>Operasional member</span></div>
       <div class="section-title"><h2>Tambah Poin Member</h2><span>Scan QR / Barcode atau cari nama</span></div>
 
-      
+      <div class="card">
+        <div class="scan-panel">
+          <div class="scan-box">
+            <strong style="font-size:14px">1. Pilih member dengan scan</strong>
+            <p class="note" style="margin:6px 0 0">Gunakan kamera HP untuk memindai QR member. QR boleh berisi <b>ID langsung</b> atau <b>link halaman member</b> seperti <b>https://curu123.github.io/member/member.html?id=RK-2026-0001</b>. Sistem otomatis mengambil ID member dari link. Tidak ada batas transaksi harian, tetapi QR member yang sama hanya dapat menambah poin setiap <b>5 menit</b>.</p>
+
+            <div class="scan-actions">
+              
+              
+            </div>
+
+            
+            <div class="scan-status" id="scanStatus">Scanner belum aktif.</div>
+          </div>
+
+          <div class="scan-box">
+            <strong style="font-size:14px">2. Jika kartu lupa dibawa</strong>
+            <p class="note" style="margin:6px 0 8px">Cari berdasarkan nama, ID member, atau nomor WhatsApp.</p>
+            <div class="field">
+              <input id="manualMemberSearch" placeholder="Contoh: Andi / RK-2026-0001 / 08xxxx">
+            </div>
+            <div id="manualMemberResults" class="manual-results hidden"></div>
+          </div>
+        </div>
+
+        <div class="quick-point">
+          <button class="btn soft" type="button" id="quickPlus1">+1 Poin</button>
+          <button class="btn soft" type="button" id="quickPlus2">+2 Poin</button>
+          <button class="btn soft" type="button" id="quickPlus5">+5 Poin</button>
+        </div>
+
+        <div id="selectedMemberBox" class="member-selected hidden">
+          <strong id="selectedMemberName">Member terpilih</strong>
+          <small id="selectedMemberMeta">-</small>
+        </div>
+        <div id="qrCooldownBox" class="cooldown-box cooldown-ok hidden">
+          QR siap digunakan.
+        </div>
+      </div>
 
       <div class="card section">
         <div class="row">
