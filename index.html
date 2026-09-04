@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#071a2b" name="theme-color"/>
-<title>RK CELL Premium Control Center — Login Fixed</title>
+<title>RK CELL Premium • High Contrast NFC + USB</title>
 <link href="manifest.webmanifest" rel="manifest"/>
 <style>
 :root{
@@ -643,7 +643,7 @@ body.light-mode .center-scan-btn{
 }
 .analytics-summary{
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:6px;
   margin-bottom:8px;
 }
@@ -2646,6 +2646,469 @@ body.mode-login .auth-card{
   display:none!important;
 }
 
+
+/* USB Reader dual-input edition */
+.scan-mode-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+.member-method-grid{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+#usbScanPanel .nfc-wave,
+#claimUsbPanel .nfc-wave{
+  background:linear-gradient(135deg,rgba(67,215,255,.16),rgba(139,92,246,.16))!important;
+  border-color:rgba(67,215,255,.28)!important;
+}
+#usbScanPanel .scan-status,
+#claimUsbPanel .scan-status{
+  border-color:rgba(67,215,255,.12)!important;
+}
+@media(max-width:520px){
+  .scan-mode-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+  .scan-mode-btn{padding-left:6px!important;padding-right:6px!important;font-size:8px!important}
+  .member-method-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+/* =========================================================
+   RK CELL — HIGH CONTRAST PREMIUM UI PATCH
+   Lebih terang • divider lebih jelas • tetap premium
+========================================================= */
+:root{
+  --rk-text:#ffffff!important;
+  --rk-muted:#c4c6d0!important;
+  --rk-border:rgba(255,255,255,.15)!important;
+  --rk-border-strong:rgba(255,255,255,.22)!important;
+}
+
+/* Teks utama */
+body{color:#fdfdff!important}
+.brand-title,
+.section-title h2,
+.card h1,.card h2,.card h3,
+.item strong,
+.utility-btn strong,
+.member-method-btn strong,
+.nfc-reader-visual strong{
+  color:#fff!important;
+}
+
+/* Teks sekunder dibuat jauh lebih terbaca */
+.brand-sub,
+.section-title span,
+.field label,
+.item small,
+.utility-btn small,
+.member-method-btn small,
+.nfc-reader-visual small,
+.note,
+.hint,
+.footer,
+.scan-status,
+.kpi-box span{
+  color:#b9bbc7!important;
+}
+
+/* Label form */
+.field label{
+  color:#d0d1da!important;
+  font-weight:850!important;
+}
+
+/* Card dan pembatas */
+.card{
+  border-color:rgba(255,255,255,.14)!important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.038),rgba(255,255,255,.010)),
+    rgba(20,22,29,.94)!important;
+  box-shadow:
+    0 18px 44px rgba(0,0,0,.30),
+    inset 0 1px 0 rgba(255,255,255,.06)!important;
+}
+
+.kpi-box,
+.item,
+.utility-btn,
+.member-method-btn,
+.member-method-box,
+.reward,
+.nfc-reader-visual{
+  border-color:rgba(255,255,255,.12)!important;
+}
+
+/* Pemisah antar elemen lebih jelas */
+.item{
+  background:rgba(255,255,255,.038)!important;
+}
+.item + .item{
+  margin-top:1px!important;
+}
+
+.kpi-box{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.015)),
+    #181a22!important;
+}
+
+.kpi-box strong{
+  color:#fff!important;
+}
+
+/* Input */
+input,select,textarea{
+  color:#fff!important;
+  background:#0d0f15!important;
+  border-color:rgba(255,255,255,.15)!important;
+}
+input::placeholder,textarea::placeholder{
+  color:#858895!important;
+}
+input:hover,select:hover,textarea:hover{
+  border-color:rgba(255,255,255,.24)!important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#ff65a8!important;
+  box-shadow:0 0 0 4px rgba(255,79,154,.13)!important;
+}
+
+/* Tombol sekunder */
+.btn.soft{
+  color:#f3f3f7!important;
+  background:rgba(255,255,255,.065)!important;
+  border-color:rgba(255,255,255,.13)!important;
+}
+.btn.soft:hover{
+  background:rgba(255,255,255,.095)!important;
+  border-color:rgba(255,255,255,.20)!important;
+}
+
+/* Metode akses */
+.member-method-box{
+  background:#101218!important;
+}
+.member-method-btn{
+  background:#1a1c24!important;
+}
+.member-method-btn.active{
+  border-color:rgba(255,95,168,.72)!important;
+  background:linear-gradient(145deg,rgba(255,79,154,.22),rgba(139,92,246,.14))!important;
+  box-shadow:
+    0 0 0 1px rgba(255,79,154,.10),
+    0 10px 24px rgba(255,79,154,.09)!important;
+}
+
+/* Scanner */
+.scan-status{
+  color:#d1d3dc!important;
+  background:#0c0e13!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+}
+#usbScanPanel .scan-status,
+#claimUsbPanel .scan-status{
+  border-color:rgba(67,215,255,.28)!important;
+}
+
+/* Section visual separator */
+.section + .section{
+  padding-top:3px!important;
+}
+.section-title{
+  padding-bottom:7px!important;
+  border-bottom:1px solid rgba(255,255,255,.09)!important;
+}
+
+/* Status pill */
+.status-pill{
+  color:#ececf1!important;
+  border-color:rgba(255,255,255,.14)!important;
+  background:rgba(255,255,255,.06)!important;
+}
+
+/* Bottom navigation */
+.bottom-nav{
+  border-color:rgba(255,255,255,.16)!important;
+  background:linear-gradient(180deg,rgba(28,30,39,.98),rgba(17,19,25,.98))!important;
+}
+.bottom-nav button{
+  color:#aeb0bb!important;
+}
+.bottom-nav button.active{
+  color:#fff!important;
+  background:rgba(255,255,255,.085)!important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+
+/* Premium strip */
+.rk-premium-strip{
+  color:#a5a7b1!important;
+}
+.rk-premium-strip strong{
+  color:#e1e2e8!important;
+}
+.rk-premium-strip small{
+  color:#9699a5!important;
+}
+
+/* Garis tipis premium di atas card lebih terlihat */
+.card::before{
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.20),
+    transparent
+  )!important;
+}
+
+/* Light mode juga diperjelas */
+body.dark-mode{
+  color:#241d26!important;
+}
+body.dark-mode .card,
+body.dark-mode .item,
+body.dark-mode .utility-btn,
+body.dark-mode .kpi-box,
+body.dark-mode .member-method-btn{
+  border-color:rgba(55,35,48,.14)!important;
+}
+body.dark-mode .brand-title,
+body.dark-mode .section-title h2,
+body.dark-mode .item strong,
+body.dark-mode .utility-btn strong,
+body.dark-mode .member-method-btn strong{
+  color:#211a22!important;
+}
+body.dark-mode .brand-sub,
+body.dark-mode .section-title span,
+body.dark-mode .item small,
+body.dark-mode .utility-btn small,
+body.dark-mode .member-method-btn small,
+body.dark-mode .note,
+body.dark-mode .hint,
+body.dark-mode .kpi-box span{
+  color:#6f6470!important;
+}
+body.dark-mode .field label{
+  color:#554a55!important;
+}
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea{
+  color:#211a22!important;
+  background:#fff!important;
+  border-color:rgba(55,35,48,.17)!important;
+}
+body.dark-mode .section-title{
+  border-bottom-color:rgba(55,35,48,.11)!important;
+}
+
+
+/* =========================================================
+   SUPER VISIBLE SCAN UI
+========================================================= */
+#directScanOverlay,
+#claimScanOverlay,
+#cardReaderChoiceOverlay{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9999!important;
+  background:rgba(3,4,8,.94)!important;
+  backdrop-filter:blur(14px)!important;
+  padding:18px!important;
+  overflow:auto!important;
+}
+
+#directScanOverlay:not(.hidden),
+#claimScanOverlay:not(.hidden),
+#cardReaderChoiceOverlay:not(.hidden){
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+#directScanOverlay > .scan-shell,
+#claimScanOverlay > .scan-shell{
+  width:min(100%,640px)!important;
+  background:#11131a!important;
+  border:2px solid rgba(255,255,255,.20)!important;
+  border-radius:30px!important;
+  padding:18px!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.55),0 0 0 1px rgba(255,79,154,.08)!important;
+}
+
+.scan-mode-grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin:14px 0!important;
+}
+
+.scan-mode-btn{
+  min-height:76px!important;
+  border-radius:20px!important;
+  font-size:11px!important;
+  font-weight:950!important;
+  letter-spacing:.02em!important;
+  border:2px solid rgba(255,255,255,.18)!important;
+  color:#fff!important;
+  background:#232631!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)!important;
+}
+.scan-mode-btn.primary{
+  background:linear-gradient(135deg,#ff4f9a,#8b5cf6)!important;
+  border-color:#ff85ba!important;
+  box-shadow:0 12px 28px rgba(255,79,154,.24)!important;
+}
+.scan-mode-btn.soft:hover{
+  border-color:rgba(255,255,255,.35)!important;
+  background:#2b2e3a!important;
+}
+
+#qrScanPanel,#nfcScanPanel,#usbScanPanel,
+#claimQrPanel,#claimNfcPanel,#claimUsbPanel{
+  border:2px solid rgba(255,255,255,.16)!important;
+  background:#181a22!important;
+  border-radius:24px!important;
+}
+
+#nfcScanPanel .nfc-reader-visual,
+#usbScanPanel .nfc-reader-visual,
+#claimNfcPanel .nfc-reader-visual,
+#claimUsbPanel .nfc-reader-visual{
+  min-height:260px!important;
+  border:2px dashed rgba(255,255,255,.24)!important;
+  background:
+    radial-gradient(circle at 50% 35%,rgba(255,79,154,.15),transparent 48%),
+    #12141b!important;
+}
+.nfc-reader-visual strong{
+  font-size:16px!important;
+  color:#fff!important;
+}
+.nfc-reader-visual small{
+  font-size:10px!important;
+  color:#d2d4dd!important;
+}
+.nfc-wave{
+  width:100px!important;
+  height:100px!important;
+  display:grid!important;
+  place-items:center!important;
+  border-radius:28px!important;
+  font-size:42px!important;
+  border:2px solid rgba(255,255,255,.22)!important;
+  background:rgba(255,255,255,.06)!important;
+  box-shadow:0 14px 34px rgba(0,0,0,.28)!important;
+}
+
+.scan-status{
+  min-height:48px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  color:#fff!important;
+  font-weight:850!important;
+  font-size:10px!important;
+  text-align:center!important;
+  border:2px solid rgba(255,255,255,.17)!important;
+  background:#090b10!important;
+  border-radius:15px!important;
+  margin-top:10px!important;
+  padding:10px!important;
+}
+
+/* Unified card chooser */
+.card-reader-choice{
+  width:min(100%,560px)!important;
+  background:#12141b!important;
+  border:2px solid rgba(255,255,255,.20)!important;
+  border-radius:30px!important;
+  padding:22px!important;
+  text-align:center!important;
+  box-shadow:0 30px 90px rgba(0,0,0,.55)!important;
+}
+.choice-icon{
+  width:76px;height:76px;margin:0 auto 12px;border-radius:24px;
+  display:grid;place-items:center;font-size:34px;
+  background:linear-gradient(135deg,rgba(255,79,154,.18),rgba(139,92,246,.18));
+  border:1px solid rgba(255,255,255,.15)
+}
+.card-reader-choice h2{color:#fff!important;font-size:22px!important;margin:0}
+.card-reader-choice p{color:#c9cbd5!important;font-size:11px!important;line-height:1.5!important;margin:8px auto 16px!important;max-width:420px}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.choice-big{
+  min-height:155px;border-radius:24px;border:2px solid rgba(255,255,255,.16);
+  background:#1a1d26;color:#fff;cursor:pointer;padding:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px
+}
+.choice-big span{font-size:38px}
+.choice-big strong{font-size:14px}
+.choice-big small{font-size:9px;color:#c5c7d1}
+.choice-big:hover{border-color:#ff72ae;background:#222531}
+.nfc-choice{box-shadow:inset 0 0 0 1px rgba(255,79,154,.05)}
+.usb-choice{box-shadow:inset 0 0 0 1px rgba(67,215,255,.05)}
+
+@media(max-width:520px){
+  #directScanOverlay,#claimScanOverlay,#cardReaderChoiceOverlay{padding:10px!important}
+  .scan-mode-grid{gap:7px!important}
+  .scan-mode-btn{min-height:66px!important;font-size:9px!important}
+  .choice-grid{grid-template-columns:1fr!important}
+  .choice-big{min-height:116px!important}
+}
+
+
+/* SCAN ICON — BRIGHT RED FOCAL BUTTON */
+#centerScanBtn{
+  position:relative!important;
+  background:linear-gradient(145deg,#ff1744,#ff0033)!important;
+  color:#fff!important;
+  border:3px solid #ff6b82!important;
+  box-shadow:
+    0 0 0 4px rgba(255,23,68,.16),
+    0 0 26px rgba(255,0,51,.72),
+    0 12px 30px rgba(255,0,51,.42)!important;
+  transform:translateY(-8px) scale(1.10)!important;
+  overflow:visible!important;
+}
+#centerScanBtn::before{
+  content:""!important;
+  position:absolute!important;
+  inset:-7px!important;
+  border:2px solid rgba(255,54,89,.55)!important;
+  border-radius:inherit!important;
+  animation:rkScanPulse 1.7s ease-out infinite!important;
+  pointer-events:none!important;
+}
+#centerScanBtn::after{
+  content:"SCAN"!important;
+  position:absolute!important;
+  left:50%!important;
+  bottom:-17px!important;
+  transform:translateX(-50%)!important;
+  color:#ff4968!important;
+  font-size:8px!important;
+  line-height:1!important;
+  font-weight:1000!important;
+  letter-spacing:.12em!important;
+  text-shadow:0 0 12px rgba(255,23,68,.75)!important;
+  white-space:nowrap!important;
+}
+#centerScanBtn:hover{
+  background:linear-gradient(145deg,#ff3158,#ff0033)!important;
+  box-shadow:
+    0 0 0 5px rgba(255,23,68,.18),
+    0 0 34px rgba(255,0,51,.85),
+    0 14px 34px rgba(255,0,51,.48)!important;
+}
+#centerScanBtn:active{
+  transform:translateY(-7px) scale(1.04)!important;
+}
+@keyframes rkScanPulse{
+  0%{opacity:.9;transform:scale(.94)}
+  75%,100%{opacity:0;transform:scale(1.24)}
+}
+
 </style>
 <script>
 (function(){
@@ -2727,10 +3190,10 @@ body.mode-login .auth-card{
       <span>▦</span><strong>QR</strong><small>Bisa dipindai</small>
     </button>
     <button class="member-method-btn" type="button" data-method="nfc" id="memberMethodNfc" aria-pressed="false">
-      <span>📡</span><strong>NFC</strong><small>Kartu tempel</small>
+      <span>💳</span><strong>KARTU</strong><small>NFC HP / USB Reader</small>
     </button>
   </div>
-  <div class="member-method-note" id="memberMethodNote">Nama selalu tersedia. QR aktif secara default. NFC bisa ditambahkan jika member ingin kartu.</div>
+  <div class="member-method-note" id="memberMethodNote">Nama selalu tersedia. QR aktif secara default. Satu UID kartu dapat dibaca lewat NFC HP maupun USB Reader.</div>
 </div>
 
 <div style="margin-top:10px">
@@ -2811,7 +3274,8 @@ body.mode-login .auth-card{
   </div>
   <div class="claim-scan-mini">
     <button class="btn soft claim-mini-btn" id="claimQrScanBtn" type="button" title="Scan QR Member">▦ QR</button>
-    <button class="btn soft claim-mini-btn" id="claimNfcScanBtn" type="button" title="Tempel NFC Member">📡 NFC</button>
+    <button class="btn soft claim-mini-btn" id="claimNfcScanBtn" type="button" title="Tempel NFC Member">📱 NFC HP</button>
+    <button class="btn soft claim-mini-btn" id="claimUsbScanBtn" type="button" title="Scan USB Reader">🔌 USB</button>
   </div>
 </div>
 <div class="scan-status hidden" id="claimScanStatus" style="margin-top:7px"></div>
@@ -2911,14 +3375,15 @@ body.mode-login .auth-card{
 <input accept=".json,application/json" class="hidden" id="importFile" type="file"/>
 </div>
 <div class="card section hidden" id="nfcToolPanel">
-<div class="section-title"><h2>NFC MEMBER</h2><span>Daftar UID kartu</span></div>
-<p class="note">Pilih member lalu tempel kartu NFC. Sistem akan membaca UID bawaan kartu dan menyimpannya sebagai identitas member.</p>
+<div class="section-title"><h2>KARTU MEMBER</h2><span>NFC HP / USB Reader</span></div>
+<p class="note">Pilih member lalu daftarkan UID kartu menggunakan NFC HP atau reader USB external. Keduanya memakai UID member yang sama.</p>
 <div class="field"><label>PILIH MEMBER</label><select id="nfcMemberSelect"></select></div>
 <div class="row" style="margin-top:10px">
-<button class="btn primary" id="writeNfcBtn" type="button">📡 Daftarkan Kartu NFC</button>
-<button class="btn soft" id="testNfcBtn" type="button">🔎 Tes UID NFC</button>
+<button class="btn primary" id="writeNfcBtn" type="button">💳 Daftarkan Kartu</button>
+<button class="btn soft" id="testNfcBtn" type="button">📱 Tes via NFC HP</button>
+<button class="btn soft" id="testUsbBtn" type="button">🔌 Tes via USB</button>
 </div>
-<div class="scan-status" id="nfcWriterStatus" style="margin-top:10px">Siap membaca UID bawaan kartu NFC.</div>
+<div class="scan-status" id="nfcWriterStatus" style="margin-top:10px">Siap membaca UID kartu via NFC HP atau USB Reader.</div>
 </div>
 
 <div class="card section hidden qr-card" id="qrToolPanel">
@@ -3057,13 +3522,14 @@ body.mode-login .auth-card{
 <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px">
 <div>
 <strong style="font-size:18px;color:#fff">SCAN MEMBER</strong><br/>
-<small style="color:#7893a7">Pilih QR atau NFC member</small>
+<small style="color:#7893a7">PILIH CARA SCAN MEMBER</small>
 </div>
 <button class="btn soft" id="directScanClose" style="width:auto" type="button">✕ Tutup</button>
 </div>
 <div class="scan-mode-grid">
-<button class="btn primary scan-mode-btn" id="scanModeQrBtn" type="button">📷 SCAN QR</button>
-<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">📡 TEMPEL NFC</button>
+<button class="btn primary scan-mode-btn" id="scanModeQrBtn" type="button">📷 QR</button>
+<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">📱 NFC HP</button>
+<button class="btn soft scan-mode-btn" id="scanModeUsbBtn" type="button">🔌 USB READER</button>
 </div>
 
 <div class="card" id="qrScanPanel">
@@ -3083,6 +3549,16 @@ body.mode-login .auth-card{
 <div class="scan-status" id="nfcScanStatus">NFC belum dimulai.</div>
 <button class="btn soft" id="stopNfcBtn" type="button" style="margin-top:10px;width:100%">■ Stop NFC</button>
 </div>
+</div>
+
+<div class="card hidden" id="usbScanPanel">
+  <div class="nfc-reader-visual">
+    <div class="nfc-wave">🔌</div>
+    <strong>SCAN KARTU DI USB READER</strong>
+    <small>Reader HID akan mengetik UID otomatis</small>
+  </div>
+  <div class="scan-status" id="usbScanStatus">USB Reader belum diaktifkan.</div>
+  <button class="btn soft" id="stopUsbBtn" type="button" style="margin-top:10px;width:100%">■ Stop USB Reader</button>
 </div>
 </div>
 
@@ -3115,6 +3591,33 @@ body.mode-login .auth-card{
       </div>
       <div class="scan-status" id="claimNfcStatus">Menunggu NFC...</div>
     </div>
+
+    <div class="card hidden" id="claimUsbPanel">
+      <div class="nfc-reader-visual" style="min-height:210px">
+        <div class="nfc-wave">🔌</div>
+        <strong>SCAN KARTU DI USB READER</strong>
+        <small>UID akan dicocokkan ke member reward</small>
+      </div>
+      <div class="scan-status" id="claimUsbStatus">Menunggu USB Reader...</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="hidden" id="cardReaderChoiceOverlay">
+  <div class="card-reader-choice">
+    <div class="choice-icon">💳</div>
+    <h2>BACA KARTU MEMBER</h2>
+    <p>UID hanya disimpan satu kali. Pilih alat yang ingin digunakan untuk membaca kartu.</p>
+    <div class="choice-grid">
+      <button class="choice-big nfc-choice" id="choiceNfcHpBtn" type="button">
+        <span>📱</span><strong>NFC HP</strong><small>Tempel kartu ke belakang HP</small>
+      </button>
+      <button class="choice-big usb-choice" id="choiceUsbBtn" type="button">
+        <span>🔌</span><strong>USB READER</strong><small>Scan kartu pada reader external</small>
+      </button>
+    </div>
+    <button class="btn soft" id="choiceCancelBtn" type="button" style="width:100%;margin-top:12px">Batal</button>
   </div>
 </div>
 
@@ -3909,7 +4412,7 @@ function updateMemberMethodUI(){
   const labels=[];
   if(newMemberMethods.has("name")) labels.push("Nama");
   if(newMemberMethods.has("qr")) labels.push("QR");
-  if(newMemberMethods.has("nfc")) labels.push("NFC");
+  if(newMemberMethods.has("nfc")) labels.push("Kartu (NFC/USB)");
 
   note.textContent=`Akses aktif: ${labels.join(" + ")}. Member bisa menggunakan metode mana pun yang tersedia.`;
 }
@@ -3996,12 +4499,12 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
 
   const accessLabels=["Nama"];
   if(methodsUsed.has("qr")) accessLabels.push("QR");
-  if(methodsUsed.has("nfc")) accessLabels.push("NFC");
+  if(methodsUsed.has("nfc")) accessLabels.push("Kartu (NFC/USB)");
 
   if(methodsUsed.has("nfc")){
-    const nfcOk=await registerNfcUidForNewMember(m);
-    if(nfcOk && methodsUsed.has("qr")){
-      alert(`Member aktif dengan akses: ${accessLabels.join(" + ")}.\n\nQR dapat dibuat/diunduh dari Setup → QR Member.`);
+    const cardOk=await registerUnifiedCardForNewMember(m);
+    if(cardOk && methodsUsed.has("qr")){
+      alert(`Member aktif dengan akses: ${accessLabels.join(" + ")}.\n\nSatu UID kartu dapat dipakai lewat NFC HP maupun USB Reader.`);
     }
   }else if(methodsUsed.has("qr")){
     alert(`Member berhasil dibuat: ${m.id}\n\nAkses aktif: ${accessLabels.join(" + ")}.\nQR member dapat dibuat atau dicetak dari Setup → QR Member.`);
@@ -4740,12 +5243,29 @@ document.getElementById("scanModeQrBtn")?.addEventListener("click",async()=>{
 });
 
 document.getElementById("scanModeNfcBtn")?.addEventListener("click",async()=>{
+  stopUsbReader();
   await closeDirectCamera();
   const overlay=document.getElementById("directScanOverlay");
   overlay?.classList.remove("hidden");
   document.body.style.overflow="hidden";
   showScanMode("nfc");
   await startMemberNfcScan("nfcScanStatus",true);
+});
+
+document.getElementById("scanModeUsbBtn")?.addEventListener("click",async()=>{
+  await stopNfcScan();
+  await closeDirectCamera();
+  const overlay=document.getElementById("directScanOverlay");
+  overlay?.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+  showScanMode("usb");
+  startUsbReader("direct","usbScanStatus");
+});
+
+document.getElementById("stopUsbBtn")?.addEventListener("click",()=>{
+  stopUsbReader();
+  const status=document.getElementById("usbScanStatus");
+  if(status) status.textContent="USB Reader dihentikan.";
 });
 
 document.getElementById("stopNfcBtn")?.addEventListener("click",async()=>{
@@ -4768,7 +5288,75 @@ document.getElementById("nfcWriterBtn")?.addEventListener("click",()=>{
   }
 });
 
-document.getElementById("writeNfcBtn")?.addEventListener("click",writeMemberNfc);
+document.getElementById("writeNfcBtn")?.addEventListener("click",()=>{
+  const memberId=document.getElementById("nfcMemberSelect")?.value;
+  const status=document.getElementById("nfcWriterStatus");
+  if(!memberId){
+    if(status) status.textContent="Pilih member terlebih dahulu.";
+    return;
+  }
+  const member=members.find(m=>m.id===memberId);
+  if(!member){
+    if(status) status.textContent="Member tidak ditemukan.";
+    return;
+  }
+  unifiedCardResolve=null;
+  unifiedCardMember=member;
+  openCardReaderChoice(member);
+});
+
+document.getElementById("choiceCancelBtn")?.addEventListener("click",()=>closeCardReaderChoice(false));
+
+document.getElementById("choiceNfcHpBtn")?.addEventListener("click",async()=>{
+  const member=unifiedCardMember;
+  if(!member) return closeCardReaderChoice(false);
+
+  document.getElementById("cardReaderChoiceOverlay")?.classList.add("hidden");
+  document.body.style.overflow="";
+
+  try{
+    const uid=await scanNfcUidOnce("nfcWriterStatus");
+    if(!uid){
+      if(unifiedCardResolve) closeCardReaderChoice(false);
+      return;
+    }
+    const clean=await saveNfcUidToMember(member.id,uid);
+    await createAudit("card_uid_registered",member.id,{nfc_uid:clean,reader:"nfc_hp"});
+    await loadSupabaseData();
+    const status=document.getElementById("nfcWriterStatus");
+    if(status) status.textContent=`✓ UID ${clean} tersimpan. Bisa dibaca via NFC HP atau USB Reader.`;
+    const resolve=unifiedCardResolve;
+    unifiedCardResolve=null; unifiedCardMember=null;
+    if(resolve) resolve(true);
+  }catch(err){
+    const status=document.getElementById("nfcWriterStatus");
+    if(status) status.textContent=`Gagal membaca kartu: ${err.message||err}`;
+    const resolve=unifiedCardResolve;
+    unifiedCardResolve=null; unifiedCardMember=null;
+    if(resolve) resolve(false);
+  }
+});
+
+document.getElementById("choiceUsbBtn")?.addEventListener("click",()=>{
+  const member=unifiedCardMember;
+  if(!member) return closeCardReaderChoice(false);
+
+  document.getElementById("cardReaderChoiceOverlay")?.classList.add("hidden");
+  document.body.style.overflow="";
+
+  // For add-member flow retain resolver and resolve after UID is saved
+  const originalResolve=unifiedCardResolve;
+  startUsbReader("unified-register","nfcWriterStatus",member.id);
+  if(originalResolve){
+    window.__unifiedUsbResolve=originalResolve;
+    unifiedCardResolve=null;
+  }
+  unifiedCardMember=null;
+});
+
+document.getElementById("testUsbBtn")?.addEventListener("click",()=>{
+  startUsbReader("test","nfcWriterStatus");
+});
 
 document.getElementById("testNfcBtn")?.addEventListener("click",async()=>{
   const status=document.getElementById("nfcWriterStatus");
@@ -4864,6 +5452,7 @@ function chooseClaimMember(memberId,source="manual"){
 }
 
 async function closeClaimScanner(){
+  stopUsbReader();
   try{ await stopClaimCamera(); }catch(e){}
   try{
     if(typeof claimQrScanner!=="undefined" && claimQrScanner){
@@ -4945,6 +5534,7 @@ async function openClaimQrScanner(){
   const overlay=document.getElementById("claimScanOverlay");
   const qrPanel=document.getElementById("claimQrPanel");
   const nfcPanel=document.getElementById("claimNfcPanel");
+  const usbPanel=document.getElementById("claimUsbPanel");
   const status=document.getElementById("claimQrStatus");
   const label=document.getElementById("claimScanOverlayLabel");
   const video=document.getElementById("claimQrVideo");
@@ -4952,6 +5542,7 @@ async function openClaimQrScanner(){
   overlay?.classList.remove("hidden");
   qrPanel?.classList.remove("hidden");
   nfcPanel?.classList.add("hidden");
+  usbPanel?.classList.add("hidden");
   document.body.style.overflow="hidden";
   if(label) label.textContent="SCAN QR MEMBER";
 
@@ -5064,12 +5655,14 @@ async function openClaimNfcScanner(){
   const overlay=document.getElementById("claimScanOverlay");
   const qrPanel=document.getElementById("claimQrPanel");
   const nfcPanel=document.getElementById("claimNfcPanel");
+  const usbPanel=document.getElementById("claimUsbPanel");
   const status=document.getElementById("claimNfcStatus");
   const label=document.getElementById("claimScanOverlayLabel");
 
   overlay?.classList.remove("hidden");
   qrPanel?.classList.add("hidden");
   nfcPanel?.classList.remove("hidden");
+  usbPanel?.classList.add("hidden");
   document.body.style.overflow="hidden";
   if(label) label.textContent="TEMPEL NFC MEMBER";
 
@@ -5092,6 +5685,21 @@ async function openClaimNfcScanner(){
 
 document.getElementById("claimQrScanBtn")?.addEventListener("click",openClaimQrScanner);
 document.getElementById("claimNfcScanBtn")?.addEventListener("click",openClaimNfcScanner);
+document.getElementById("claimUsbScanBtn")?.addEventListener("click",async()=>{
+  await closeClaimScanner();
+  const overlay=document.getElementById("claimScanOverlay");
+  const qrPanel=document.getElementById("claimQrPanel");
+  const nfcPanel=document.getElementById("claimNfcPanel");
+  const usbPanel=document.getElementById("claimUsbPanel");
+  overlay?.classList.remove("hidden");
+  qrPanel?.classList.add("hidden");
+  nfcPanel?.classList.add("hidden");
+  usbPanel?.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+  const label=document.getElementById("claimScanOverlayLabel");
+  if(label) label.textContent="USB READER MEMBER";
+  startUsbReader("claim","claimUsbStatus");
+});
 document.getElementById("claimScanClose")?.addEventListener("click",closeClaimScanner);
 
 document.getElementById("claimMemberSelect").addEventListener("change",e=>renderClaimRewards(e.target.value));
@@ -5215,20 +5823,206 @@ function syncNfcMemberOptions(){
   if(current && members.some(m=>m.id===current)) sel.value=current;
 }
 
+
+
+let unifiedCardResolve=null;
+let unifiedCardMember=null;
+
+function openCardReaderChoice(member){
+  unifiedCardMember=member;
+  document.getElementById("cardReaderChoiceOverlay")?.classList.remove("hidden");
+  document.body.style.overflow="hidden";
+}
+
+function closeCardReaderChoice(result=false){
+  document.getElementById("cardReaderChoiceOverlay")?.classList.add("hidden");
+  document.body.style.overflow="";
+  const resolve=unifiedCardResolve;
+  unifiedCardResolve=null;
+  unifiedCardMember=null;
+  if(resolve) resolve(result);
+}
+
+function registerUnifiedCardForNewMember(member){
+  return new Promise(resolve=>{
+    unifiedCardResolve=resolve;
+    openCardReaderChoice(member);
+  });
+}
+
+/* ======================================================
+   USB RFID/NFC READER — HID KEYBOARD MODE
+   Reader mengetik UID lalu Enter. Tidak butuh WebUSB.
+====================================================== */
+let usbReaderActive=false;
+let usbReaderContext=null;
+let usbReaderStatusId=null;
+let usbReaderMemberId=null;
+let usbReaderBuffer="";
+let usbReaderLastKeyAt=0;
+let usbReaderTimer=null;
+
+function stopUsbReader(){
+  usbReaderActive=false;
+  usbReaderContext=null;
+  usbReaderStatusId=null;
+  usbReaderMemberId=null;
+  usbReaderBuffer="";
+  clearTimeout(usbReaderTimer);
+  usbReaderTimer=null;
+}
+
+function startUsbReader(context="direct",statusId="usbScanStatus",memberId=null){
+  stopUsbReader();
+  usbReaderActive=true;
+  usbReaderContext=context;
+  usbReaderStatusId=statusId;
+  usbReaderMemberId=memberId;
+  const status=document.getElementById(statusId);
+  if(status) status.textContent="Reader USB aktif. Tempel kartu sekarang...";
+}
+
+async function processUsbUid(rawUid){
+  const uid=normalizeNfcUid(rawUid);
+  if(!uid) return;
+  const context=usbReaderContext;
+  const status=document.getElementById(usbReaderStatusId||"usbScanStatus");
+  stopUsbReader();
+
+  try{
+    if(status) status.textContent=`UID terbaca: ${uid}`;
+
+    if(context==="direct"){
+      const m=findMemberByNfcUid(uid);
+      if(!m){
+        if(status) status.textContent=`UID ${uid} belum terdaftar ke member.`;
+        return;
+      }
+      selectedMemberSource="usb";
+      const sel=document.getElementById("txMember");
+      if(sel) sel.value=m.id;
+      updateSelectedMember(m.id);
+      if(status) status.textContent=`✓ ${m.name} (${m.id})`;
+      document.getElementById("directScanOverlay")?.classList.add("hidden");
+      document.body.style.overflow="";
+      activateTab("txTab");
+      return;
+    }
+
+    if(context==="claim"){
+      const m=findMemberByNfcUid(uid);
+      if(!m){
+        if(status) status.textContent=`UID ${uid} belum terdaftar.`;
+        return;
+      }
+      chooseClaimMember(m.id,"usb");
+      await closeClaimScanner();
+      return;
+    }
+
+    if(context==="register" || context==="setup-register"){
+      const memberId=usbReaderMemberId;
+      const m=members.find(x=>x.id===memberId);
+      if(!m) throw new Error("Member tidak ditemukan.");
+      const clean=await saveNfcUidToMember(memberId,uid);
+      await createAudit("usb_uid_registered",memberId,{nfc_uid:clean,source:context});
+      await loadSupabaseData();
+      if(status) status.textContent=`✓ UID ${clean} tersimpan untuk ${m.name}.`;
+      if(context==="register"){
+        alert(`✓ Kartu berhasil didaftarkan via USB Reader.\\nUID: ${clean}\\nMember: ${m.name}`);
+      }
+      return;
+    }
+
+    if(context==="test"){
+      const m=findMemberByNfcUid(uid);
+      if(status) status.textContent=m
+        ? `UID ${uid} → ${m.name} (${m.id})`
+        : `UID ${uid} belum terdaftar.`;
+      return;
+    }
+  }catch(err){
+    console.error("USB READER:",err);
+    if(status) status.textContent=`USB Reader gagal: ${err.message||err}`;
+  }
+}
+
+window.addEventListener("keydown",event=>{
+  if(!usbReaderActive) return;
+  if(event.ctrlKey||event.altKey||event.metaKey) return;
+
+  const now=performance.now();
+
+  if(event.key==="Enter"){
+    if(usbReaderBuffer.length>=3){
+      const value=usbReaderBuffer;
+      usbReaderBuffer="";
+      event.preventDefault();
+      processUsbUid(value);
+    }
+    return;
+  }
+
+  if(event.key.length===1 && /[a-zA-Z0-9]/.test(event.key)){
+    if(now-usbReaderLastKeyAt>180) usbReaderBuffer="";
+    usbReaderBuffer+=event.key;
+    usbReaderLastKeyAt=now;
+
+    clearTimeout(usbReaderTimer);
+    usbReaderTimer=setTimeout(()=>{
+      if(usbReaderActive && usbReaderBuffer.length>=4){
+        const value=usbReaderBuffer;
+        usbReaderBuffer="";
+        processUsbUid(value);
+      }
+    },140);
+  }
+});
+
+async function registerUsbUidForNewMember(member){
+  return new Promise(resolve=>{
+    alert(`Member ${member.name} berhasil dibuat.\\n\\nSekarang tempel kartu pada USB Reader untuk mendaftarkan UID.`);
+    const status=document.getElementById("nfcWriterStatus");
+    const timeout=setTimeout(()=>{
+      if(usbReaderContext==="register"){
+        stopUsbReader();
+        resolve(false);
+      }
+    },30000);
+
+    const originalProcess=processUsbUid;
+    startUsbReader("register","nfcWriterStatus",member.id);
+
+    const watcher=setInterval(()=>{
+      const local=members.find(m=>m.id===member.id && normalizeNfcUid(m.nfc_uid));
+      if(local){
+        clearInterval(watcher);
+        clearTimeout(timeout);
+        resolve(true);
+      }
+      if(!usbReaderActive && usbReaderContext===null){
+        clearInterval(watcher);
+      }
+    },350);
+  });
+}
+
 function showScanMode(mode){
   const qr=document.getElementById("qrScanPanel");
   const nfc=document.getElementById("nfcScanPanel");
+  const usb=document.getElementById("usbScanPanel");
   const qrBtn=document.getElementById("scanModeQrBtn");
   const nfcBtn=document.getElementById("scanModeNfcBtn");
+  const usbBtn=document.getElementById("scanModeUsbBtn");
 
-  const isNfc=mode==="nfc";
-  qr?.classList.toggle("hidden",isNfc);
-  nfc?.classList.toggle("hidden",!isNfc);
+  qr?.classList.toggle("hidden",mode!=="qr");
+  nfc?.classList.toggle("hidden",mode!=="nfc");
+  usb?.classList.toggle("hidden",mode!=="usb");
 
-  qrBtn?.classList.toggle("primary",!isNfc);
-  qrBtn?.classList.toggle("soft",isNfc);
-  nfcBtn?.classList.toggle("primary",isNfc);
-  nfcBtn?.classList.toggle("soft",!isNfc);
+  [[qrBtn,"qr"],[nfcBtn,"nfc"],[usbBtn,"usb"]].forEach(([btn,key])=>{
+    btn?.classList.toggle("primary",mode===key);
+    btn?.classList.toggle("soft",mode!==key);
+  });
 }
 
 let directCameraStream=null;
@@ -5345,6 +6139,7 @@ async function openDirectCamera(){
 const centerScanBtn=document.getElementById("centerScanBtn");
 if(centerScanBtn){
   centerScanBtn.addEventListener("click",async(event)=>{
+    stopUsbReader();
     event.preventDefault();
     event.stopPropagation();
 
@@ -5357,13 +6152,14 @@ if(centerScanBtn){
 
     showScanMode("qr");
     const status=document.getElementById("directScanStatus");
-    if(status) status.textContent="Pilih SCAN QR atau TEMPEL NFC.";
+    if(status) status.textContent="PILIH CARA SCAN MEMBER.";
 
     // Jangan membuka kamera sebelum tombol QR ditekan.
   });
 }
 
 document.getElementById("directScanClose")?.addEventListener("click",async()=>{
+  stopUsbReader();
   await stopNfcScan();
   try{await stopScanner();}catch(e){}
   await closeDirectCamera();
