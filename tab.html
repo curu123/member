@@ -88,6 +88,17 @@ button{-webkit-tap-highlight-color:transparent}
   .claim-reward-btn{height:40px!important;margin-top:6px!important}
 }
 
+/* RK CELL T285 v14: kompatibilitas browser lama - gunakan FLEX, bukan CSS Grid */
+@media (orientation:landscape){
+  .stage{display:-webkit-box!important;display:-webkit-flex!important;display:flex!important;grid-template-columns:none!important;gap:0!important;width:100%!important}
+  .stage>.panel{display:block!important;width:calc(50% - 4px)!important;max-width:calc(50% - 4px)!important;min-width:0!important;flex:0 0 calc(50% - 4px)!important;-webkit-flex:0 0 calc(50% - 4px)!important}
+  .stage>.panel:first-child{margin-right:8px!important}
+}
+@media (orientation:portrait){
+  .stage{display:block!important}
+  .stage>.panel{width:100%!important;max-width:none!important;margin-right:0!important;margin-bottom:10px!important}
+}
+
 </style>
 </head>
 <body>
@@ -97,7 +108,7 @@ button{-webkit-tap-highlight-color:transparent}
       <div class="brand-logo">RK</div>
       <div>
         <div class="brand-title">RK CELL</div>
-        <div class="brand-sub">Smart Member Station • T285 • v13</div>
+        <div class="brand-sub">Smart Member Station • T285 • v14</div>
       </div>
     </div>
     <div class="top-actions"><div id="readerPill" class="reader-pill" title="Status reader berdasarkan aktivitas data RFID"><span class="reader-dot"></span><span id="readerState">Reader belum terdeteksi</span></div><button id="logoutBtn" class="logout-btn" type="button">KELUAR</button></div>
@@ -147,7 +158,7 @@ button{-webkit-tap-highlight-color:transparent}
               <div id="memberName" class="name">-</div>
               <div id="memberId" class="mid">-</div>
             </div>
-            <div><div id="voicePill" class="voice-pill ok" title="AI Voice aktif otomatis">● AI AKTIF</div><span id="voiceSource" class="voice-source">ONLINE</span></div>
+            <div><div id="voicePill" class="voice-pill ok" title="AI Voice aktif otomatis">● AI AKTIF</div><span id="voiceSource" class="voice-source">TTS TAB</span></div>
           </div>
           <div class="points-wrap">
             <div><div class="points-label">TOTAL POIN</div><div id="memberPoints" class="points">0</div></div>
@@ -223,7 +234,7 @@ function setVoiceUi(ok,msg){var v=$("voicePill");if(!v)return;v.className="voice
 function pickIndonesianVoice(){try{var vs=window.speechSynthesis?window.speechSynthesis.getVoices():[];var fallback=null;for(var i=0;i<vs.length;i++){var lang=String(vs[i].lang||"").toLowerCase();if(lang==="id-id"||lang.indexOf("id-")===0||lang==="id")return vs[i];if(!fallback&&vs[i].default)fallback=vs[i]}return fallback||null}catch(e){return null}}
 function initVoiceEngine(){
   try{
-    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){setVoiceUi(false,"Browser/TTS tidak mendukung Speech Synthesis");return false}
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){setVoiceUi(false,"Browser/TTS tidak mendukung Speech Synthesis");setVoiceSource("TTS TIDAK TERSEDIA");if($("aiState"))$("aiState").innerHTML="VOICE OFF";return false}
     VOICE_READY=true;
     var vs=window.speechSynthesis.getVoices();
     if(!vs||!vs.length){setVoiceUi(true,"AI Voice aktif otomatis • menunggu daftar voice...");setTimeout(function(){try{window.speechSynthesis.getVoices()}catch(e){}},250)}else setVoiceUi(true,"AI Voice aktif otomatis • kecepatan "+AI_VOICE_RATE+"x");
@@ -324,7 +335,7 @@ function onlineSpeak(spoken,seq){
 }
 function say(t){
   lastVoiceText=String(t||"");if(!lastVoiceText)return;
-  var spoken=voiceFriendlyText(lastVoiceText),seq=++VOICE_SEQ;
+  var spoken=speechFriendlyText(lastVoiceText),seq=++VOICE_SEQ;
   try{if(window.speechSynthesis)window.speechSynthesis.cancel()}catch(e){}
   stopOnlineAudio();
   onlineSpeak(spoken,seq);
