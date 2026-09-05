@@ -3109,6 +3109,814 @@ body.dark-mode .section-title{
   75%,100%{opacity:0;transform:scale(1.24)}
 }
 
+
+/* BOTTOM NAV — BLACK TEXT */
+.bottom-nav button,
+.bottom-nav button span,
+.bottom-nav button strong,
+.bottom-nav button small,
+.bottom-nav .nav-item,
+.bottom-nav .nav-label{
+  color:#000!important;
+  text-shadow:none!important;
+}
+
+/* Keep center SCAN red button, but its icon/text inside is black */
+#centerScanBtn,
+#centerScanBtn span,
+#centerScanBtn strong,
+#centerScanBtn small{
+  color:#000!important;
+  text-shadow:none!important;
+}
+#centerScanBtn::after{
+  color:#000!important;
+  text-shadow:none!important;
+}
+
+
+/* FINAL NAV TEXT OVERRIDE — FORCE TRUE BLACK */
+body .bottom-nav,
+body.dark-mode .bottom-nav{
+  color:#000!important;
+}
+
+body .bottom-nav button,
+body .bottom-nav button *,
+body .bottom-nav a,
+body .bottom-nav a *,
+body .bottom-nav .nav-item,
+body .bottom-nav .nav-item *,
+body.dark-mode .bottom-nav button,
+body.dark-mode .bottom-nav button *,
+body.dark-mode .bottom-nav a,
+body.dark-mode .bottom-nav a *,
+body.dark-mode .bottom-nav .nav-item,
+body.dark-mode .bottom-nav .nav-item *{
+  color:#000000!important;
+  -webkit-text-fill-color:#000000!important;
+  text-shadow:none!important;
+  opacity:1!important;
+}
+
+/* active menu must also stay black */
+body .bottom-nav button.active,
+body .bottom-nav button.active *,
+body.dark-mode .bottom-nav button.active,
+body.dark-mode .bottom-nav button.active *{
+  color:#000000!important;
+  -webkit-text-fill-color:#000000!important;
+}
+
+/* SCAN */
+body #centerScanBtn,
+body #centerScanBtn *,
+body.dark-mode #centerScanBtn,
+body.dark-mode #centerScanBtn *{
+  color:#000000!important;
+  -webkit-text-fill-color:#000000!important;
+  text-shadow:none!important;
+}
+body #centerScanBtn::after,
+body.dark-mode #centerScanBtn::after{
+  color:#000000!important;
+  -webkit-text-fill-color:#000000!important;
+  text-shadow:none!important;
+}
+
+/* Make nav background bright enough so black text is actually readable */
+body .bottom-nav,
+body.dark-mode .bottom-nav{
+  background:rgba(248,248,250,.97)!important;
+  border:1px solid rgba(0,0,0,.16)!important;
+  box-shadow:0 -8px 30px rgba(0,0,0,.20)!important;
+}
+body .bottom-nav button:not(#centerScanBtn).active,
+body.dark-mode .bottom-nav button:not(#centerScanBtn).active{
+  background:rgba(0,0,0,.09)!important;
+  border-color:rgba(0,0,0,.10)!important;
+}
+
+
+/* =========================================================
+   DARK MODE = YELLOW + BLUE THEME
+   Legacy app uses body.dark-mode for alternate theme.
+========================================================= */
+body.dark-mode{
+  --yellow-bg:#ffd900;
+  --yellow-card:#ffe84d;
+  --yellow-soft:#fff078;
+  --blue-text:#073b9a;
+  --blue-strong:#002b7f;
+  --blue-border:#1760c4;
+
+  background:
+    radial-gradient(circle at 12% 0%,rgba(255,255,255,.42),transparent 30%),
+    linear-gradient(180deg,#ffd900,#ffc800)!important;
+  color:var(--blue-text)!important;
+}
+
+/* Header / cards / panels */
+body.dark-mode .topbar,
+body.dark-mode .hero,
+body.dark-mode .card,
+body.dark-mode .kpi-box,
+body.dark-mode .item,
+body.dark-mode .utility-btn,
+body.dark-mode .member-method-box,
+body.dark-mode .member-method-btn,
+body.dark-mode .reward,
+body.dark-mode .scan-status,
+body.dark-mode .nfc-reader-visual,
+body.dark-mode .auth-card{
+  background:var(--yellow-card)!important;
+  border-color:rgba(7,59,154,.28)!important;
+  color:var(--blue-text)!important;
+  box-shadow:0 10px 28px rgba(75,60,0,.12)!important;
+}
+
+/* Force virtually all normal text blue */
+body.dark-mode .app *,
+body.dark-mode #authGate *,
+body.dark-mode #offlineView *{
+  color:var(--blue-text)!important;
+  -webkit-text-fill-color:var(--blue-text)!important;
+  text-shadow:none!important;
+}
+
+body.dark-mode .brand-title,
+body.dark-mode .section-title h2,
+body.dark-mode .card h1,
+body.dark-mode .card h2,
+body.dark-mode .card h3,
+body.dark-mode .item strong,
+body.dark-mode .kpi-box strong,
+body.dark-mode .utility-btn strong,
+body.dark-mode .member-method-btn strong{
+  color:var(--blue-strong)!important;
+  -webkit-text-fill-color:var(--blue-strong)!important;
+}
+
+/* Inputs */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea{
+  background:#fff5a8!important;
+  color:var(--blue-strong)!important;
+  -webkit-text-fill-color:var(--blue-strong)!important;
+  border:1.5px solid rgba(7,59,154,.38)!important;
+}
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder{
+  color:rgba(7,59,154,.60)!important;
+  -webkit-text-fill-color:rgba(7,59,154,.60)!important;
+}
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus{
+  border-color:#0755c9!important;
+  box-shadow:0 0 0 4px rgba(7,85,201,.14)!important;
+}
+
+/* Buttons */
+body.dark-mode .btn{
+  border-color:rgba(7,59,154,.30)!important;
+}
+body.dark-mode .btn.soft{
+  background:#ffe65a!important;
+  color:#073b9a!important;
+  -webkit-text-fill-color:#073b9a!important;
+}
+body.dark-mode .btn.primary{
+  background:#0b57c9!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:#003f9f!important;
+}
+
+/* Scanner overlay also yellow/blue */
+body.dark-mode #directScanOverlay,
+body.dark-mode #claimScanOverlay,
+body.dark-mode #cardReaderChoiceOverlay{
+  background:rgba(255,217,0,.96)!important;
+}
+body.dark-mode #directScanOverlay > .scan-shell,
+body.dark-mode #claimScanOverlay > .scan-shell,
+body.dark-mode .card-reader-choice,
+body.dark-mode #qrScanPanel,
+body.dark-mode #nfcScanPanel,
+body.dark-mode #usbScanPanel,
+body.dark-mode #claimQrPanel,
+body.dark-mode #claimNfcPanel,
+body.dark-mode #claimUsbPanel{
+  background:#ffe84d!important;
+  border-color:#0b57c9!important;
+}
+body.dark-mode .scan-mode-btn{
+  background:#ffe96a!important;
+  border-color:rgba(7,59,154,.35)!important;
+  color:#073b9a!important;
+  -webkit-text-fill-color:#073b9a!important;
+}
+body.dark-mode .scan-mode-btn.primary{
+  background:#0b57c9!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:#003c94!important;
+}
+
+/* Bottom nav = yellow with blue text */
+body.dark-mode .bottom-nav{
+  background:#ffe84d!important;
+  border:2px solid rgba(7,59,154,.30)!important;
+  box-shadow:0 -8px 30px rgba(74,58,0,.18)!important;
+}
+body.dark-mode .bottom-nav button,
+body.dark-mode .bottom-nav button *,
+body.dark-mode .bottom-nav .nav-item,
+body.dark-mode .bottom-nav .nav-item *{
+  color:#073b9a!important;
+  -webkit-text-fill-color:#073b9a!important;
+}
+body.dark-mode .bottom-nav button:not(#centerScanBtn).active{
+  background:rgba(7,59,154,.12)!important;
+  border-color:rgba(7,59,154,.18)!important;
+}
+
+/* SCAN remains the visual focal point, but blue text */
+body.dark-mode #centerScanBtn{
+  background:#ff304f!important;
+  border-color:#d90027!important;
+  box-shadow:
+    0 0 0 4px rgba(255,48,79,.18),
+    0 0 25px rgba(255,48,79,.55),
+    0 12px 28px rgba(120,0,20,.20)!important;
+}
+body.dark-mode #centerScanBtn,
+body.dark-mode #centerScanBtn *,
+body.dark-mode #centerScanBtn::after{
+  color:#073b9a!important;
+  -webkit-text-fill-color:#073b9a!important;
+}
+
+/* Dividers */
+body.dark-mode .section-title{
+  border-bottom-color:rgba(7,59,154,.25)!important;
+}
+body.dark-mode .rk-premium-strip{
+  background:rgba(255,232,77,.82)!important;
+  border-color:rgba(7,59,154,.20)!important;
+}
+
+
+/* ==========================================================
+   RK CELL — TAB T285 OPERATION MODE
+   Target UI: compact 5.7" display / ~360 CSS px.
+   Access methods: NAME + QR + USB HID READER.
+========================================================== */
+
+#choiceNfcHpBtn,
+#scanModeNfcBtn,
+#claimModeNfcBtn,
+#nfcScanPanel,
+#claimNfcPanel,
+#testNfcBtn,
+[data-action="nfc"],
+[data-reader="nfc"],
+.nfc-only{
+  display:none!important;
+}
+
+.a83-operational-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 8px;
+  margin-left:6px;
+  border-radius:999px;
+  font-size:10px;
+  font-weight:900;
+  background:#fff2a6;
+  color:#073b9a;
+  border:1px solid rgba(7,59,154,.22);
+}
+
+@media (max-width:480px){
+  html{font-size:14px!important;-webkit-text-size-adjust:100%}
+  body{min-width:0!important;overflow-x:hidden!important;padding-bottom:88px!important}
+  .app,.app-shell,main{width:100%!important;max-width:100%!important;margin:0 auto!important}
+  .topbar,header{min-height:54px!important;padding:8px 10px!important}
+  .brand-title{font-size:16px!important}
+  .brand-subtitle{font-size:10px!important}
+  .hero{padding:12px!important;border-radius:16px!important;margin:8px!important}
+  .card{padding:12px!important;border-radius:15px!important;margin-bottom:9px!important}
+  .section-title{margin-bottom:8px!important}
+  .section-title h2{font-size:16px!important}
+  input,select,textarea,button,.btn{min-height:44px!important;font-size:14px!important}
+  input,select,textarea{padding:10px 11px!important}
+  .btn{padding:9px 11px!important}
+  .grid,.form-grid,.two-col,.three-col{grid-template-columns:1fr!important;gap:8px!important}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+  .kpi-box{min-height:72px!important;padding:9px!important}
+  .member-method-box{padding:8px!important}
+  .member-method-btn{min-height:54px!important;padding:8px!important}
+  .scan-shell,.card-reader-choice{
+    width:calc(100vw - 20px)!important;
+    max-width:400px!important;
+    max-height:90vh!important;
+    overflow:auto!important;
+    padding:12px!important;
+    border-radius:18px!important;
+  }
+  .scan-mode-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .scan-mode-btn{min-height:64px!important;font-size:13px!important}
+  #usbScanPanel,#claimUsbPanel,#qrScanPanel,#claimQrPanel{padding:10px!important}
+  .bottom-nav{
+    left:6px!important;right:6px!important;bottom:6px!important;width:auto!important;
+    min-height:62px!important;border-radius:18px!important;padding:5px 3px!important;gap:1px!important
+  }
+  .bottom-nav button{min-width:0!important;padding:5px 2px!important;font-size:10px!important}
+  .bottom-nav button span,.bottom-nav .nav-label{font-size:9px!important;letter-spacing:-.02em!important}
+  #centerScanBtn{width:54px!important;height:54px!important;min-height:54px!important;transform:translateY(-8px) scale(1.02)!important}
+  #centerScanBtn::after{bottom:-13px!important;font-size:7px!important}
+  .table-wrap{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+  table{font-size:11px!important}
+  th,td{padding:7px 6px!important}
+  .topbar,.bottom-nav,.card,.hero,.scan-shell,.card-reader-choice{
+    backdrop-filter:none!important;-webkit-backdrop-filter:none!important
+  }
+}
+
+
+/* USB registration feedback — Tab T285 */
+#nfcWriterStatus{
+  min-height:74px!important;
+  padding:12px!important;
+  border:2px solid rgba(7,59,154,.28)!important;
+  border-radius:14px!important;
+  font-size:13px!important;
+  line-height:1.5!important;
+  text-align:center!important;
+}
+
+
+/* ==========================================================
+   RK CELL — COMFORT THEME
+   Soft slate + warm white + teal accent.
+   Designed for long daily use on Tab T285.
+========================================================== */
+body,
+body.dark-mode{
+  --rk-bg:#eef2f3;
+  --rk-surface:#ffffff;
+  --rk-surface-2:#f7f9f9;
+  --rk-text:#17343a;
+  --rk-muted:#667b80;
+  --rk-line:#d6e0e1;
+  --rk-accent:#087f78;
+  --rk-accent-dark:#05645f;
+  --rk-accent-soft:#dff3f0;
+  --rk-danger:#e53945;
+
+  background:linear-gradient(180deg,#f4f7f7 0%,#e9eff0 100%)!important;
+  color:var(--rk-text)!important;
+}
+
+/* Main surfaces */
+body .topbar,
+body.dark-mode .topbar,
+body .hero,
+body.dark-mode .hero,
+body .card,
+body.dark-mode .card,
+body .kpi-box,
+body.dark-mode .kpi-box,
+body .item,
+body.dark-mode .item,
+body .utility-btn,
+body.dark-mode .utility-btn,
+body .member-method-box,
+body.dark-mode .member-method-box,
+body .member-method-btn,
+body.dark-mode .member-method-btn,
+body .reward,
+body.dark-mode .reward,
+body .auth-card,
+body.dark-mode .auth-card{
+  background:rgba(255,255,255,.97)!important;
+  color:var(--rk-text)!important;
+  border-color:var(--rk-line)!important;
+  box-shadow:0 5px 18px rgba(27,57,62,.07)!important;
+}
+
+/* Typography */
+body .app *,
+body.dark-mode .app *,
+body #authGate *,
+body.dark-mode #authGate *{
+  color:var(--rk-text);
+  -webkit-text-fill-color:currentColor;
+  text-shadow:none;
+}
+body .muted,
+body.dark-mode .muted,
+body small,
+body.dark-mode small,
+body .brand-subtitle,
+body.dark-mode .brand-subtitle{
+  color:var(--rk-muted)!important;
+  -webkit-text-fill-color:var(--rk-muted)!important;
+}
+
+/* Inputs */
+body input,body select,body textarea,
+body.dark-mode input,body.dark-mode select,body.dark-mode textarea{
+  background:#fbfcfc!important;
+  color:var(--rk-text)!important;
+  -webkit-text-fill-color:var(--rk-text)!important;
+  border:1.5px solid #ccd9da!important;
+  box-shadow:none!important;
+}
+body input:focus,body select:focus,body textarea:focus,
+body.dark-mode input:focus,body.dark-mode select:focus,body.dark-mode textarea:focus{
+  border-color:var(--rk-accent)!important;
+  box-shadow:0 0 0 3px rgba(8,127,120,.11)!important;
+}
+
+/* Primary actions */
+body .btn.primary,
+body.dark-mode .btn.primary{
+  background:linear-gradient(135deg,#0b9188,#08756f)!important;
+  border-color:#076c66!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  box-shadow:0 5px 14px rgba(8,127,120,.18)!important;
+}
+body .btn.soft,
+body.dark-mode .btn.soft{
+  background:var(--rk-accent-soft)!important;
+  color:var(--rk-accent-dark)!important;
+  -webkit-text-fill-color:var(--rk-accent-dark)!important;
+  border-color:#b9dfda!important;
+}
+
+/* Selected method / selected nav-like controls */
+body .member-method-btn.active,
+body.dark-mode .member-method-btn.active,
+body .scan-mode-btn.primary,
+body.dark-mode .scan-mode-btn.primary{
+  background:var(--rk-accent)!important;
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+  border-color:var(--rk-accent-dark)!important;
+}
+body .member-method-btn.active *,
+body.dark-mode .member-method-btn.active *,
+body .scan-mode-btn.primary *,
+body.dark-mode .scan-mode-btn.primary *{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
+/* Scan overlays */
+body #directScanOverlay,
+body.dark-mode #directScanOverlay,
+body #claimScanOverlay,
+body.dark-mode #claimScanOverlay,
+body #cardReaderChoiceOverlay,
+body.dark-mode #cardReaderChoiceOverlay{
+  background:rgba(22,40,44,.82)!important;
+}
+body .scan-shell,
+body.dark-mode .scan-shell,
+body .card-reader-choice,
+body.dark-mode .card-reader-choice,
+body #qrScanPanel,
+body.dark-mode #qrScanPanel,
+body #usbScanPanel,
+body.dark-mode #usbScanPanel,
+body #claimQrPanel,
+body.dark-mode #claimQrPanel,
+body #claimUsbPanel,
+body.dark-mode #claimUsbPanel{
+  background:#fff!important;
+  color:var(--rk-text)!important;
+  border-color:#cbdadb!important;
+}
+body .scan-status,
+body.dark-mode .scan-status,
+body #nfcWriterStatus,
+body.dark-mode #nfcWriterStatus{
+  background:#f2f7f7!important;
+  color:var(--rk-text)!important;
+  border-color:#cbdadb!important;
+}
+
+/* Bottom navigation: comfortable light dock */
+body .bottom-nav,
+body.dark-mode .bottom-nav{
+  background:rgba(255,255,255,.98)!important;
+  border:1px solid #ccd9da!important;
+  box-shadow:0 -5px 22px rgba(23,52,58,.12)!important;
+}
+body .bottom-nav button,
+body.dark-mode .bottom-nav button,
+body .bottom-nav button *,
+body.dark-mode .bottom-nav button *{
+  color:#27474d!important;
+  -webkit-text-fill-color:#27474d!important;
+}
+body .bottom-nav button:not(#centerScanBtn).active,
+body.dark-mode .bottom-nav button:not(#centerScanBtn).active{
+  background:#e2f3f1!important;
+  border-color:#c0e2de!important;
+}
+body .bottom-nav button:not(#centerScanBtn).active *,
+body.dark-mode .bottom-nav button:not(#centerScanBtn).active *{
+  color:#05645f!important;
+  -webkit-text-fill-color:#05645f!important;
+}
+
+/* SCAN stays instantly recognizable */
+body #centerScanBtn,
+body.dark-mode #centerScanBtn{
+  background:linear-gradient(145deg,#ff4354,#e9263a)!important;
+  border-color:#ff7884!important;
+  box-shadow:
+    0 0 0 4px rgba(233,38,58,.10),
+    0 0 18px rgba(233,38,58,.34),
+    0 8px 20px rgba(121,23,35,.18)!important;
+}
+body #centerScanBtn *,
+body.dark-mode #centerScanBtn *,
+body #centerScanBtn::after,
+body.dark-mode #centerScanBtn::after{
+  color:#fff!important;
+  -webkit-text-fill-color:#fff!important;
+}
+
+/* A83 badge */
+body .a83-operational-badge,
+body.dark-mode .a83-operational-badge{
+  background:#e4f4f2!important;
+  color:#086b65!important;
+  -webkit-text-fill-color:#086b65!important;
+  border-color:#bddfdb!important;
+}
+
+/* Premium strip */
+body .rk-premium-strip,
+body.dark-mode .rk-premium-strip{
+  background:#edf6f5!important;
+  border-color:#d0e4e2!important;
+  color:#31565b!important;
+}
+
+/* Softer separators */
+body hr, body.dark-mode hr,
+body .section-title,body.dark-mode .section-title{
+  border-color:#dce5e6!important;
+}
+
+
+/* ==========================================================
+   RK CELL — SAMSUNG TAB T285 EDITION
+   Android 7 / 7-inch / portrait-first tablet operations
+   Access: NAME + QR + USB HID READER
+========================================================== */
+
+/* General performance: reduce costly effects for older Android browser/GPU */
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+body{
+  overflow-x:hidden!important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+*{
+  -webkit-tap-highlight-color:transparent;
+}
+.topbar,.bottom-nav,.card,.hero,.scan-shell,.card-reader-choice,
+.rk-premium-strip,.auth-card{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+
+/* Tablet badge */
+.t285-operational-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  margin-left:7px;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:11px;
+  line-height:1;
+  font-weight:900;
+  background:#e4f4f2;
+  color:#086b65;
+  border:1px solid #bddfdb;
+  white-space:nowrap;
+}
+
+/* 7-inch tablet portrait / landscape */
+@media (min-width:540px) and (max-width:1100px){
+  body{
+    padding-bottom:92px!important;
+  }
+
+  .app,.app-shell{
+    width:100%!important;
+    max-width:980px!important;
+    margin:0 auto!important;
+    padding-left:12px!important;
+    padding-right:12px!important;
+  }
+
+  .topbar,header{
+    min-height:64px!important;
+    padding:10px 14px!important;
+  }
+  .brand-title{
+    font-size:20px!important;
+  }
+  .brand-subtitle{
+    font-size:11px!important;
+  }
+
+  .hero{
+    margin:10px 0!important;
+    padding:16px!important;
+    border-radius:18px!important;
+  }
+  .card{
+    padding:15px!important;
+    border-radius:16px!important;
+    margin-bottom:11px!important;
+  }
+  .section-title h2{
+    font-size:18px!important;
+  }
+
+  /* Comfortable touch targets */
+  input,select,textarea,button,.btn{
+    min-height:48px!important;
+    font-size:15px!important;
+  }
+  input,select,textarea{
+    padding:11px 12px!important;
+  }
+  .btn{
+    padding:10px 14px!important;
+  }
+
+  /* Tablet gains real space: two columns where possible */
+  .two-col{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+  .three-col{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:9px!important;
+  }
+  .form-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:10px!important;
+  }
+
+  /* Do not force every generic grid; preserve existing sections */
+  .kpi-grid{
+    grid-template-columns:repeat(4,minmax(0,1fr))!important;
+    gap:9px!important;
+  }
+  .kpi-box{
+    min-height:82px!important;
+    padding:11px!important;
+  }
+  .kpi-box strong{
+    font-size:20px!important;
+  }
+
+  /* Member access methods */
+  .member-method-box{
+    padding:10px!important;
+  }
+  .member-method-btn{
+    min-height:66px!important;
+    padding:10px!important;
+    font-size:14px!important;
+  }
+
+  /* QR + USB scanner modal optimized for tablet */
+  .scan-shell,.card-reader-choice{
+    width:min(92vw,620px)!important;
+    max-height:86vh!important;
+    overflow:auto!important;
+    padding:18px!important;
+    border-radius:20px!important;
+  }
+  .scan-mode-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:12px!important;
+  }
+  .scan-mode-btn{
+    min-height:78px!important;
+    font-size:15px!important;
+    border-width:2px!important;
+  }
+  #qrScanPanel,#usbScanPanel,#claimQrPanel,#claimUsbPanel{
+    padding:14px!important;
+  }
+  .scan-status,#nfcWriterStatus{
+    min-height:82px!important;
+    padding:14px!important;
+    font-size:14px!important;
+    line-height:1.55!important;
+  }
+
+  /* Tables are much more usable on 7-inch display */
+  .table-wrap{
+    overflow-x:auto!important;
+    -webkit-overflow-scrolling:touch!important;
+  }
+  table{
+    width:100%!important;
+    font-size:12px!important;
+  }
+  th,td{
+    padding:9px 8px!important;
+    white-space:nowrap;
+  }
+
+  /* Bottom tablet dock */
+  .bottom-nav{
+    left:12px!important;
+    right:12px!important;
+    bottom:8px!important;
+    width:auto!important;
+    max-width:760px!important;
+    margin:0 auto!important;
+    min-height:68px!important;
+    padding:6px 8px!important;
+    border-radius:20px!important;
+    gap:4px!important;
+  }
+  .bottom-nav button{
+    min-width:0!important;
+    min-height:54px!important;
+    padding:6px 5px!important;
+    font-size:11px!important;
+  }
+  .bottom-nav button span,
+  .bottom-nav .nav-label{
+    font-size:10px!important;
+  }
+  #centerScanBtn{
+    width:62px!important;
+    height:62px!important;
+    min-height:62px!important;
+    transform:translateY(-9px) scale(1.03)!important;
+  }
+  #centerScanBtn::after{
+    bottom:-14px!important;
+    font-size:8px!important;
+  }
+}
+
+/* T285 portrait sweet spot */
+@media (min-width:600px) and (max-width:850px) and (orientation:portrait){
+  .app,.app-shell{
+    max-width:800px!important;
+  }
+  .admin-dashboard-grid,
+  .transaction-layout{
+    grid-template-columns:1fr 1fr!important;
+    gap:10px!important;
+  }
+}
+
+/* T285 landscape */
+@media (min-width:850px) and (max-width:1400px) and (orientation:landscape){
+  .app,.app-shell{
+    max-width:1180px!important;
+  }
+  .hero{
+    padding:14px 18px!important;
+  }
+  .card{
+    padding:14px!important;
+  }
+}
+
+/* Android 7 friendly: remove expensive pulse if device feels sluggish */
+@media (prefers-reduced-motion:reduce){
+  #centerScanBtn::before{
+    animation:none!important;
+  }
+}
+
 </style>
 <script>
 (function(){
@@ -3190,7 +3998,7 @@ body.dark-mode .section-title{
       <span>▦</span><strong>QR</strong><small>Bisa dipindai</small>
     </button>
     <button class="member-method-btn" type="button" data-method="nfc" id="memberMethodNfc" aria-pressed="false">
-      <span>💳</span><strong>KARTU</strong><small>NFC HP / USB Reader</small>
+      <span>💳</span><strong>KARTU</strong><small>USB Reader</small>
     </button>
   </div>
   <div class="member-method-note" id="memberMethodNote">Nama selalu tersedia. QR aktif secara default. Satu UID kartu dapat dibaca lewat NFC HP maupun USB Reader.</div>
@@ -3274,7 +4082,7 @@ body.dark-mode .section-title{
   </div>
   <div class="claim-scan-mini">
     <button class="btn soft claim-mini-btn" id="claimQrScanBtn" type="button" title="Scan QR Member">▦ QR</button>
-    <button class="btn soft claim-mini-btn" id="claimNfcScanBtn" type="button" title="Tempel NFC Member">📱 NFC HP</button>
+    <button class="btn soft claim-mini-btn" id="claimNfcScanBtn" type="button" title="Tempel NFC Member">🔌 USB Reader</button>
     <button class="btn soft claim-mini-btn" id="claimUsbScanBtn" type="button" title="Scan USB Reader">🔌 USB</button>
   </div>
 </div>
@@ -3375,12 +4183,12 @@ body.dark-mode .section-title{
 <input accept=".json,application/json" class="hidden" id="importFile" type="file"/>
 </div>
 <div class="card section hidden" id="nfcToolPanel">
-<div class="section-title"><h2>KARTU MEMBER</h2><span>NFC HP / USB Reader</span></div>
-<p class="note">Pilih member lalu daftarkan UID kartu menggunakan NFC HP atau reader USB external. Keduanya memakai UID member yang sama.</p>
+<div class="section-title"><h2>KARTU MEMBER</h2><span>USB Reader</span></div>
+<p class="note">Pilih member lalu daftarkan kartu menggunakan USB Reader melalui OTG. Setelah kartu ditempel, UID akan tersimpan otomatis ke member.</p>
 <div class="field"><label>PILIH MEMBER</label><select id="nfcMemberSelect"></select></div>
 <div class="row" style="margin-top:10px">
-<button class="btn primary" id="writeNfcBtn" type="button">💳 Daftarkan Kartu</button>
-<button class="btn soft" id="testNfcBtn" type="button">📱 Tes via NFC HP</button>
+<button class="btn primary" id="writeNfcBtn" type="button">🔌 Daftarkan Reader</button>
+<button class="btn soft" id="testNfcBtn" type="button">📱 Tes Reader USB</button>
 <button class="btn soft" id="testUsbBtn" type="button">🔌 Tes via USB</button>
 </div>
 <div class="scan-status" id="nfcWriterStatus" style="margin-top:10px">Siap membaca UID kartu via NFC HP atau USB Reader.</div>
@@ -3528,7 +4336,7 @@ body.dark-mode .section-title{
 </div>
 <div class="scan-mode-grid">
 <button class="btn primary scan-mode-btn" id="scanModeQrBtn" type="button">📷 QR</button>
-<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">📱 NFC HP</button>
+<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">🔌 USB Reader</button>
 <button class="btn soft scan-mode-btn" id="scanModeUsbBtn" type="button">🔌 USB READER</button>
 </div>
 
@@ -4412,7 +5220,7 @@ function updateMemberMethodUI(){
   const labels=[];
   if(newMemberMethods.has("name")) labels.push("Nama");
   if(newMemberMethods.has("qr")) labels.push("QR");
-  if(newMemberMethods.has("nfc")) labels.push("Kartu (NFC/USB)");
+  if(newMemberMethods.has("nfc")) labels.push("Reader USB");
 
   note.textContent=`Akses aktif: ${labels.join(" + ")}. Member bisa menggunakan metode mana pun yang tersedia.`;
 }
@@ -4499,7 +5307,7 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
 
   const accessLabels=["Nama"];
   if(methodsUsed.has("qr")) accessLabels.push("QR");
-  if(methodsUsed.has("nfc")) accessLabels.push("Kartu (NFC/USB)");
+  if(methodsUsed.has("nfc")) accessLabels.push("Reader USB");
 
   if(methodsUsed.has("nfc")){
     const cardOk=await registerUnifiedCardForNewMember(m);
@@ -5879,7 +6687,7 @@ function startUsbReader(context="direct",statusId="usbScanStatus",memberId=null)
   usbReaderStatusId=statusId;
   usbReaderMemberId=memberId;
   const status=document.getElementById(statusId);
-  if(status) status.textContent="Reader USB aktif. Tempel kartu sekarang...";
+  if(status) status.innerHTML=`<strong>🔌 USB READER AKTIF</strong><br>Tempelkan kartu tepat di atas permukaan reader sampai UID terbaca.<br><small>Jangan klik/ketik apa pun sampai proses selesai.</small>`;
 }
 
 async function processUsbUid(rawUid){
@@ -5920,17 +6728,49 @@ async function processUsbUid(rawUid){
       return;
     }
 
+    if(context==="unified-register"){
+      const memberId=usbReaderMemberId;
+      const m=members.find(x=>x.id===memberId);
+      if(!m) throw new Error("Member tidak ditemukan.");
+
+      if(status) status.textContent=`UID ${uid} terbaca. Menyimpan ke ${m.name}...`;
+
+      const clean=await saveNfcUidToMember(memberId,uid);
+      await createAudit("card_uid_registered",memberId,{
+        nfc_uid:clean,
+        reader:"usb",
+        source:"member_create"
+      });
+
+      await loadSupabaseData();
+
+      const refreshed=members.find(x=>x.id===memberId);
+      if(refreshed) refreshed.nfc_uid=clean;
+
+      if(status){
+        status.innerHTML=`<strong style="color:#16a34a">✓ KARTU BERHASIL TERSIMPAN</strong><br>UID: ${clean}<br>Member: ${escapeHtml(m.name)} (${m.id})`;
+      }
+
+      alert(`✓ KARTU BERHASIL TERSIMPAN\n\nMember: ${m.name}\nID: ${m.id}\nUID: ${clean}\n\nKartu sekarang siap digunakan.`);
+
+      const resolve=window.__unifiedUsbResolve;
+      window.__unifiedUsbResolve=null;
+      if(resolve) resolve(true);
+      return;
+    }
+
     if(context==="register" || context==="setup-register"){
       const memberId=usbReaderMemberId;
       const m=members.find(x=>x.id===memberId);
       if(!m) throw new Error("Member tidak ditemukan.");
+      if(status) status.textContent=`UID ${uid} terbaca. Menyimpan...`;
       const clean=await saveNfcUidToMember(memberId,uid);
       await createAudit("usb_uid_registered",memberId,{nfc_uid:clean,source:context});
       await loadSupabaseData();
-      if(status) status.textContent=`✓ UID ${clean} tersimpan untuk ${m.name}.`;
-      if(context==="register"){
-        alert(`✓ Kartu berhasil didaftarkan via USB Reader.\\nUID: ${clean}\\nMember: ${m.name}`);
+      if(status){
+        status.innerHTML=`<strong style="color:#16a34a">✓ KARTU BERHASIL TERSIMPAN</strong><br>UID: ${clean}<br>Member: ${escapeHtml(m.name)} (${m.id})`;
       }
+      alert(`✓ KARTU BERHASIL TERSIMPAN\n\nMember: ${m.name}\nID: ${m.id}\nUID: ${clean}`);
       return;
     }
 
@@ -5943,7 +6783,13 @@ async function processUsbUid(rawUid){
     }
   }catch(err){
     console.error("USB READER:",err);
-    if(status) status.textContent=`USB Reader gagal: ${err.message||err}`;
+    if(status) status.innerHTML=`<strong style="color:#dc2626">✕ GAGAL MENYIMPAN KARTU</strong><br>${escapeHtml(String(err.message||err))}`;
+    if(context==="unified-register"){
+      const resolve=window.__unifiedUsbResolve;
+      window.__unifiedUsbResolve=null;
+      if(resolve) resolve(false);
+      alert(`Kartu belum tersimpan.\n\n${err.message||err}`);
+    }
   }
 }
 
@@ -6171,5 +7017,69 @@ if("serviceWorker" in navigator && location.protocol==="https:"){
 </script>
 <script>
 </script>
+
+<script>
+/* TAB T285 operational patch: NFC disabled. */
+(function(){
+  function applyA83Mode(){
+    ["choiceNfcHpBtn","scanModeNfcBtn","claimModeNfcBtn","nfcScanPanel","claimNfcPanel","testNfcBtn"]
+      .forEach(function(id){
+        var el=document.getElementById(id);
+        if(el) el.style.display="none";
+      });
+
+    document.querySelectorAll("[data-method='nfc']").forEach(function(el){
+      var txt=(el.textContent||"").toLowerCase();
+      if(txt.indexOf("usb")===-1 && txt.indexOf("reader")===-1){
+        el.innerHTML=el.innerHTML
+          .replace(/KARTU/gi,"USB READER")
+          .replace(/NFC/gi,"USB");
+      }
+    });
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",applyA83Mode,{once:true});
+  }else{
+    applyA83Mode();
+  }
+
+  setTimeout(applyA83Mode,300);
+})();
+</script>
+
+
+<script>
+/* ADMIN operational mode: full management + QR + USB Reader + Name */
+(function(){
+  function applyT285Mode(){
+    var ids=["choiceNfcHpBtn","scanModeNfcBtn","claimModeNfcBtn","nfcScanPanel","claimNfcPanel","testNfcBtn"];
+    for(var i=0;i<ids.length;i++){
+      var el=document.getElementById(ids[i]);
+      if(el) el.style.display="none";
+    }
+
+    /* Make USB reader wording explicit */
+    var nodes=document.querySelectorAll("button,span,label,small,strong,p");
+    for(var j=0;j<nodes.length;j++){
+      var n=nodes[j];
+      if(!n || n.children.length) continue;
+      var t=n.textContent||"";
+      t=t.replace(/NFC HP\s*\/\s*USB Reader/gi,"USB Reader");
+      t=t.replace(/NFC\/USB/gi,"USB Reader");
+      t=t.replace(/NFC HP/gi,"USB Reader");
+      n.textContent=t;
+    }
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener("DOMContentLoaded",applyT285Mode);
+  }else{
+    applyT285Mode();
+  }
+  window.setTimeout(applyT285Mode,300);
+})();
+</script>
+
 </body>
 </html>
