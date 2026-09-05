@@ -15,7 +15,7 @@ button,input{font-family:inherit}
 button{-webkit-tap-highlight-color:transparent}
 .shell{position:relative;z-index:1;width:100%;max-width:1040px;margin:0 auto;padding:14px}
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(9,24,42,.94);box-shadow:0 18px 46px rgba(0,0,0,.24)}
-.brand-wrap{display:flex;align-items:center;gap:12px;min-width:0}.brand-logo{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#2f80ff,#00c7a5);box-shadow:0 10px 24px rgba(18,125,232,.28);font-size:18px;font-weight:1000;letter-spacing:.4px}.brand-title{font-size:22px;font-weight:1000;letter-spacing:.6px;line-height:1}.brand-sub{margin-top:5px;font-size:10px;color:#89a1bd;letter-spacing:1.2px;text-transform:uppercase}.top-actions{display:flex;align-items:center;gap:8px}.reader-pill{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:#0f2a25;border:1px solid rgba(54,219,167,.22);color:#9cf5d5;font-size:11px;font-weight:900;white-space:nowrap}.reader-dot{width:9px;height:9px;border-radius:50%;background:#38e0a8;box-shadow:0 0 0 5px rgba(56,224,168,.12)}.logout-btn{display:none;height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:#132338;color:#d9e8f8;font-size:10px;font-weight:1000;letter-spacing:.4px}.logout-btn.show{display:block}.logout-btn:active{transform:scale(.98)}
+.brand-wrap{display:flex;align-items:center;gap:12px;min-width:0}.brand-logo{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#2f80ff,#00c7a5);box-shadow:0 10px 24px rgba(18,125,232,.28);font-size:18px;font-weight:1000;letter-spacing:.4px}.brand-title{font-size:22px;font-weight:1000;letter-spacing:.6px;line-height:1}.brand-sub{margin-top:5px;font-size:10px;color:#89a1bd;letter-spacing:1.2px;text-transform:uppercase}.top-actions{display:flex;align-items:center;gap:8px}.reader-pill{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:#201c12;border:1px solid rgba(255,190,74,.22);color:#ffd487;font-size:11px;font-weight:900;white-space:nowrap;transition:.2s}.reader-pill.online{background:#0f2a25;border-color:rgba(54,219,167,.22);color:#9cf5d5}.reader-pill.offline{background:#281519;border-color:rgba(255,91,112,.24);color:#ffb3bd}.reader-dot{width:9px;height:9px;border-radius:50%;background:#f5b642;box-shadow:0 0 0 5px rgba(245,182,66,.10)}.reader-pill.online .reader-dot{background:#38e0a8;box-shadow:0 0 0 5px rgba(56,224,168,.12)}.reader-pill.offline .reader-dot{background:#ff5b70;box-shadow:0 0 0 5px rgba(255,91,112,.10)}.logout-btn{display:none;height:38px;padding:0 13px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:#132338;color:#d9e8f8;font-size:10px;font-weight:1000;letter-spacing:.4px}.logout-btn.show{display:block}.logout-btn:active{transform:scale(.98)}
 .login{display:none;margin-top:12px;padding:16px;border-radius:22px;background:#0b1b30;border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 50px rgba(0,0,0,.28)}.login.show{display:block}.login-title{font-size:17px;font-weight:1000}.login-sub{font-size:11px;color:#8ea4bf;margin-top:4px}.login-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;margin-top:12px}.login input{min-width:0;height:46px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:#081426;color:#fff;padding:0 12px;font-size:14px;outline:none}.login input:focus{border-color:#2f80ff;box-shadow:0 0 0 3px rgba(47,128,255,.12)}.login button{height:46px;padding:0 18px;border:0;border-radius:13px;background:linear-gradient(135deg,#2f80ff,#2366d4);color:#fff;font-weight:1000;box-shadow:0 9px 22px rgba(47,128,255,.22)}.login-options{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px}.remember-id{display:flex;align-items:center;gap:8px;font-size:11px;color:#a9bed4;font-weight:800}.remember-id input{width:16px;height:16px;accent-color:#2f80ff}.saved-id-note{font-size:10px;color:#68829d}.small{font-size:10px;color:#7990aa;margin-top:8px}
 .stage{margin-top:12px;display:grid;grid-template-columns:1.04fr .96fr;gap:12px}
 .panel{border-radius:26px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,#0d213a,#091829);box-shadow:0 24px 70px rgba(0,0,0,.30);overflow:hidden}.panel-inner{padding:20px}
@@ -30,6 +30,9 @@ button{-webkit-tap-highlight-color:transparent}
 @media(max-width:760px){.shell{padding:8px}.topbar{padding:10px 12px;border-radius:16px}.brand-logo{width:42px;height:42px;border-radius:13px}.brand-title{font-size:18px}.brand-sub{font-size:8px}.reader-pill{padding:7px 9px;font-size:9px}.stage{grid-template-columns:1fr}.scan-panel,.member-panel{min-height:auto}.scan-title{font-size:24px}.scan-orb-wrap{min-height:190px}.scan-orb{width:144px;height:144px}.scan-orb:before{width:105px;height:105px}.scan-orb:after{left:65px}.card-icon{width:66px;height:48px}.panel-inner{padding:15px}.profile-card{padding:15px}.name{font-size:20px}.points{font-size:50px}.reward-zone{padding:14px}.login-grid{grid-template-columns:1fr}.login button{width:100%}}
 @media(min-width:761px) and (orientation:landscape){body{overflow:hidden}.shell{padding:8px 12px}.topbar{padding:10px 14px}.brand-logo{width:42px;height:42px}.stage{height:calc(100vh - 82px)}.panel,.scan-panel,.member-panel{height:100%}.panel-inner{padding:16px}.scan-panel{min-height:0}.scan-title{font-size:28px}.scan-orb-wrap{min-height:205px;flex:1}.scan-orb{width:150px;height:150px}.scan-orb:before{width:110px;height:110px}.scan-orb:after{left:67px}.member-panel{min-height:0}.profile-card{padding:16px}.name{font-size:22px}.points{font-size:54px}.reward-zone{padding:13px 15px 14px}.reward-card{padding:9px 10px}.claim-reward-btn{height:44px;margin-top:8px}.footer-note{margin-top:8px}}
 @media(max-height:620px) and (orientation:landscape){.scan-desc{display:none}.scan-orb-wrap{min-height:150px}.scan-orb{width:122px;height:122px}.scan-orb:before{width:88px;height:88px}.scan-orb:after{left:53px}.card-icon{width:58px;height:42px}.tap-rule{padding:9px}.profile-card{padding:12px 15px}.points-wrap{margin-top:12px}.points{font-size:46px}.reward-zone{padding:10px 14px}.reward-card{padding:8px 9px}.footer-note{display:none}}
+
+.password-wrap{position:relative;min-width:0}.password-wrap input{width:100%;padding-right:72px}.toggle-pass{position:absolute;right:6px;top:6px;height:34px!important;min-width:58px;padding:0 10px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:10px!important;background:#132338!important;color:#cfe1f5!important;box-shadow:none!important;font-size:10px!important;font-weight:1000!important}.toggle-pass:active{transform:scale(.97)}
+.voice-pill{cursor:pointer;-webkit-user-select:none;user-select:none}.voice-pill.off{background:rgba(255,174,66,.12);border-color:rgba(255,174,66,.18);color:#ffd59a}.voice-pill.ok{background:rgba(0,199,165,.12);border-color:rgba(0,199,165,.18);color:#8ef0d5}
 </style>
 </head>
 <body>
@@ -42,7 +45,7 @@ button{-webkit-tap-highlight-color:transparent}
         <div class="brand-sub">Smart Member Station • T285</div>
       </div>
     </div>
-    <div class="top-actions"><div class="reader-pill"><span class="reader-dot"></span><span id="readerState">Reader siap</span></div><button id="logoutBtn" class="logout-btn" type="button">KELUAR</button></div>
+    <div class="top-actions"><div id="readerPill" class="reader-pill" title="Status reader berdasarkan aktivitas data RFID"><span class="reader-dot"></span><span id="readerState">Reader belum terdeteksi</span></div><button id="logoutBtn" class="logout-btn" type="button">KELUAR</button></div>
   </header>
 
   <section id="loginBox" class="login">
@@ -50,7 +53,7 @@ button{-webkit-tap-highlight-color:transparent}
     <div class="login-sub">Masuk untuk mengaktifkan terminal member RK CELL.</div>
     <div class="login-grid">
       <input id="email" type="email" placeholder="Email admin/operator" autocomplete="username">
-      <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      <div class="password-wrap"><input id="password" type="password" placeholder="Password" autocomplete="current-password"><button id="togglePassword" class="toggle-pass" type="button" aria-label="Tampilkan password">SHOW</button></div>
       <button id="loginBtn" type="button">MASUK</button>
     </div>
     <div class="login-options"><label class="remember-id"><input id="rememberId" type="checkbox" checked> Simpan ID login</label><span id="savedIdNote" class="saved-id-note"></span></div>
@@ -88,7 +91,7 @@ button{-webkit-tap-highlight-color:transparent}
               <div id="memberName" class="name">-</div>
               <div id="memberId" class="mid">-</div>
             </div>
-            <div class="voice-pill">● AI VOICE</div>
+            <div id="voicePill" class="voice-pill" title="Ketuk untuk tes suara">● AI VOICE</div>
           </div>
           <div class="points-wrap">
             <div><div class="points-label">TOTAL POIN</div><div id="memberPoints" class="points">0</div></div>
@@ -123,6 +126,7 @@ var refreshingSession=false, refreshWaiters=[];
 var hidBuffer="", hidTimer=null, lastKeyAt=0;
 var pendingTap=null, pendingTimer=null, busy=false, currentMember=null, currentClaim=null, currentClaims=[];
 var DOUBLE_MS=1200;
+var READER_LAST_SEEN=0,READER_EVER_SEEN=false,READER_IDLE_MS=60000;
 var rewards=[
   {threshold:10,name:"Free Admin"},
   {threshold:20,name:"Free Deterjen"},
@@ -137,7 +141,59 @@ function decToHexString(dec){dec=String(dec||"").replace(/\D/g,"");if(!dec)retur
 function reverseHexBytes(hex){hex=String(hex||"").toUpperCase();if(!/^[0-9A-F]+$/.test(hex)||hex.length%2)return"";var out="";for(var i=hex.length;i>0;i-=2)out+=hex.slice(i-2,i);return out}
 function uidVariants(value){var raw=normalizeUid(value),set={};function add(v){v=normalizeUid(v);if(v)set[v]=1}add(raw);if(/^[0-9A-F]+$/.test(raw)){var even=raw.length%2?"0"+raw:raw;add(even);add(stripZeros(even));var rev=reverseHexBytes(even);add(rev);add(stripZeros(rev));add(hexToDecString(even));if(rev)add(hexToDecString(rev));if(even.length>8){var arr=[even.slice(-8),even.slice(0,8)];for(var k=0;k<arr.length;k++){var x=arr[k];add(x);add(hexToDecString(x));var xr=reverseHexBytes(x);add(xr);add(hexToDecString(xr))}}}if(/^\d+$/.test(raw)){var hx=decToHexString(raw);if(hx.length%2)hx="0"+hx;add(hx);add(reverseHexBytes(hx))}var out=[];for(var key in set)if(set.hasOwnProperty(key))out.push(key);return out}
 function setStatus(t){$("status").innerHTML=t}
-function say(t){try{if(window.speechSynthesis&&window.SpeechSynthesisUtterance){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(t||""));u.lang="id-ID";u.rate=0.94;u.pitch=1.03;u.volume=1;speechSynthesis.speak(u)}}catch(e){}}
+function setReaderState(mode,text){
+  var pill=$("readerPill"),state=$("readerState");
+  if(!pill||!state)return;
+  pill.className="reader-pill"+(mode?" "+mode:"");
+  state.innerHTML=text||"Reader belum terdeteksi";
+}
+function markReaderActivity(){
+  READER_LAST_SEEN=(new Date()).getTime();READER_EVER_SEEN=true;
+  setReaderState("online","Reader aktif");
+}
+function updateReaderState(){
+  var now=(new Date()).getTime();
+  if(!READER_EVER_SEEN){setReaderState("","Reader belum terdeteksi");return}
+  if(now-READER_LAST_SEEN>READER_IDLE_MS)setReaderState("offline","Reader tidak terdeteksi");
+  else setReaderState("online","Reader aktif");
+}
+var VOICE_READY=false,VOICE_UNLOCKED=false,lastVoiceText="";
+function setVoiceUi(ok,msg){var v=$("voicePill");if(!v)return;v.className="voice-pill "+(ok?"ok":"off");v.innerHTML=(ok?"● AI VOICE":"● VOICE OFF");if(msg)v.title=msg}
+function pickIndonesianVoice(){try{var vs=window.speechSynthesis?window.speechSynthesis.getVoices():[];var fallback=null;for(var i=0;i<vs.length;i++){var lang=String(vs[i].lang||"").toLowerCase();if(lang==="id-id"||lang.indexOf("id-")===0||lang==="id")return vs[i];if(!fallback&&vs[i].default)fallback=vs[i]}return fallback||null}catch(e){return null}}
+function initVoiceEngine(){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){setVoiceUi(false,"Browser/TTS tidak mendukung Speech Synthesis");return false}
+    VOICE_READY=true;
+    var vs=window.speechSynthesis.getVoices();
+    if(!vs||!vs.length){setVoiceUi(true,"Mesin suara tersedia, menunggu daftar voice...");setTimeout(function(){try{window.speechSynthesis.getVoices()}catch(e){}},250)}else setVoiceUi(true,"AI Voice siap • ketuk untuk tes");
+    return true;
+  }catch(e){setVoiceUi(false,"Voice error: "+e.message);return false}
+}
+function unlockVoice(){
+  if(!initVoiceEngine())return;
+  try{
+    var u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="id-ID";
+    window.speechSynthesis.cancel();window.speechSynthesis.speak(u);VOICE_UNLOCKED=true;
+    setTimeout(function(){try{window.speechSynthesis.cancel()}catch(e){}},60);
+  }catch(e){}
+}
+function say(t){
+  lastVoiceText=String(t||"");if(!lastVoiceText)return;
+  try{
+    if(!initVoiceEngine())return;
+    var synth=window.speechSynthesis;
+    synth.cancel();
+    var u=new SpeechSynthesisUtterance(lastVoiceText);
+    var v=pickIndonesianVoice();if(v)u.voice=v;
+    u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=0.92;u.pitch=1;u.volume=1;
+    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceUi(true,"AI Voice sedang berbicara")};
+    u.onend=function(){setVoiceUi(true,"AI Voice siap • ketuk untuk tes")};
+    u.onerror=function(ev){setVoiceUi(false,"Suara gagal. Ketuk AI VOICE untuk mengaktifkan TTS.")};
+    synth.speak(u);
+    setTimeout(function(){try{if(synth.paused)synth.resume();if(!synth.speaking&&lastVoiceText){synth.cancel();synth.speak(u)}}catch(e){}},450);
+  }catch(e){setVoiceUi(false,"Voice error: "+e.message)}
+}
+if(window.speechSynthesis){try{window.speechSynthesis.onvoiceschanged=function(){initVoiceEngine()}}catch(e){}}
 
 function jwtExpired(token){
   try{
@@ -260,7 +316,18 @@ function requireSession(){
   return ok;
 }
 
+$("togglePassword").onclick=function(){
+  var p=$("password"),show=p.type==="password";
+  p.type=show?"text":"password";
+  this.innerHTML=show?"HIDE":"SHOW";
+  this.setAttribute("aria-label",show?"Sembunyikan password":"Tampilkan password");
+  try{p.focus();var n=p.value.length;p.setSelectionRange(n,n)}catch(e){}
+};
+if($("voicePill"))$("voicePill").onclick=function(){unlockVoice();setTimeout(function(){say("AI Voice RK CELL siap digunakan.")},120)};
+try{document.addEventListener("touchstart",function onceVoice(){unlockVoice();document.removeEventListener("touchstart",onceVoice,false)},false)}catch(e){}
+
 $("loginBtn").onclick=function(){
+  unlockVoice();
   var email=$("email").value.replace(/^\s+|\s+$/g,"");
   var password=$("password").value;
   if(!email||!password){$("loginStatus").innerHTML="Isi email dan password.";return}
@@ -277,6 +344,7 @@ $("loginBtn").onclick=function(){
     updateLoginUi();
     $("loginStatus").innerHTML="Login berhasil.";
     setStatus("✓ Login berhasil. Menunggu kartu...");
+    setTimeout(function(){say("Login berhasil. Terminal RK CELL siap digunakan.")},180);
   });
 };
 
@@ -466,12 +534,13 @@ document.addEventListener("keydown",function(e){
   lastKeyAt=now;
   if(e.key==="Enter"||e.keyCode===13){
     if(e.preventDefault)e.preventDefault();
+    if(hidBuffer.length>=4)markReaderActivity();
     clearTimeout(hidTimer);flushBuffer();return;
   }
   var key=e.key;
   if(!key && e.keyCode>=48 && e.keyCode<=90)key=String.fromCharCode(e.keyCode);
   if(key && key.length===1 && /[a-zA-Z0-9]/.test(key)){
-    hidBuffer+=key;clearTimeout(hidTimer);
+    hidBuffer+=key;if(hidBuffer.length>=4)markReaderActivity();clearTimeout(hidTimer);
     hidTimer=setTimeout(function(){if(hidBuffer.length>=4)flushBuffer()},140);
   }
 });
@@ -489,5 +558,8 @@ if((ACCESS_TOKEN&&jwtExpired(ACCESS_TOKEN))&&REFRESH_TOKEN){
 
 loadSavedLoginId();
 updateLoginUi();
+initVoiceEngine();
+updateReaderState();
+setInterval(updateReaderState,5000);
 </script>
 </body></html>
