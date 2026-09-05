@@ -33,6 +33,8 @@ button{-webkit-tap-highlight-color:transparent}
 
 .password-wrap{position:relative;min-width:0}.password-wrap input{width:100%;padding-right:72px}.toggle-pass{position:absolute;right:6px;top:6px;height:34px!important;min-width:58px;padding:0 10px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:10px!important;background:#132338!important;color:#cfe1f5!important;box-shadow:none!important;font-size:10px!important;font-weight:1000!important}.toggle-pass:active{transform:scale(.97)}
 .voice-pill{cursor:pointer;-webkit-user-select:none;user-select:none}.voice-pill.off{background:rgba(255,174,66,.12);border-color:rgba(255,174,66,.18);color:#ffd59a}.voice-pill.ok{background:rgba(0,199,165,.12);border-color:rgba(0,199,165,.18);color:#8ef0d5}
+
+.ai-console{margin-top:9px;padding:10px 12px;border-radius:14px;background:rgba(47,128,255,.08);border:1px solid rgba(83,165,255,.16)}.ai-console-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.ai-console-title{font-size:10px;font-weight:1000;color:#87c9ff;letter-spacing:1px}.ai-console-state{font-size:9px;color:#79e7c5}.ai-console-text{margin-top:6px;font-size:11px;line-height:1.4;color:#cfe4f7}.ai-console-actions{display:flex;gap:6px;margin-top:8px}.ai-mini{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#122941;color:#dceeff;padding:0 10px;font-size:9px;font-weight:900}
 </style>
 </head>
 <body>
@@ -73,6 +75,7 @@ button{-webkit-tap-highlight-color:transparent}
         </div>
         <div>
           <div id="status" class="status">Menunggu kartu...</div>
+          <div class="ai-console"><div class="ai-console-head"><span class="ai-console-title">RK AI ASSISTANT</span><span id="aiState" class="ai-console-state">SIAP</span></div><div id="aiText" class="ai-console-text">Tempelkan kartu member. AI akan membaca nama, poin, reward, dan status transaksi.</div><div class="ai-console-actions"><button id="aiTestBtn" class="ai-mini" type="button">TES SUARA</button><button id="aiRepeatBtn" class="ai-mini" type="button">ULANGI</button></div></div>
           <div class="tap-rules">
             <div class="tap-rule"><strong>1× TAP</strong><span>CEK POIN & REWARD</span></div>
             <div class="tap-rule"><strong>2× TAP</strong><span>TAMBAH +1 POIN</span></div>
@@ -108,7 +111,7 @@ button{-webkit-tap-highlight-color:transparent}
               <button id="claimRewardBtn" class="claim-reward-btn" type="button">KLAIM REWARD</button>
             </div>
           </div>
-          <div class="footer-note">1× tap untuk melihat poin • 2× tap untuk +1 poin • AI Voice membacakan nama, poin, dan reward.</div>
+          <div class="footer-note">1× tap cek poin • 2× tap +1 poin • +1 maksimal sekali per 1 menit • RK AI membaca nama, poin, reward & status.</div>
         </div>
       </div>
     </section>
@@ -126,6 +129,7 @@ var refreshingSession=false, refreshWaiters=[];
 var hidBuffer="", hidTimer=null, lastKeyAt=0;
 var pendingTap=null, pendingTimer=null, busy=false, currentMember=null, currentClaim=null, currentClaims=[];
 var DOUBLE_MS=1200;
+var POINT_COOLDOWN_MS=60000, pointCooldowns={};
 var READER_LAST_SEEN=0,READER_EVER_SEEN=false,READER_IDLE_MS=60000;
 var rewards=[
   {threshold:10,name:"Free Admin"},
@@ -177,22 +181,21 @@ function unlockVoice(){
     setTimeout(function(){try{window.speechSynthesis.cancel()}catch(e){}},60);
   }catch(e){}
 }
+function setAiText(t,state){lastVoiceText=String(t||"");if($("aiText"))$("aiText").innerHTML=lastVoiceText;if($("aiState"))$("aiState").innerHTML=state||"SIAP"}
+function nativeSpeak(t){try{if(window.AndroidVoice&&typeof window.AndroidVoice.speak==="function"){window.AndroidVoice.speak(String(t));return true}}catch(e){}return false}
 function say(t){
-  lastVoiceText=String(t||"");if(!lastVoiceText)return;
+  lastVoiceText=String(t||"");if(!lastVoiceText)return;setAiText(lastVoiceText,"BERBICARA");
+  if(nativeSpeak(lastVoiceText)){setVoiceUi(true,"Android Native Voice aktif");setTimeout(function(){if($("aiState"))$("aiState").innerHTML="SIAP"},1200);return}
   try{
-    if(!initVoiceEngine())return;
-    var synth=window.speechSynthesis;
-    synth.cancel();
-    var u=new SpeechSynthesisUtterance(lastVoiceText);
-    var v=pickIndonesianVoice();if(v)u.voice=v;
-    u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=0.92;u.pitch=1;u.volume=1;
-    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceUi(true,"AI Voice sedang berbicara")};
-    u.onend=function(){setVoiceUi(true,"AI Voice siap • ketuk untuk tes")};
-    u.onerror=function(ev){setVoiceUi(false,"Suara gagal. Ketuk AI VOICE untuk mengaktifkan TTS.")};
-    synth.speak(u);
-    setTimeout(function(){try{if(synth.paused)synth.resume();if(!synth.speaking&&lastVoiceText){synth.cancel();synth.speak(u)}}catch(e){}},450);
-  }catch(e){setVoiceUi(false,"Voice error: "+e.message)}
+    if(!initVoiceEngine()){if($("aiState"))$("aiState").innerHTML="VOICE OFF";return}
+    var synth=window.speechSynthesis;synth.cancel();var u=new SpeechSynthesisUtterance(lastVoiceText);var v=pickIndonesianVoice();if(v)u.voice=v;
+    u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=0.90;u.pitch=1;u.volume=1;
+    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceUi(true,"AI Voice sedang berbicara");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
+    u.onend=function(){setVoiceUi(true,"AI Voice siap");if($("aiState"))$("aiState").innerHTML="SIAP"};
+    u.onerror=function(){setVoiceUi(false,"TTS browser gagal");if($("aiState"))$("aiState").innerHTML="VOICE OFF"};synth.speak(u);
+  }catch(e){setVoiceUi(false,"Voice error: "+e.message);if($("aiState"))$("aiState").innerHTML="VOICE OFF"}
 }
+
 if(window.speechSynthesis){try{window.speechSynthesis.onvoiceschanged=function(){initVoiceEngine()}}catch(e){}}
 
 function jwtExpired(token){
@@ -323,7 +326,9 @@ $("togglePassword").onclick=function(){
   this.setAttribute("aria-label",show?"Sembunyikan password":"Tampilkan password");
   try{p.focus();var n=p.value.length;p.setSelectionRange(n,n)}catch(e){}
 };
-if($("voicePill"))$("voicePill").onclick=function(){unlockVoice();setTimeout(function(){say("AI Voice RK CELL siap digunakan.")},120)};
+if($("voicePill"))$("voicePill").onclick=function(){unlockVoice();setTimeout(function(){say("RK AI Assistant siap digunakan.")},120)};
+if($("aiTestBtn"))$("aiTestBtn").onclick=function(){unlockVoice();setTimeout(function(){say("Halo. RK AI Assistant siap membaca data member, poin, dan reward.")},120)};
+if($("aiRepeatBtn"))$("aiRepeatBtn").onclick=function(){if(lastVoiceText)say(lastVoiceText);else say("Belum ada data member untuk dibacakan.")};
 try{document.addEventListener("touchstart",function onceVoice(){unlockVoice();document.removeEventListener("touchstart",onceVoice,false)},false)}catch(e){}
 
 $("loginBtn").onclick=function(){
@@ -425,12 +430,9 @@ function renderReward(points){
 }
 
 function voiceMember(m){
-  var pts=Number(m.points||0),ready=getReadyReward(pts),msg="Selamat datang "+(m.name||"member")+". Poin Anda saat ini "+pts+" poin.";
-  if(ready)msg+=" Anda mendapatkan reward "+ready.name+". Reward siap diklaim.";
-  else{
-    var next=null;for(var i=0;i<rewards.length;i++){if(pts<rewards[i].threshold){next=rewards[i];break}}
-    if(next)msg+=" Reward berikutnya "+next.name+" pada "+next.threshold+" poin.";
-  }
+  var pts=Number(m.points||0),ready=getReadyReward(pts),name=(m.name||"member"),msg="Halo "+name+". Poin Anda sekarang "+pts+" poin.";
+  if(ready)msg+=" Selamat, reward "+ready.name+" sudah tersedia dan siap diklaim.";
+  else{var next=null;for(var i=0;i<rewards.length;i++){if(pts<rewards[i].threshold){next=rewards[i];break}}if(next){var kurang=next.threshold-pts;msg+=" Tinggal "+kurang+" poin lagi untuk mendapatkan "+next.name+"."}else msg+=" Terima kasih sudah menjadi member setia RK CELL."}
   say(msg);
 }
 
@@ -469,7 +471,7 @@ $("claimRewardBtn").onclick=claimCurrentReward;
 function addOne(m){
   var payload={p_member_id:m.id,p_category:"Lainnya",p_points:1,p_note:"Double Tap RFID +1",p_source:"reader"};
   xhr("POST","/rest/v1/rpc/add_member_points",payload,true,function(err){
-    if(err){setStatus("✕ Gagal tambah poin: "+err.message);busy=false;return}
+    if(err){if(m&&m.id){pointCooldowns[m.id]=0;localStorage.removeItem("rk_point_cd_"+m.id)}setStatus("✕ Gagal tambah poin: "+err.message);say("Maaf, poin gagal ditambahkan.");busy=false;return}
     findMember(normalizeUid(m.nfc_uid),function(err2,fresh){
       var mm=fresh||m;
       if(!fresh)mm.points=Number(m.points||0)+1;
@@ -501,6 +503,9 @@ function handleUid(raw){
   if(pendingTap && pendingTap.uid===cardUid && now-pendingTap.time<=DOUBLE_MS){
     clearTimeout(pendingTimer);pendingTimer=null;
     var m2=pendingTap.member;pendingTap=null;
+    var lastPoint=Number(pointCooldowns[m2.id]||localStorage.getItem("rk_point_cd_"+m2.id)||0);
+    if(lastPoint && now-lastPoint<POINT_COOLDOWN_MS){var sec=Math.ceil((POINT_COOLDOWN_MS-(now-lastPoint))/1000);showMember(m2,"COOLDOWN "+sec+" DETIK",false);setStatus("Poin belum dapat ditambah • tunggu "+sec+" detik");say("Halo "+(m2.name||"member")+". Poin baru saja ditambahkan. Silakan tunggu "+sec+" detik sebelum menambah poin lagi.");return}
+    pointCooldowns[m2.id]=now;localStorage.setItem("rk_point_cd_"+m2.id,String(now));
     busy=true;
     showMember(m2,"2× TAP TERDETEKSI • MENAMBAH +1",false);
     setStatus("Memproses +1 poin...");
