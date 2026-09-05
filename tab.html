@@ -115,6 +115,8 @@ button{-webkit-tap-highlight-color:transparent}
 var SUPABASE_URL='https://dguqxtxhfvuoobwraywp.supabase.co';
 var SUPABASE_KEY='sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj';
 var ACCESS_TOKEN=localStorage.getItem('rk_t285_access_token')||'';
+var REFRESH_TOKEN=localStorage.getItem('rk_t285_refresh_token')||'';
+var refreshingSession=false, refreshWaiters=[];
 
 var hidBuffer="", hidTimer=null, lastKeyAt=0;
 var pendingTap=null, pendingTimer=null, busy=false, currentMember=null, currentClaim=null, currentClaims=[];
@@ -135,7 +137,78 @@ function uidVariants(value){var raw=normalizeUid(value),set={};function add(v){v
 function setStatus(t){$("status").innerHTML=t}
 function say(t){try{if(window.speechSynthesis&&window.SpeechSynthesisUtterance){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(t||""));u.lang="id-ID";u.rate=0.94;u.pitch=1.03;u.volume=1;speechSynthesis.speak(u)}}catch(e){}}
 
-function xhr(method,path,body,auth,cb){
+function jwtExpired(token){
+  try{
+    if(!token)return true;
+    var part=token.split(".")[1];
+    if(!part)return true;
+    part=part.replace(/-/g,"+").replace(/_/g,"/");
+    while(part.length%4)part+="=";
+    var payload=JSON.parse(atob(part));
+    if(!payload.exp)return false;
+    return (payload.exp*1000) <= ((new Date()).getTime()+30000);
+  }catch(e){return false}
+}
+function saveSession(data){
+  ACCESS_TOKEN=data&&data.access_token?data.access_token:"";
+  if(data&&data.refresh_token)REFRESH_TOKEN=data.refresh_token;
+  if(ACCESS_TOKEN)localStorage.setItem("rk_t285_access_token",ACCESS_TOKEN);
+  else localStorage.removeItem("rk_t285_access_token");
+  if(REFRESH_TOKEN)localStorage.setItem("rk_t285_refresh_token",REFRESH_TOKEN);
+  else localStorage.removeItem("rk_t285_refresh_token");
+}
+function clearSession(){
+  ACCESS_TOKEN="";REFRESH_TOKEN="";
+  localStorage.removeItem("rk_t285_access_token");
+  localStorage.removeItem("rk_t285_refresh_token");
+  $("loginBox").className="login show";
+}
+function refreshSession(cb){
+  if(!REFRESH_TOKEN){clearSession();cb(new Error("Sesi login berakhir. Silakan login kembali."));return}
+  if(refreshingSession){refreshWaiters.push(cb);return}
+  refreshingSession=true;refreshWaiters=[cb];
+  try{
+    var x=new XMLHttpRequest();
+    x.open("POST",SUPABASE_URL+"/auth/v1/token?grant_type=refresh_token",true);
+    x.setRequestHeader("apikey",SUPABASE_KEY);
+    x.setRequestHeader("Content-Type","application/json");
+    x.onreadystatechange=function(){
+      if(x.readyState!==4)return;
+      var data=null,err=null;
+      try{data=x.responseText?JSON.parse(x.responseText):null}catch(e){data=null}
+      if(x.status>=200&&x.status<300&&data&&data.access_token){
+        saveSession(data);
+        $("loginBox").className="login";
+      }else{
+        err=new Error((data&&data.msg)||(data&&data.message)||(data&&data.error_description)||"Sesi login berakhir. Silakan login kembali.");
+        clearSession();
+      }
+      refreshingSession=false;
+      var q=refreshWaiters.slice(0);refreshWaiters=[];
+      for(var i=0;i<q.length;i++)try{q[i](err)}catch(e2){}
+    };
+    x.onerror=function(){
+      refreshingSession=false;
+      var q=refreshWaiters.slice(0);refreshWaiters=[];
+      for(var i=0;i<q.length;i++)try{q[i](new Error("Gagal memperbarui sesi. Periksa internet."))}catch(e){}
+    };
+    x.timeout=15000;
+    x.ontimeout=x.onerror;
+    x.send(JSON.stringify({refresh_token:REFRESH_TOKEN}));
+  }catch(e){
+    refreshingSession=false;
+    var q=refreshWaiters.slice(0);refreshWaiters=[];
+    for(var i=0;i<q.length;i++)try{q[i](e)}catch(e2){}
+  }
+}
+function xhr(method,path,body,auth,cb,retried){
+  if(auth && (!ACCESS_TOKEN || jwtExpired(ACCESS_TOKEN)) && REFRESH_TOKEN && !retried){
+    refreshSession(function(rerr){
+      if(rerr){cb(rerr,null,401);return}
+      xhr(method,path,body,auth,cb,true);
+    });
+    return;
+  }
   try{
     var x=new XMLHttpRequest();
     x.open(method,SUPABASE_URL+path,true);
@@ -146,8 +219,17 @@ function xhr(method,path,body,auth,cb){
       if(x.readyState!==4)return;
       var data=null;
       try{data=x.responseText?JSON.parse(x.responseText):null}catch(e){data=x.responseText}
-      if(x.status>=200 && x.status<300) cb(null,data,x.status);
-      else cb(new Error((data&&data.msg)||(data&&data.message)||(data&&data.error_description)||(data&&data.error)||("HTTP "+x.status)),data,x.status);
+      if(x.status>=200 && x.status<300){cb(null,data,x.status);return}
+      var msg=(data&&data.msg)||(data&&data.message)||(data&&data.error_description)||(data&&data.error)||("HTTP "+x.status);
+      var expired=(x.status===401)&&(/jwt|expired|token/i.test(String(msg||"")));
+      if(auth && !retried && REFRESH_TOKEN && (x.status===401||expired)){
+        refreshSession(function(rerr){
+          if(rerr){cb(rerr,data,x.status);return}
+          xhr(method,path,body,auth,cb,true);
+        });
+        return;
+      }
+      cb(new Error(msg),data,x.status);
     };
     x.onerror=function(){cb(new Error("Koneksi ke Supabase gagal. Periksa internet/TLS/browser."),null,0)};
     x.ontimeout=function(){cb(new Error("Koneksi timeout."),null,0)};
@@ -157,7 +239,7 @@ function xhr(method,path,body,auth,cb){
 }
 
 function requireSession(){
-  var ok=!!ACCESS_TOKEN;
+  var ok=!!(ACCESS_TOKEN||REFRESH_TOKEN);
   $("loginBox").className=ok?"login":"login show";
   return ok;
 }
@@ -173,9 +255,8 @@ $("loginBtn").onclick=function(){
       setStatus("⚠ "+err.message);
       return;
     }
-    ACCESS_TOKEN=data&&data.access_token?data.access_token:"";
+    saveSession(data);
     if(!ACCESS_TOKEN){$("loginStatus").innerHTML="Token login tidak diterima.";return}
-    localStorage.setItem("rk_t285_access_token",ACCESS_TOKEN);
     $("loginBox").className="login";
     $("loginStatus").innerHTML="Login berhasil.";
     setStatus("✓ Login berhasil. Menunggu kartu...");
@@ -369,6 +450,14 @@ document.addEventListener("keydown",function(e){
 });
 
 requireSession();
-setStatus(ACCESS_TOKEN?"Menunggu kartu...":"Login operator diperlukan.");
+if((ACCESS_TOKEN&&jwtExpired(ACCESS_TOKEN))&&REFRESH_TOKEN){
+  setStatus("Memperbarui sesi operator...");
+  refreshSession(function(err){
+    if(err){setStatus("⚠ Sesi berakhir. Silakan login kembali.");}
+    else{setStatus("✓ Sesi diperbarui. Menunggu kartu...");}
+  });
+}else{
+  setStatus((ACCESS_TOKEN||REFRESH_TOKEN)?"Menunggu kartu...":"Login operator diperlukan.");
+}
 </script>
 </body></html>
