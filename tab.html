@@ -34,7 +34,7 @@ button{-webkit-tap-highlight-color:transparent}
 .password-wrap{position:relative;min-width:0}.password-wrap input{width:100%;padding-right:72px}.toggle-pass{position:absolute;right:6px;top:6px;height:34px!important;min-width:58px;padding:0 10px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:10px!important;background:#132338!important;color:#cfe1f5!important;box-shadow:none!important;font-size:10px!important;font-weight:1000!important}.toggle-pass:active{transform:scale(.97)}
 .voice-pill{cursor:pointer;-webkit-user-select:none;user-select:none}.voice-pill.off{background:rgba(255,174,66,.12);border-color:rgba(255,174,66,.18);color:#ffd59a}.voice-pill.ok{background:rgba(0,199,165,.12);border-color:rgba(0,199,165,.18);color:#8ef0d5}
 
-.ai-console{margin-top:9px;padding:10px 12px;border-radius:14px;background:rgba(47,128,255,.08);border:1px solid rgba(83,165,255,.16)}.ai-console-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.ai-console-title{font-size:10px;font-weight:1000;color:#87c9ff;letter-spacing:1px}.ai-console-state{font-size:9px;color:#79e7c5}.ai-console-text{margin-top:6px;font-size:11px;line-height:1.4;color:#cfe4f7}.ai-console-actions{display:flex;gap:6px;margin-top:8px}.ai-mini{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#122941;color:#dceeff;padding:0 10px;font-size:9px;font-weight:900}
+.ai-console{margin-top:9px;padding:10px 12px;border-radius:14px;background:rgba(47,128,255,.08);border:1px solid rgba(83,165,255,.16)}.ai-console-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.ai-console-title{font-size:10px;font-weight:1000;color:#87c9ff;letter-spacing:1px}.ai-console-state{font-size:9px;color:#79e7c5}.ai-console-text{margin-top:6px;font-size:11px;line-height:1.4;color:#cfe4f7}.ai-console-actions{display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap}.ai-mini{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#122941;color:#dceeff;padding:0 10px;font-size:9px;font-weight:900}.ai-speed-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:9px;color:#91afd0;font-weight:900}.ai-speed{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#0c2036;color:#fff;padding:0 8px;font-size:10px;font-weight:900;outline:none}
 </style>
 </head>
 <body>
@@ -75,7 +75,7 @@ button{-webkit-tap-highlight-color:transparent}
         </div>
         <div>
           <div id="status" class="status">Menunggu kartu...</div>
-          <div class="ai-console"><div class="ai-console-head"><span class="ai-console-title">RK AI ASSISTANT</span><span id="aiState" class="ai-console-state">SIAP</span></div><div id="aiText" class="ai-console-text">Tempelkan kartu member. AI akan membaca nama, poin, reward, dan status transaksi.</div><div class="ai-console-actions"><button id="aiTestBtn" class="ai-mini" type="button">TES SUARA</button><button id="aiRepeatBtn" class="ai-mini" type="button">ULANGI</button></div></div>
+          <div class="ai-console"><div class="ai-console-head"><span class="ai-console-title">RK AI ASSISTANT</span><span id="aiState" class="ai-console-state">SIAP</span></div><div id="aiText" class="ai-console-text">Tempelkan kartu member. AI akan membaca nama, poin, reward, dan status transaksi.</div><div class="ai-console-actions"><button id="aiRepeatBtn" class="ai-mini" type="button">ULANGI SUARA</button><div class="ai-speed-wrap"><span>KECEPATAN</span><select id="aiSpeed" class="ai-speed"><option value="0.8">0.8×</option><option value="1.0">1.0×</option><option value="1.2">1.2×</option><option value="1.5">1.5×</option></select></div></div></div>
           <div class="tap-rules">
             <div class="tap-rule"><strong>1× TAP</strong><span>CEK POIN & REWARD</span></div>
             <div class="tap-rule"><strong>2× TAP</strong><span>TAMBAH +1 POIN</span></div>
@@ -94,7 +94,7 @@ button{-webkit-tap-highlight-color:transparent}
               <div id="memberName" class="name">-</div>
               <div id="memberId" class="mid">-</div>
             </div>
-            <div id="voicePill" class="voice-pill" title="Ketuk untuk tes suara">● AI VOICE</div>
+            <div id="voicePill" class="voice-pill ok" title="AI Voice aktif otomatis">● AI AKTIF</div>
           </div>
           <div class="points-wrap">
             <div><div class="points-label">TOTAL POIN</div><div id="memberPoints" class="points">0</div></div>
@@ -162,14 +162,15 @@ function updateReaderState(){
   else setReaderState("online","Reader aktif");
 }
 var VOICE_READY=false,VOICE_UNLOCKED=false,lastVoiceText="";
-function setVoiceUi(ok,msg){var v=$("voicePill");if(!v)return;v.className="voice-pill "+(ok?"ok":"off");v.innerHTML=(ok?"● AI VOICE":"● VOICE OFF");if(msg)v.title=msg}
+var AI_VOICE_RATE=parseFloat(localStorage.getItem("rk_ai_voice_rate")||"1.0");if(!(AI_VOICE_RATE>=0.8&&AI_VOICE_RATE<=1.5))AI_VOICE_RATE=1.0;
+function setVoiceUi(ok,msg){var v=$("voicePill");if(!v)return;v.className="voice-pill "+(ok?"ok":"off");v.innerHTML=(ok?"● AI AKTIF":"● VOICE OFF");if(msg)v.title=msg}
 function pickIndonesianVoice(){try{var vs=window.speechSynthesis?window.speechSynthesis.getVoices():[];var fallback=null;for(var i=0;i<vs.length;i++){var lang=String(vs[i].lang||"").toLowerCase();if(lang==="id-id"||lang.indexOf("id-")===0||lang==="id")return vs[i];if(!fallback&&vs[i].default)fallback=vs[i]}return fallback||null}catch(e){return null}}
 function initVoiceEngine(){
   try{
     if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){setVoiceUi(false,"Browser/TTS tidak mendukung Speech Synthesis");return false}
     VOICE_READY=true;
     var vs=window.speechSynthesis.getVoices();
-    if(!vs||!vs.length){setVoiceUi(true,"Mesin suara tersedia, menunggu daftar voice...");setTimeout(function(){try{window.speechSynthesis.getVoices()}catch(e){}},250)}else setVoiceUi(true,"AI Voice siap • ketuk untuk tes");
+    if(!vs||!vs.length){setVoiceUi(true,"AI Voice aktif otomatis • menunggu daftar voice...");setTimeout(function(){try{window.speechSynthesis.getVoices()}catch(e){}},250)}else setVoiceUi(true,"AI Voice aktif otomatis • kecepatan "+AI_VOICE_RATE+"x");
     return true;
   }catch(e){setVoiceUi(false,"Voice error: "+e.message);return false}
 }
@@ -182,15 +183,42 @@ function unlockVoice(){
   }catch(e){}
 }
 function setAiText(t,state){lastVoiceText=String(t||"");if($("aiText"))$("aiText").innerHTML=lastVoiceText;if($("aiState"))$("aiState").innerHTML=state||"SIAP"}
-function nativeSpeak(t){try{if(window.AndroidVoice&&typeof window.AndroidVoice.speak==="function"){window.AndroidVoice.speak(String(t));return true}}catch(e){}return false}
+function speechFriendlyText(t){
+  var x=String(t||"");
+  x=x.replace(/RK\s*CELL/gi,"Er Ka Sel");
+  x=x.replace(/AI\s*Voice/gi,"Asisten suara");
+  x=x.replace(/AI/gi,"A I");
+  x=x.replace(/reward/gi,"hadiah");
+  x=x.replace(/Free\s*Admin/gi,"gratis biaya admin");
+  x=x.replace(/Free\s*Deterjen/gi,"gratis deterjen");
+  x=x.replace(/Minyak\s*500\s*ml/gi,"minyak lima ratus mililiter");
+  x=x.replace(/\+1\s*poin/gi,"satu poin tambahan");
+  x=x.replace(/2×\s*TAP/gi,"dua kali tempel");
+  x=x.replace(/1×\s*TAP/gi,"satu kali tempel");
+  x=x.replace(/\bml\b/gi,"mililiter");
+  x=x.replace(/\s*•\s*/g,", ");
+  x=x.replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
+  return x;
+}
+function nativeSpeak(t){
+  try{
+    if(window.AndroidVoice&&typeof window.AndroidVoice.speak==="function"){
+      try{if(typeof window.AndroidVoice.setVolume==="function")window.AndroidVoice.setVolume(1)}catch(e0){}
+      try{if(typeof window.AndroidVoice.setRate==="function")window.AndroidVoice.setRate(AI_VOICE_RATE)}catch(e1){}
+      window.AndroidVoice.speak(String(t));return true;
+    }
+  }catch(e){}
+  return false;
+}
 function say(t){
   lastVoiceText=String(t||"");if(!lastVoiceText)return;setAiText(lastVoiceText,"BERBICARA");
-  if(nativeSpeak(lastVoiceText)){setVoiceUi(true,"Android Native Voice aktif");setTimeout(function(){if($("aiState"))$("aiState").innerHTML="SIAP"},1200);return}
+  var spoken=speechFriendlyText(lastVoiceText);
+  if(nativeSpeak(spoken)){setVoiceUi(true,"Android Native Voice aktif • "+AI_VOICE_RATE+"x • volume maksimum");setTimeout(function(){if($("aiState"))$("aiState").innerHTML="SIAP"},1200);return}
   try{
     if(!initVoiceEngine()){if($("aiState"))$("aiState").innerHTML="VOICE OFF";return}
-    var synth=window.speechSynthesis;synth.cancel();var u=new SpeechSynthesisUtterance(lastVoiceText);var v=pickIndonesianVoice();if(v)u.voice=v;
-    u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=0.90;u.pitch=1;u.volume=1;
-    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceUi(true,"AI Voice sedang berbicara");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
+    var synth=window.speechSynthesis;synth.cancel();var u=new SpeechSynthesisUtterance(spoken);var v=pickIndonesianVoice();if(v)u.voice=v;
+    u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=AI_VOICE_RATE;u.pitch=0.96;u.volume=1;
+    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceUi(true,"AI Voice berbicara • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
     u.onend=function(){setVoiceUi(true,"AI Voice siap");if($("aiState"))$("aiState").innerHTML="SIAP"};
     u.onerror=function(){setVoiceUi(false,"TTS browser gagal");if($("aiState"))$("aiState").innerHTML="VOICE OFF"};synth.speak(u);
   }catch(e){setVoiceUi(false,"Voice error: "+e.message);if($("aiState"))$("aiState").innerHTML="VOICE OFF"}
@@ -326,9 +354,12 @@ $("togglePassword").onclick=function(){
   this.setAttribute("aria-label",show?"Sembunyikan password":"Tampilkan password");
   try{p.focus();var n=p.value.length;p.setSelectionRange(n,n)}catch(e){}
 };
-if($("voicePill"))$("voicePill").onclick=function(){unlockVoice();setTimeout(function(){say("RK AI Assistant siap digunakan.")},120)};
-if($("aiTestBtn"))$("aiTestBtn").onclick=function(){unlockVoice();setTimeout(function(){say("Halo. RK AI Assistant siap membaca data member, poin, dan reward.")},120)};
+if($("voicePill"))$("voicePill").onclick=function(){say("RK AI Assistant aktif otomatis.")};
 if($("aiRepeatBtn"))$("aiRepeatBtn").onclick=function(){if(lastVoiceText)say(lastVoiceText);else say("Belum ada data member untuk dibacakan.")};
+if($("aiSpeed")){
+  $("aiSpeed").value=String(AI_VOICE_RATE);
+  $("aiSpeed").onchange=function(){var r=parseFloat(this.value||"1");if(r<0.8)r=0.8;if(r>1.5)r=1.5;AI_VOICE_RATE=r;localStorage.setItem("rk_ai_voice_rate",String(r));setVoiceUi(true,"AI Voice aktif otomatis • kecepatan "+r+"x");say("Kecepatan suara diatur ke "+String(r).replace("."," koma ")+" kali.")};
+}
 try{document.addEventListener("touchstart",function onceVoice(){unlockVoice();document.removeEventListener("touchstart",onceVoice,false)},false)}catch(e){}
 
 $("loginBtn").onclick=function(){
@@ -349,7 +380,7 @@ $("loginBtn").onclick=function(){
     updateLoginUi();
     $("loginStatus").innerHTML="Login berhasil.";
     setStatus("✓ Login berhasil. Menunggu kartu...");
-    setTimeout(function(){say("Login berhasil. Terminal RK CELL siap digunakan.")},180);
+    setTimeout(function(){say("Login berhasil. Terminal RK CELL siap digunakan. Silakan tempelkan kartu member.")},180);
   });
 };
 
@@ -430,9 +461,14 @@ function renderReward(points){
 }
 
 function voiceMember(m){
-  var pts=Number(m.points||0),ready=getReadyReward(pts),name=(m.name||"member"),msg="Halo "+name+". Poin Anda sekarang "+pts+" poin.";
-  if(ready)msg+=" Selamat, reward "+ready.name+" sudah tersedia dan siap diklaim.";
-  else{var next=null;for(var i=0;i<rewards.length;i++){if(pts<rewards[i].threshold){next=rewards[i];break}}if(next){var kurang=next.threshold-pts;msg+=" Tinggal "+kurang+" poin lagi untuk mendapatkan "+next.name+"."}else msg+=" Terima kasih sudah menjadi member setia RK CELL."}
+  var pts=Number(m.points||0),ready=getReadyReward(pts),name=(m.name||"member"),msg="Halo, "+name+". Selamat datang di RK CELL. Poin Anda saat ini, "+pts+" poin.";
+  if(ready){
+    msg+=" Selamat! Hadiah "+ready.name+" sudah tersedia. Silakan klaim hadiah Anda.";
+  }else{
+    var next=null;for(var i=0;i<rewards.length;i++){if(pts<rewards[i].threshold){next=rewards[i];break}}
+    if(next){var kurang=next.threshold-pts;msg+=" Anda hanya perlu "+kurang+" poin lagi untuk mendapatkan "+next.name+"."}
+    else msg+=" Terima kasih sudah menjadi member setia RK CELL.";
+  }
   say(msg);
 }
 
@@ -532,6 +568,7 @@ function handleUid(raw){
 function flushBuffer(){var v=hidBuffer;hidBuffer="";if(v)handleUid(v)}
 
 document.addEventListener("keydown",function(e){
+  if(!VOICE_UNLOCKED)unlockVoice();
   var tag=e.target&&e.target.tagName?e.target.tagName:"";
   if(tag==="INPUT"||tag==="TEXTAREA")return;
   var now=(new Date()).getTime();
@@ -564,6 +601,10 @@ if((ACCESS_TOKEN&&jwtExpired(ACCESS_TOKEN))&&REFRESH_TOKEN){
 loadSavedLoginId();
 updateLoginUi();
 initVoiceEngine();
+if($("aiSpeed"))$("aiSpeed").value=String(AI_VOICE_RATE);
+setVoiceUi(true,"AI Voice aktif otomatis • kecepatan "+AI_VOICE_RATE+"x • volume maksimum");
+setAiText("AI aktif otomatis. Tempelkan kartu member untuk membaca nama, poin, dan hadiah.","AKTIF");
+try{unlockVoice()}catch(e){}
 updateReaderState();
 setInterval(updateReaderState,5000);
 </script>
