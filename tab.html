@@ -146,8 +146,22 @@ $("loginBtn").onclick=function(){
   });
 };
 
+function readerToNfcUid(value){
+  var raw=normalizeUid(value);
+  if(!/^\d+$/.test(raw)) return raw;
+  var hx=decToHexString(raw);
+  while(hx.length<8) hx="0"+hx;
+  if(hx.length===8) return reverseHexBytes(hx);
+  return raw;
+}
+
 function findMember(cardUid,cb){
-  var vars=uidVariants(cardUid);if(!vars.length){cb(null,null);return}
+  var canonical=readerToNfcUid(cardUid);
+  var vars=uidVariants(cardUid).concat(uidVariants(canonical));
+  var seen={}, uniq=[];
+  for(var u=0;u<vars.length;u++){if(!seen[vars[u]]){seen[vars[u]]=1;uniq.push(vars[u]);}}
+  vars=uniq;
+  if(!vars.length){cb(null,null);return}
   var filters=[];for(var i=0;i<vars.length&&i<18;i++)filters.push("nfc_uid.eq."+vars[i]);
   var q="/rest/v1/members?select=id,name,points,nfc_uid&or=("+filters.join(",")+")&limit=1";
   xhr("GET",q,null,true,function(err,data){if(err){cb(err);return}cb(null,(data&&data.length)?data[0]:null);});
@@ -226,7 +240,7 @@ function handleUid(raw){
   setStatus("UID terbaca. Memeriksa member...");
   findMember(cardUid,function(err,m){
     if(err){setStatus("✕ Gagal membaca database: "+err.message);return}
-    if(!m){setStatus("✕ Kartu belum terdaftar • Reader UID: "+cardUid);say("Kartu belum terdaftar");return}
+    if(!m){setStatus("✕ Kartu belum terdaftar • Reader: "+cardUid+" • NFC: "+readerToNfcUid(cardUid));say("Kartu belum terdaftar");return}
     showMember(m,"Tap 1 terbaca • CEK POIN");
     setStatus("Tap 1 terbaca • cek poin • tunggu ±1,2 detik jika ingin +1");
     scheduleSingle(cardUid,m);
