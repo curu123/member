@@ -29,10 +29,36 @@ button{-webkit-tap-highlight-color:transparent}
 .claim-area{display:none;margin-top:auto;padding-top:12px}.claim-area.show{display:block}.claim-card{padding:13px;border-radius:16px;background:linear-gradient(135deg,#2a210a,#1c180c);border:1px solid rgba(255,190,60,.26)}.claim-title{font-size:13px;font-weight:1000;color:#ffd474}.claim-desc{font-size:10px;color:#aa9366;margin-top:4px}.claim-reward-btn{width:100%;height:50px;margin-top:10px;border:0;border-radius:14px;background:linear-gradient(135deg,#ffc84a,#e99414);color:#211503;font-size:13px;font-weight:1000;box-shadow:0 12px 28px rgba(233,148,20,.20)}.claim-reward-btn:disabled{opacity:.55;box-shadow:none}.footer-note{margin-top:12px;text-align:center;font-size:9px;color:#607b96;line-height:1.5}
 @media(max-width:760px){.shell{padding:8px}.topbar{padding:10px 12px;border-radius:16px}.brand-logo{width:42px;height:42px;border-radius:13px}.brand-title{font-size:18px}.brand-sub{font-size:8px}.reader-pill{padding:7px 9px;font-size:9px}.stage{grid-template-columns:1fr}.scan-panel,.member-panel{min-height:auto}.scan-title{font-size:24px}.scan-orb-wrap{min-height:190px}.scan-orb{width:144px;height:144px}.scan-orb:before{width:105px;height:105px}.scan-orb:after{left:65px}.card-icon{width:66px;height:48px}.panel-inner{padding:15px}.profile-card{padding:15px}.name{font-size:20px}.points{font-size:50px}.reward-zone{padding:14px}.login-grid{grid-template-columns:1fr}.login button{width:100%}}
 @media(min-width:761px) and (orientation:landscape){body{overflow:hidden}.shell{padding:8px 12px}.topbar{padding:10px 14px}.brand-logo{width:42px;height:42px}.stage{height:calc(100vh - 82px)}.panel,.scan-panel,.member-panel{height:100%}.panel-inner{padding:16px}.scan-panel{min-height:0}.scan-title{font-size:28px}.scan-orb-wrap{min-height:205px;flex:1}.scan-orb{width:150px;height:150px}.scan-orb:before{width:110px;height:110px}.scan-orb:after{left:67px}.member-panel{min-height:0}.profile-card{padding:16px}.name{font-size:22px}.points{font-size:54px}.reward-zone{padding:13px 15px 14px}.reward-card{padding:9px 10px}.claim-reward-btn{height:44px;margin-top:8px}.footer-note{margin-top:8px}}
+@media (orientation:landscape) and (min-width:560px){
+  .stage{grid-template-columns:.94fr 1.06fr!important;gap:10px!important}
+  .scan-panel,.member-panel{min-height:0!important;height:100%}
+  .panel-inner{padding:14px}
+  .scan-title{font-size:26px}
+  .scan-desc{font-size:11px;line-height:1.38}
+  .scan-orb-wrap{min-height:170px;flex:1}
+  .scan-orb{width:132px;height:132px}
+  .scan-orb:before{width:96px;height:96px}
+  .scan-orb:after{left:58px}
+  .card-icon{width:62px;height:46px}
+  .status{min-height:50px;padding:10px 12px;font-size:12px}
+  .ai-console{margin-top:8px}
+  .tap-rules{margin-top:8px;gap:7px}
+  .tap-rule{padding:9px 10px}
+  .tap-rule strong{font-size:16px}
+  .profile-card{padding:14px 15px 12px}
+  .avatar{width:46px;height:46px;border-radius:14px}
+  .name{font-size:21px}
+  .points-wrap{margin-top:12px}
+  .points{font-size:50px}
+  .reward-zone{padding:11px 13px 12px}
+  .reward-card{padding:8px 9px}
+  .claim-reward-btn{height:42px;margin-top:7px}
+  .footer-note{margin-top:7px}
+}
 @media(max-height:620px) and (orientation:landscape){.scan-desc{display:none}.scan-orb-wrap{min-height:150px}.scan-orb{width:122px;height:122px}.scan-orb:before{width:88px;height:88px}.scan-orb:after{left:53px}.card-icon{width:58px;height:42px}.tap-rule{padding:9px}.profile-card{padding:12px 15px}.points-wrap{margin-top:12px}.points{font-size:46px}.reward-zone{padding:10px 14px}.reward-card{padding:8px 9px}.footer-note{display:none}}
 
 .password-wrap{position:relative;min-width:0}.password-wrap input{width:100%;padding-right:72px}.toggle-pass{position:absolute;right:6px;top:6px;height:34px!important;min-width:58px;padding:0 10px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:10px!important;background:#132338!important;color:#cfe1f5!important;box-shadow:none!important;font-size:10px!important;font-weight:1000!important}.toggle-pass:active{transform:scale(.97)}
-.voice-pill{cursor:pointer;-webkit-user-select:none;user-select:none}.voice-pill.off{background:rgba(255,174,66,.12);border-color:rgba(255,174,66,.18);color:#ffd59a}.voice-pill.ok{background:rgba(0,199,165,.12);border-color:rgba(0,199,165,.18);color:#8ef0d5}
+.voice-source{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#10243a;color:#8fb2d3;font-size:8px;font-weight:1000;margin-left:6px}.voice-pill{cursor:pointer;-webkit-user-select:none;user-select:none}.voice-pill.off{background:rgba(255,174,66,.12);border-color:rgba(255,174,66,.18);color:#ffd59a}.voice-pill.ok{background:rgba(0,199,165,.12);border-color:rgba(0,199,165,.18);color:#8ef0d5}
 
 .ai-console{margin-top:9px;padding:10px 12px;border-radius:14px;background:rgba(47,128,255,.08);border:1px solid rgba(83,165,255,.16)}.ai-console-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.ai-console-title{font-size:10px;font-weight:1000;color:#87c9ff;letter-spacing:1px}.ai-console-state{font-size:9px;color:#79e7c5}.ai-console-text{margin-top:6px;font-size:11px;line-height:1.4;color:#cfe4f7}.ai-console-actions{display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap}.ai-mini{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#122941;color:#dceeff;padding:0 10px;font-size:9px;font-weight:900}.ai-speed-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:9px;color:#91afd0;font-weight:900}.ai-speed{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#0c2036;color:#fff;padding:0 8px;font-size:10px;font-weight:900;outline:none}
 </style>
@@ -94,7 +120,7 @@ button{-webkit-tap-highlight-color:transparent}
               <div id="memberName" class="name">-</div>
               <div id="memberId" class="mid">-</div>
             </div>
-            <div id="voicePill" class="voice-pill ok" title="AI Voice aktif otomatis">● AI AKTIF</div>
+            <div><div id="voicePill" class="voice-pill ok" title="AI Voice aktif otomatis">● AI AKTIF</div><span id="voiceSource" class="voice-source">ONLINE</span></div>
           </div>
           <div class="points-wrap">
             <div><div class="points-label">TOTAL POIN</div><div id="memberPoints" class="points">0</div></div>
@@ -163,6 +189,9 @@ function updateReaderState(){
 }
 var VOICE_READY=false,VOICE_UNLOCKED=false,lastVoiceText="";
 var AI_VOICE_RATE=parseFloat(localStorage.getItem("rk_ai_voice_rate")||"1.0");if(!(AI_VOICE_RATE>=0.8&&AI_VOICE_RATE<=1.5))AI_VOICE_RATE=1.0;
+var ONLINE_TTS_URL=SUPABASE_URL+"/functions/v1/rk-ai-tts";
+var ONLINE_TTS_ENABLED=false,ONLINE_AUDIO=null,ONLINE_AUDIO_URL="",ONLINE_REQ=null,VOICE_SEQ=0;
+function setVoiceSource(t){var e=$("voiceSource");if(e)e.innerHTML=t||"-"}
 function setVoiceUi(ok,msg){var v=$("voicePill");if(!v)return;v.className="voice-pill "+(ok?"ok":"off");v.innerHTML=(ok?"● AI AKTIF":"● VOICE OFF");if(msg)v.title=msg}
 function pickIndonesianVoice(){try{var vs=window.speechSynthesis?window.speechSynthesis.getVoices():[];var fallback=null;for(var i=0;i<vs.length;i++){var lang=String(vs[i].lang||"").toLowerCase();if(lang==="id-id"||lang.indexOf("id-")===0||lang==="id")return vs[i];if(!fallback&&vs[i].default)fallback=vs[i]}return fallback||null}catch(e){return null}}
 function initVoiceEngine(){
@@ -210,18 +239,59 @@ function nativeSpeak(t){
   }catch(e){}
   return false;
 }
-function say(t){
-  lastVoiceText=String(t||"");if(!lastVoiceText)return;setAiText(lastVoiceText,"BERBICARA");
-  var spoken=speechFriendlyText(lastVoiceText);
-  if(nativeSpeak(spoken)){setVoiceUi(true,"Android Native Voice aktif • "+AI_VOICE_RATE+"x • volume maksimum");setTimeout(function(){if($("aiState"))$("aiState").innerHTML="SIAP"},1200);return}
+function stopOnlineAudio(){
+  try{if(ONLINE_REQ){ONLINE_REQ.abort();ONLINE_REQ=null}}catch(e){}
+  try{if(ONLINE_AUDIO){ONLINE_AUDIO.pause();ONLINE_AUDIO.src="";ONLINE_AUDIO=null}}catch(e2){}
+  try{if(ONLINE_AUDIO_URL){URL.revokeObjectURL(ONLINE_AUDIO_URL);ONLINE_AUDIO_URL=""}}catch(e3){}
+}
+function browserSpeak(spoken,seq){
   try{
-    if(!initVoiceEngine()){if($("aiState"))$("aiState").innerHTML="VOICE OFF";return}
+    if(nativeSpeak(spoken)){setVoiceSource("ANDROID");setVoiceUi(true,"Android Native Voice aktif • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA";setTimeout(function(){if(seq===VOICE_SEQ&&$("aiState"))$("aiState").innerHTML="SIAP"},1200);return}
+    if(!initVoiceEngine()){if($("aiState"))$("aiState").innerHTML="VOICE OFF";setVoiceSource("OFF");return}
     var synth=window.speechSynthesis;synth.cancel();var u=new SpeechSynthesisUtterance(spoken);var v=pickIndonesianVoice();if(v)u.voice=v;
     u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=AI_VOICE_RATE;u.pitch=0.96;u.volume=1;
-    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceUi(true,"AI Voice berbicara • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
-    u.onend=function(){setVoiceUi(true,"AI Voice siap");if($("aiState"))$("aiState").innerHTML="SIAP"};
-    u.onerror=function(){setVoiceUi(false,"TTS browser gagal");if($("aiState"))$("aiState").innerHTML="VOICE OFF"};synth.speak(u);
-  }catch(e){setVoiceUi(false,"Voice error: "+e.message);if($("aiState"))$("aiState").innerHTML="VOICE OFF"}
+    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceSource("ANDROID");setVoiceUi(true,"Fallback Android TTS • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
+    u.onend=function(){if(seq===VOICE_SEQ){setVoiceUi(true,"AI Voice siap");if($("aiState"))$("aiState").innerHTML="SIAP"}};
+    u.onerror=function(){if(seq===VOICE_SEQ){setVoiceUi(false,"TTS browser gagal");setVoiceSource("OFF");if($("aiState"))$("aiState").innerHTML="VOICE OFF"}};synth.speak(u);
+  }catch(e){setVoiceUi(false,"Voice error: "+e.message);setVoiceSource("OFF");if($("aiState"))$("aiState").innerHTML="VOICE OFF"}
+}
+function onlineSpeak(spoken,seq){
+  if(!ONLINE_TTS_ENABLED||!ONLINE_TTS_URL||!ACCESS_TOKEN){browserSpeak(spoken,seq);return}
+  stopOnlineAudio();
+  try{
+    var x=new XMLHttpRequest();ONLINE_REQ=x;
+    x.open("POST",ONLINE_TTS_URL,true);
+    x.responseType="arraybuffer";
+    x.setRequestHeader("apikey",SUPABASE_KEY);
+    x.setRequestHeader("Authorization","Bearer "+ACCESS_TOKEN);
+    x.setRequestHeader("Content-Type","application/json");
+    x.timeout=12000;
+    setVoiceSource("ONLINE");setVoiceUi(true,"Mengambil suara RK AI online...");if($("aiState"))$("aiState").innerHTML="MEMUAT SUARA";
+    x.onload=function(){
+      if(seq!==VOICE_SEQ)return;
+      ONLINE_REQ=null;
+      if(x.status>=200&&x.status<300&&x.response&&x.response.byteLength){
+        try{
+          var blob=new Blob([x.response],{type:(x.getResponseHeader("Content-Type")||"audio/mpeg")});
+          ONLINE_AUDIO_URL=URL.createObjectURL(blob);ONLINE_AUDIO=new Audio(ONLINE_AUDIO_URL);ONLINE_AUDIO.volume=1;ONLINE_AUDIO.playbackRate=AI_VOICE_RATE;
+          ONLINE_AUDIO.onplay=function(){setVoiceSource("RK AI ONLINE");setVoiceUi(true,"RK AI Online • suara standar • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
+          ONLINE_AUDIO.onended=function(){if(seq===VOICE_SEQ){setVoiceUi(true,"RK AI Online siap");if($("aiState"))$("aiState").innerHTML="SIAP"}stopOnlineAudio()};
+          ONLINE_AUDIO.onerror=function(){if(seq===VOICE_SEQ){stopOnlineAudio();browserSpeak(spoken,seq)}};
+          var pr=ONLINE_AUDIO.play();if(pr&&typeof pr.catch==="function")pr.catch(function(){if(seq===VOICE_SEQ){stopOnlineAudio();browserSpeak(spoken,seq)}});
+        }catch(e){browserSpeak(spoken,seq)}
+      }else browserSpeak(spoken,seq);
+    };
+    x.onerror=function(){if(seq===VOICE_SEQ){ONLINE_REQ=null;browserSpeak(spoken,seq)}};
+    x.ontimeout=x.onerror;
+    x.send(JSON.stringify({text:spoken}));
+  }catch(e){browserSpeak(spoken,seq)}
+}
+function say(t){
+  lastVoiceText=String(t||"");if(!lastVoiceText)return;
+  var spoken=voiceFriendlyText(lastVoiceText),seq=++VOICE_SEQ;
+  try{if(window.speechSynthesis)window.speechSynthesis.cancel()}catch(e){}
+  stopOnlineAudio();
+  onlineSpeak(spoken,seq);
 }
 
 if(window.speechSynthesis){try{window.speechSynthesis.onvoiceschanged=function(){initVoiceEngine()}}catch(e){}}
@@ -410,7 +480,7 @@ function findMember(cardUid,cb){
   for(var u=0;u<vars.length;u++){if(!seen[vars[u]]){seen[vars[u]]=1;uniq.push(vars[u]);}}
   vars=uniq;
   if(!vars.length){cb(null,null);return}
-  var filters=[];for(var i=0;i<vars.length&&i<18;i++)filters.push("nfc_uid.eq."+vars[i]);
+  var filters=[];for(var i=0;i<vars.length&&i<18;i++)filters.push("nfc_uid.ilike."+vars[i]);
   var q="/rest/v1/members?select=id,name,points,nfc_uid&or=("+filters.join(",")+")&limit=1";
   xhr("GET",q,null,true,function(err,data){if(err){cb(err);return}cb(null,(data&&data.length)?data[0]:null);});
 }
@@ -602,8 +672,8 @@ loadSavedLoginId();
 updateLoginUi();
 initVoiceEngine();
 if($("aiSpeed"))$("aiSpeed").value=String(AI_VOICE_RATE);
-setVoiceUi(true,"AI Voice aktif otomatis • kecepatan "+AI_VOICE_RATE+"x • volume maksimum");
-setAiText("AI aktif otomatis. Tempelkan kartu member untuk membaca nama, poin, dan hadiah.","AKTIF");
+setVoiceUi(true,"AI Voice aktif otomatis • TTS bawaan Android • "+AI_VOICE_RATE+"x • volume maksimum");setVoiceSource("ANDROID");
+setAiText("AI aktif otomatis dengan suara bawaan Tab. Tempelkan kartu member untuk membaca nama, poin, dan hadiah.","AKTIF");
 try{unlockVoice()}catch(e){}
 updateReaderState();
 setInterval(updateReaderState,5000);
