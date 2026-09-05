@@ -61,6 +61,33 @@ button{-webkit-tap-highlight-color:transparent}
 .voice-source{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#10243a;color:#8fb2d3;font-size:8px;font-weight:1000;margin-left:6px}.voice-pill{cursor:pointer;-webkit-user-select:none;user-select:none}.voice-pill.off{background:rgba(255,174,66,.12);border-color:rgba(255,174,66,.18);color:#ffd59a}.voice-pill.ok{background:rgba(0,199,165,.12);border-color:rgba(0,199,165,.18);color:#8ef0d5}
 
 .ai-console{margin-top:9px;padding:10px 12px;border-radius:14px;background:rgba(47,128,255,.08);border:1px solid rgba(83,165,255,.16)}.ai-console-head{display:flex;justify-content:space-between;gap:8px;align-items:center}.ai-console-title{font-size:10px;font-weight:1000;color:#87c9ff;letter-spacing:1px}.ai-console-state{font-size:9px;color:#79e7c5}.ai-console-text{margin-top:6px;font-size:11px;line-height:1.4;color:#cfe4f7}.ai-console-actions{display:flex;gap:6px;margin-top:8px;align-items:center;flex-wrap:wrap}.ai-mini{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#122941;color:#dceeff;padding:0 10px;font-size:9px;font-weight:900}.ai-speed-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:9px;color:#91afd0;font-weight:900}.ai-speed{height:32px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#0c2036;color:#fff;padding:0 8px;font-size:10px;font-weight:900;outline:none}
+
+/* RK CELL T285 v13: paksa panel status + member selalu berdampingan saat landscape */
+@media (orientation:landscape){
+  .stage{grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr)!important;gap:8px!important;align-items:stretch}
+  .scan-panel,.member-panel{min-width:0!important;min-height:0!important;height:100%!important}
+  .panel-inner{padding:12px!important}
+  .scan-title{font-size:24px!important}
+  .scan-desc{font-size:10px!important;line-height:1.32!important}
+  .scan-orb-wrap{min-height:145px!important}
+  .scan-orb{width:118px!important;height:118px!important}
+  .scan-orb:before{width:86px!important;height:86px!important}
+  .scan-orb:after{left:51px!important}
+  .card-icon{width:56px!important;height:41px!important}
+  .status{min-height:46px!important;padding:9px 10px!important;font-size:11px!important}
+  .ai-console{margin-top:7px!important;padding:8px 9px!important}
+  .ai-console-text{font-size:10px!important}
+  .tap-rules{margin-top:7px!important;gap:6px!important}
+  .tap-rule{padding:8px!important}
+  .tap-rule strong{font-size:15px!important}
+  .profile-card{padding:12px 13px 10px!important}
+  .name{font-size:20px!important}
+  .points{font-size:46px!important}
+  .reward-zone{padding:9px 11px 10px!important}
+  .reward-card{padding:7px 8px!important}
+  .claim-reward-btn{height:40px!important;margin-top:6px!important}
+}
+
 </style>
 </head>
 <body>
@@ -70,7 +97,7 @@ button{-webkit-tap-highlight-color:transparent}
       <div class="brand-logo">RK</div>
       <div>
         <div class="brand-title">RK CELL</div>
-        <div class="brand-sub">Smart Member Station • T285</div>
+        <div class="brand-sub">Smart Member Station • T285 • v13</div>
       </div>
     </div>
     <div class="top-actions"><div id="readerPill" class="reader-pill" title="Status reader berdasarkan aktivitas data RFID"><span class="reader-dot"></span><span id="readerState">Reader belum terdeteksi</span></div><button id="logoutBtn" class="logout-btn" type="button">KELUAR</button></div>
@@ -204,12 +231,16 @@ function initVoiceEngine(){
   }catch(e){setVoiceUi(false,"Voice error: "+e.message);return false}
 }
 function unlockVoice(){
-  if(!initVoiceEngine())return;
+  if(VOICE_UNLOCKED)return true;
+  if(!initVoiceEngine())return false;
   try{
-    var u=new SpeechSynthesisUtterance(" ");u.volume=0;u.lang="id-ID";
-    window.speechSynthesis.cancel();window.speechSynthesis.speak(u);VOICE_UNLOCKED=true;
-    setTimeout(function(){try{window.speechSynthesis.cancel()}catch(e){}},60);
-  }catch(e){}
+    var u=new SpeechSynthesisUtterance(" ");u.volume=0;u.rate=1;u.lang="id-ID";
+    u.onend=function(){VOICE_UNLOCKED=true};
+    u.onerror=function(){VOICE_UNLOCKED=true};
+    window.speechSynthesis.speak(u);
+    VOICE_UNLOCKED=true;
+    return true;
+  }catch(e){return false}
 }
 function setAiText(t,state){lastVoiceText=String(t||"");if($("aiText"))$("aiText").innerHTML=lastVoiceText;if($("aiState"))$("aiState").innerHTML=state||"SIAP"}
 function speechFriendlyText(t){
@@ -248,11 +279,16 @@ function browserSpeak(spoken,seq){
   try{
     if(nativeSpeak(spoken)){setVoiceSource("ANDROID");setVoiceUi(true,"Android Native Voice aktif • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA";setTimeout(function(){if(seq===VOICE_SEQ&&$("aiState"))$("aiState").innerHTML="SIAP"},1200);return}
     if(!initVoiceEngine()){if($("aiState"))$("aiState").innerHTML="VOICE OFF";setVoiceSource("OFF");return}
-    var synth=window.speechSynthesis;synth.cancel();var u=new SpeechSynthesisUtterance(spoken);var v=pickIndonesianVoice();if(v)u.voice=v;
+    var synth=window.speechSynthesis;
+    try{if(synth.paused)synth.resume()}catch(er0){}
+    synth.cancel();
+    var u=new SpeechSynthesisUtterance(spoken);var v=pickIndonesianVoice();if(v)u.voice=v;
     u.lang=(v&&v.lang)?v.lang:"id-ID";u.rate=AI_VOICE_RATE;u.pitch=0.96;u.volume=1;
-    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceSource("ANDROID");setVoiceUi(true,"Fallback Android TTS • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
+    u.onstart=function(){VOICE_UNLOCKED=true;setVoiceSource("ANDROID TTS");setVoiceUi(true,"TTS Android aktif • "+AI_VOICE_RATE+"x • volume maksimum");if($("aiState"))$("aiState").innerHTML="BERBICARA"};
     u.onend=function(){if(seq===VOICE_SEQ){setVoiceUi(true,"AI Voice siap");if($("aiState"))$("aiState").innerHTML="SIAP"}};
-    u.onerror=function(){if(seq===VOICE_SEQ){setVoiceUi(false,"TTS browser gagal");setVoiceSource("OFF");if($("aiState"))$("aiState").innerHTML="VOICE OFF"}};synth.speak(u);
+    u.onerror=function(ev){if(seq===VOICE_SEQ){setVoiceUi(false,"TTS gagal: "+((ev&&ev.error)||"unknown"));setVoiceSource("TTS ERROR");if($("aiState"))$("aiState").innerHTML="VOICE OFF"}};
+    synth.speak(u);
+    setTimeout(function(){try{if(seq===VOICE_SEQ&&synth.paused)synth.resume()}catch(er1){}},120);
   }catch(e){setVoiceUi(false,"Voice error: "+e.message);setVoiceSource("OFF");if($("aiState"))$("aiState").innerHTML="VOICE OFF"}
 }
 function onlineSpeak(spoken,seq){
@@ -672,8 +708,7 @@ loadSavedLoginId();
 updateLoginUi();
 initVoiceEngine();
 if($("aiSpeed"))$("aiSpeed").value=String(AI_VOICE_RATE);
-setVoiceUi(true,"AI Voice aktif otomatis • TTS bawaan Android • "+AI_VOICE_RATE+"x • volume maksimum");setVoiceSource("ANDROID");
-setAiText("AI aktif otomatis dengan suara bawaan Tab. Tempelkan kartu member untuk membaca nama, poin, dan hadiah.","AKTIF");
+if(window.speechSynthesis&&window.SpeechSynthesisUtterance){setVoiceUi(true,"TTS bawaan Android siap • "+AI_VOICE_RATE+"x • volume maksimum");setVoiceSource("ANDROID TTS");setAiText("AI aktif dengan TTS bawaan Tab. Tempelkan kartu member untuk membaca nama, poin, dan hadiah.","AKTIF")}else{setVoiceUi(false,"Browser Tab tidak menyediakan Speech Synthesis");setVoiceSource("TTS TIDAK TERSEDIA");setAiText("TTS bawaan tidak tersedia pada browser ini. Data member tetap dapat digunakan.","VOICE OFF")}
 try{unlockVoice()}catch(e){}
 updateReaderState();
 setInterval(updateReaderState,5000);
