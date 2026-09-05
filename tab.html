@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>RK CELL • RFID Tap Station</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#eef3f3;color:#17343a}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px}
+.shell{width:100%;max-width:760px}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.brand{font-weight:1000;font-size:24px} .sub{font-size:12px;color:#667b80}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#16a34a;margin-right:6px}
+.card{background:#fff;border:1px solid #d6e0e1;border-radius:22px;padding:20px;box-shadow:0 10px 28px rgba(23,52,58,.09)}
+.hero{text-align:center;padding:18px 10px}
+.icon{font-size:74px;line-height:1}
+h1{font-size:27px;margin:8px 0 5px} .hint{font-size:16px;color:#61777c}
+.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.rule{border-radius:16px;padding:14px;text-align:center;font-weight:900;border:1px solid #cfe0e0;background:#f7fafa}
+.rule strong{display:block;font-size:21px;margin-bottom:4px}
+.status{margin-top:14px;padding:14px;border-radius:15px;background:#edf6f5;border:1px solid #cce3e0;text-align:center;font-weight:800;min-height:54px}
+.member{display:none;margin-top:14px;border-top:1px solid #dce5e6;padding-top:15px}
+.member.show{display:block}
+.name{font-size:25px;font-weight:1000} .mid{font-size:12px;color:#71858a;margin-top:2px}
+.points{font-size:50px;font-weight:1000;color:#087f78;line-height:1;margin:13px 0 4px}
+.action{font-size:19px;font-weight:1000;margin-top:8px}
+.reward{margin-top:10px;padding:12px;border-radius:14px;background:#fff8df;border:1px solid #f0dc91}
+.claimbox{display:none;margin-top:14px;padding:15px;border-radius:16px;background:#fff3f4;border:2px solid #ef8993;text-align:center}
+.claimbox.show{display:block}
+.claimbtn{width:100%;min-height:58px;border:0;border-radius:14px;background:#e92d43;color:#fff;font-size:18px;font-weight:1000;margin-top:10px}
+.cancel{width:100%;min-height:46px;border:1px solid #cddada;border-radius:12px;background:#fff;color:#35565b;font-weight:800;margin-top:7px}
+.login{display:none;margin-bottom:10px;padding:12px;border-radius:15px;background:#fff;border:1px solid #d6e0e1}
+.login.show{display:block}
+input{width:100%;min-height:46px;margin-top:7px;border:1px solid #cbd8da;border-radius:11px;padding:10px;font-size:15px}
+.login button{width:100%;min-height:46px;margin-top:8px;border:0;border-radius:11px;background:#087f78;color:#fff;font-weight:900}
+.small{font-size:11px;color:#73868a;text-align:center;margin-top:9px}
+@media(max-width:620px){body{padding:8px}.card{padding:14px}.brand{font-size:20px}.icon{font-size:60px}h1{font-size:23px}.rules{gap:7px}.rule{padding:11px 6px}}
+
+/* RK CELL TAB FINAL: terminal operasional RFID-only */
+.manual-member-input,.qr-input,.nfc-input{display:none!important}
+</style>
+
+</head>
+<body>
+<div class="shell">
+ <div class="head"><div><div class="brand">RK CELL</div><div class="sub">RFID MEMBER STATION • TAB T285</div></div><div><span class="dot"></span><span id="readerState">Reader siap</span></div></div>
+ <div id="loginBox" class="login">
+   <b>Login operator diperlukan</b>
+   <input id="email" type="email" placeholder="Email admin/operator">
+   <input id="password" type="password" placeholder="Password">
+   <button id="loginBtn">MASUK</button>
+   <div id="loginStatus" class="small"></div><div class="small">Mode Android 7: koneksi XHR kompatibel, tanpa Fetch API.</div>
+ </div>
+ <div class="card">
+  <div class="hero">
+   <div class="icon">💳</div>
+   <h1>TEMPELKAN KARTU MEMBER</h1>
+   <div class="hint">RFID Reader External via USB OTG • input member hanya dari kartu</div>
+   <div class="rules">
+    <div class="rule"><strong>1× TAP</strong>CEK POIN</div>
+    <div class="rule"><strong>2× TAP</strong>+1 POIN</div>
+   </div>
+  </div>
+  <div id="status" class="status">Menunggu kartu...</div>
+  <div id="memberBox" class="member">
+    <div id="memberName" class="name">-</div>
+    <div id="memberId" class="mid">-</div>
+    <div id="memberPoints" class="points">0</div>
+    <div>POIN MEMBER</div>
+    <div id="action" class="action"></div>
+    <div id="reward" class="reward"></div>
+  </div>
+  <div class="small">1× tap hanya menampilkan data dan poin member. Tap kartu yang sama 2× berurutan dalam ±1,2 detik untuk menambahkan +1 poin. Claim reward dan seluruh kontrol lain hanya melalui ADMIN.</div>
+ </div>
+</div>
+
+<script>
+var SUPABASE_URL='https://xxxx.supabase.co';
+var SUPABASE_KEY='sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj';
+var ACCESS_TOKEN=localStorage.getItem('rk_t285_access_token')||'';
+
+var hidBuffer="", hidTimer=null, lastKeyAt=0;
+var pendingTap=null, pendingTimer=null, busy=false, currentMember=null;
+var DOUBLE_MS=1200;
+var rewards=[
+  {threshold:10,name:"Free Admin"},
+  {threshold:20,name:"Free Deterjen"},
+  {threshold:30,name:"Minyak 500 ml"}
+];
+
+function $(id){return document.getElementById(id)}
+function normalizeUid(v){return String(v||"").replace(/^\s+|\s+$/g,"").replace(/[^a-zA-Z0-9]/g,"").toUpperCase()}
+function setStatus(t){$("status").innerHTML=t}
+function say(t){try{if(window.speechSynthesis){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="id-ID";speechSynthesis.speak(u)}}catch(e){}}
+
+function xhr(method,path,body,auth,cb){
+  try{
+    var x=new XMLHttpRequest();
+    x.open(method,SUPABASE_URL+path,true);
+    x.setRequestHeader("apikey",SUPABASE_KEY);
+    x.setRequestHeader("Content-Type","application/json");
+    if(auth && ACCESS_TOKEN) x.setRequestHeader("Authorization","Bearer "+ACCESS_TOKEN);
+    x.onreadystatechange=function(){
+      if(x.readyState!==4)return;
+      var data=null;
+      try{data=x.responseText?JSON.parse(x.responseText):null}catch(e){data=x.responseText}
+      if(x.status>=200 && x.status<300) cb(null,data,x.status);
+      else cb(new Error((data&&data.msg)||(data&&data.message)||(data&&data.error_description)||(data&&data.error)||("HTTP "+x.status)),data,x.status);
+    };
+    x.onerror=function(){cb(new Error("Koneksi ke Supabase gagal. Periksa internet/TLS/browser."),null,0)};
+    x.ontimeout=function(){cb(new Error("Koneksi timeout."),null,0)};
+    x.timeout=15000;
+    x.send(body===null?null:JSON.stringify(body));
+  }catch(e){cb(e,null,0)}
+}
+
+function requireSession(){
+  var ok=!!ACCESS_TOKEN;
+  $("loginBox").className=ok?"login":"login show";
+  return ok;
+}
+
+$("loginBtn").onclick=function(){
+  var email=$("email").value.replace(/^\s+|\s+$/g,"");
+  var password=$("password").value;
+  if(!email||!password){$("loginStatus").innerHTML="Isi email dan password.";return}
+  $("loginStatus").innerHTML="Menghubungkan...";
+  xhr("POST","/auth/v1/token?grant_type=password",{email:email,password:password},false,function(err,data){
+    if(err){
+      $("loginStatus").innerHTML="<b>Login gagal:</b> "+err.message;
+      setStatus("⚠ "+err.message);
+      return;
+    }
+    ACCESS_TOKEN=data&&data.access_token?data.access_token:"";
+    if(!ACCESS_TOKEN){$("loginStatus").innerHTML="Token login tidak diterima.";return}
+    localStorage.setItem("rk_t285_access_token",ACCESS_TOKEN);
+    $("loginBox").className="login";
+    $("loginStatus").innerHTML="Login berhasil.";
+    setStatus("✓ Login berhasil. Menunggu kartu...");
+  });
+};
+
+function findMember(cardUid,cb){
+  var q="/rest/v1/members?select=id,name,points,nfc_uid&nfc_uid=eq."+encodeURIComponent(cardUid)+"&limit=1";
+  xhr("GET",q,null,true,function(err,data){
+    if(err){cb(err);return}
+    cb(null,(data&&data.length)?data[0]:null);
+  });
+}
+
+function renderReward(points){
+  var mod=((points%30)+30)%30;
+  var next=null;
+  for(var i=0;i<rewards.length;i++){if(rewards[i].threshold>mod){next=rewards[i];break}}
+  if(!next)next=rewards[0];
+  var cycle=Math.floor(points/30)+((next.threshold<=mod)?1:0);
+  var absolute=cycle*30+next.threshold;
+  $("reward").innerHTML="🎁 Reward berikutnya: "+next.name+" • "+absolute+" poin";
+}
+
+function showMember(m,action){
+  currentMember=m;
+  $("memberBox").className="member show";
+  $("memberName").innerHTML=m.name||"Member";
+  $("memberId").innerHTML=m.id||"";
+  $("memberPoints").innerHTML=Number(m.points||0);
+  $("action").innerHTML=action||"";
+  renderReward(Number(m.points||0));
+}
+
+function addOne(m){
+  var payload={p_member_id:m.id,p_category:"Lainnya",p_points:1,p_note:"Double Tap RFID +1",p_source:"reader"};
+  xhr("POST","/rest/v1/rpc/add_member_points",payload,true,function(err){
+    if(err){setStatus("✕ Gagal tambah poin: "+err.message);busy=false;return}
+    findMember(normalizeUid(m.nfc_uid),function(err2,fresh){
+      var mm=fresh||m;
+      if(!fresh)mm.points=Number(m.points||0)+1;
+      showMember(mm,"✓ +1 POIN BERHASIL");
+      setStatus("✓ 2× TAP • +1 poin berhasil ditambahkan");
+      say("Berhasil. Satu poin ditambahkan untuk "+(mm.name||"member"));
+      busy=false;
+    });
+  });
+}
+
+
+function scheduleSingle(cardUid,m){
+  pendingTap={uid:cardUid,member:m,time:(new Date()).getTime()};
+  pendingTimer=setTimeout(function(){
+    var p=pendingTap;pendingTap=null;pendingTimer=null;
+    if(!p||busy)return;
+    showMember(p.member,"✓ CEK POIN");
+    setStatus("✓ Data member ditampilkan • poin tidak berubah");
+    say("Poin "+(p.member.name||"member")+" saat ini "+Number(p.member.points||0));
+  },DOUBLE_MS);
+}
+
+function handleUid(raw){
+  var cardUid=normalizeUid(raw);
+  if(cardUid.length<4||busy)return;
+  if(!requireSession()){setStatus("Silakan login operator terlebih dahulu.");return}
+  var now=(new Date()).getTime();
+
+  // Tap kedua pada kartu yang sama dalam window = +1 poin.
+  if(pendingTap && pendingTap.uid===cardUid && now-pendingTap.time<=DOUBLE_MS){
+    clearTimeout(pendingTimer);pendingTimer=null;
+    var m2=pendingTap.member;pendingTap=null;
+    busy=true;
+    showMember(m2,"2× TAP TERDETEKSI • MENAMBAH +1");
+    setStatus("Memproses +1 poin...");
+    addOne(m2);
+    return;
+  }
+
+  // Jangan campur kartu berbeda saat satu kartu masih menunggu tap kedua.
+  if(pendingTap){
+    setStatus("Tunggu proses kartu sebelumnya...");
+    return;
+  }
+
+  setStatus("UID terbaca. Memeriksa member...");
+  findMember(cardUid,function(err,m){
+    if(err){setStatus("✕ Gagal membaca database: "+err.message);return}
+    if(!m){setStatus("✕ Kartu belum terdaftar: "+cardUid);say("Kartu belum terdaftar");return}
+    showMember(m,"Tap 1 terbaca • CEK POIN");
+    setStatus("Tap 1 terbaca • cek poin • tunggu ±1,2 detik jika ingin +1");
+    scheduleSingle(cardUid,m);
+  });
+}
+
+function flushBuffer(){var v=hidBuffer;hidBuffer="";if(v)handleUid(v)}
+
+document.addEventListener("keydown",function(e){
+  var tag=e.target&&e.target.tagName?e.target.tagName:"";
+  if(tag==="INPUT"||tag==="TEXTAREA")return;
+  var now=(new Date()).getTime();
+  if(now-lastKeyAt>180)hidBuffer="";
+  lastKeyAt=now;
+  if(e.key==="Enter"||e.keyCode===13){
+    if(e.preventDefault)e.preventDefault();
+    clearTimeout(hidTimer);flushBuffer();return;
+  }
+  var key=e.key;
+  if(!key && e.keyCode>=48 && e.keyCode<=90)key=String.fromCharCode(e.keyCode);
+  if(key && key.length===1 && /[a-zA-Z0-9]/.test(key)){
+    hidBuffer+=key;clearTimeout(hidTimer);
+    hidTimer=setTimeout(function(){if(hidBuffer.length>=4)flushBuffer()},140);
+  }
+});
+
+requireSession();
+setStatus(ACCESS_TOKEN?"Menunggu kartu...":"Login operator diperlukan.");
+</script>
+
+</body></html>
