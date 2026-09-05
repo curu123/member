@@ -91,6 +91,11 @@ var rewards=[
 
 function $(id){return document.getElementById(id)}
 function normalizeUid(v){return String(v||"").replace(/^\s+|\s+$/g,"").replace(/[^a-zA-Z0-9]/g,"").toUpperCase()}
+function stripZeros(s){s=String(s||"").replace(/^0+/,"");return s||"0"}
+function hexToDecString(hex){hex=normalizeUid(hex).replace(/[^0-9A-F]/g,"");if(!hex)return"";var dec="0";for(var i=0;i<hex.length;i++){var n=parseInt(hex.charAt(i),16),carry=n,out="";for(var j=dec.length-1;j>=0;j--){var v=(dec.charCodeAt(j)-48)*16+carry;out=(v%10)+out;carry=Math.floor(v/10)}while(carry){out=(carry%10)+out;carry=Math.floor(carry/10)}dec=stripZeros(out)}return dec}
+function decToHexString(dec){dec=String(dec||"").replace(/\D/g,"");if(!dec)return"";dec=stripZeros(dec);if(dec==="0")return"0";var hex="";while(dec!=="0"){var q="",rem=0;for(var i=0;i<dec.length;i++){var num=rem*10+(dec.charCodeAt(i)-48),d=Math.floor(num/16);rem=num%16;if(q||d)q+=String(d)}hex="0123456789ABCDEF".charAt(rem)+hex;dec=q||"0"}return hex}
+function reverseHexBytes(hex){hex=String(hex||"").toUpperCase();if(!/^[0-9A-F]+$/.test(hex)||hex.length%2)return"";var out="";for(var i=hex.length;i>0;i-=2)out+=hex.slice(i-2,i);return out}
+function uidVariants(value){var raw=normalizeUid(value),set={};function add(v){v=normalizeUid(v);if(v)set[v]=1}add(raw);if(/^[0-9A-F]+$/.test(raw)){var even=raw.length%2?"0"+raw:raw;add(even);add(stripZeros(even));var rev=reverseHexBytes(even);add(rev);add(stripZeros(rev));add(hexToDecString(even));if(rev)add(hexToDecString(rev));if(even.length>8){var arr=[even.slice(-8),even.slice(0,8)];for(var k=0;k<arr.length;k++){var x=arr[k];add(x);add(hexToDecString(x));var xr=reverseHexBytes(x);add(xr);add(hexToDecString(xr))}}}if(/^\d+$/.test(raw)){var hx=decToHexString(raw);if(hx.length%2)hx="0"+hx;add(hx);add(reverseHexBytes(hx))}var out=[];for(var key in set)if(set.hasOwnProperty(key))out.push(key);return out}
 function setStatus(t){$("status").innerHTML=t}
 function say(t){try{if(window.speechSynthesis){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="id-ID";speechSynthesis.speak(u)}}catch(e){}}
 
@@ -142,11 +147,10 @@ $("loginBtn").onclick=function(){
 };
 
 function findMember(cardUid,cb){
-  var q="/rest/v1/members?select=id,name,points,nfc_uid&nfc_uid=eq."+encodeURIComponent(cardUid)+"&limit=1";
-  xhr("GET",q,null,true,function(err,data){
-    if(err){cb(err);return}
-    cb(null,(data&&data.length)?data[0]:null);
-  });
+  var vars=uidVariants(cardUid);if(!vars.length){cb(null,null);return}
+  var filters=[];for(var i=0;i<vars.length&&i<18;i++)filters.push("nfc_uid.eq."+vars[i]);
+  var q="/rest/v1/members?select=id,name,points,nfc_uid&or=("+filters.join(",")+")&limit=1";
+  xhr("GET",q,null,true,function(err,data){if(err){cb(err);return}cb(null,(data&&data.length)?data[0]:null);});
 }
 
 function renderReward(points){
@@ -222,7 +226,7 @@ function handleUid(raw){
   setStatus("UID terbaca. Memeriksa member...");
   findMember(cardUid,function(err,m){
     if(err){setStatus("✕ Gagal membaca database: "+err.message);return}
-    if(!m){setStatus("✕ Kartu belum terdaftar: "+cardUid);say("Kartu belum terdaftar");return}
+    if(!m){setStatus("✕ Kartu belum terdaftar • Reader UID: "+cardUid);say("Kartu belum terdaftar");return}
     showMember(m,"Tap 1 terbaca • CEK POIN");
     setStatus("Tap 1 terbaca • cek poin • tunggu ±1,2 detik jika ingin +1");
     scheduleSingle(cardUid,m);
