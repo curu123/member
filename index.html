@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <meta content="#071a2b" name="theme-color"/>
-<title>RK CELL Premium • High Contrast NFC + USB</title>
+<title>RK CELL ADMIN MEMBER • Nama + NFC + QR</title>
 <link href="manifest.webmanifest" rel="manifest"/>
 <style>
 :root{
@@ -3917,6 +3917,25 @@ body{
   }
 }
 
+
+/* RK CELL ADMIN FINAL — input member: Nama + QR + NFC HP */
+#scanModeUsbBtn,
+#usbScanPanel,
+#stopUsbBtn,
+#claimUsbScanBtn,
+#claimUsbPanel,
+#choiceUsbBtn,
+#testUsbBtn,
+[data-reader="usb"],
+.usb-only{
+  display:none!important;
+}
+#choiceNfcHpBtn{display:flex!important}
+#scanModeNfcBtn,
+#claimNfcScanBtn,
+#testNfcBtn{display:inline-flex!important}
+#nfcScanPanel:not(.hidden),
+#claimNfcPanel:not(.hidden){display:block!important}
 </style>
 <script>
 (function(){
@@ -3998,10 +4017,10 @@ body{
       <span>▦</span><strong>QR</strong><small>Bisa dipindai</small>
     </button>
     <button class="member-method-btn" type="button" data-method="nfc" id="memberMethodNfc" aria-pressed="false">
-      <span>💳</span><strong>KARTU</strong><small>USB Reader</small>
+      <span>📱</span><strong>NFC</strong><small>NFC HP</small>
     </button>
   </div>
-  <div class="member-method-note" id="memberMethodNote">Nama selalu tersedia. QR aktif secara default. Satu UID kartu dapat dibaca lewat NFC HP maupun USB Reader.</div>
+  <div class="member-method-note" id="memberMethodNote">Nama selalu tersedia. QR aktif secara default. Kartu member didaftarkan dan dibaca melalui NFC HP.</div>
 </div>
 
 <div style="margin-top:10px">
@@ -4082,7 +4101,7 @@ body{
   </div>
   <div class="claim-scan-mini">
     <button class="btn soft claim-mini-btn" id="claimQrScanBtn" type="button" title="Scan QR Member">▦ QR</button>
-    <button class="btn soft claim-mini-btn" id="claimNfcScanBtn" type="button" title="Tempel NFC Member">🔌 USB Reader</button>
+    <button class="btn soft claim-mini-btn" id="claimNfcScanBtn" type="button" title="Tempel NFC Member">📡 NFC</button>
     <button class="btn soft claim-mini-btn" id="claimUsbScanBtn" type="button" title="Scan USB Reader">🔌 USB</button>
   </div>
 </div>
@@ -4165,7 +4184,7 @@ body{
 </button>
 <button class="btn soft utility-btn" id="nfcWriterBtn" type="button">
 <strong>📡 NFC Member</strong>
-<small>Baca / tulis kartu NFC</small>
+<small>Daftar / baca kartu via NFC HP</small>
 </button>
 <button class="btn soft utility-btn" id="printCardBtn">
 <strong>🪪 Cetak Kartu</strong>
@@ -4183,15 +4202,15 @@ body{
 <input accept=".json,application/json" class="hidden" id="importFile" type="file"/>
 </div>
 <div class="card section hidden" id="nfcToolPanel">
-<div class="section-title"><h2>KARTU MEMBER</h2><span>USB Reader</span></div>
-<p class="note">Pilih member lalu daftarkan kartu menggunakan USB Reader melalui OTG. Setelah kartu ditempel, UID akan tersimpan otomatis ke member.</p>
+<div class="section-title"><h2>KARTU MEMBER</h2><span>NFC HP</span></div>
+<p class="note">Pilih member lalu tempel kartu pada NFC HP. UID kartu akan disimpan sebagai identitas member.</p>
 <div class="field"><label>PILIH MEMBER</label><select id="nfcMemberSelect"></select></div>
 <div class="row" style="margin-top:10px">
 <button class="btn primary" id="writeNfcBtn" type="button">🔌 Daftarkan Reader</button>
-<button class="btn soft" id="testNfcBtn" type="button">📱 Tes Reader USB</button>
+<button class="btn soft" id="testNfcBtn" type="button">📱 Tes NFC HP</button>
 <button class="btn soft" id="testUsbBtn" type="button">🔌 Tes via USB</button>
 </div>
-<div class="scan-status" id="nfcWriterStatus" style="margin-top:10px">Siap membaca UID kartu via NFC HP atau USB Reader.</div>
+<div class="scan-status" id="nfcWriterStatus" style="margin-top:10px">Siap membaca UID kartu melalui NFC HP.</div>
 </div>
 
 <div class="card section hidden qr-card" id="qrToolPanel">
@@ -4336,7 +4355,7 @@ body{
 </div>
 <div class="scan-mode-grid">
 <button class="btn primary scan-mode-btn" id="scanModeQrBtn" type="button">📷 QR</button>
-<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">🔌 USB Reader</button>
+<button class="btn soft scan-mode-btn" id="scanModeNfcBtn" type="button">📡 NFC</button>
 <button class="btn soft scan-mode-btn" id="scanModeUsbBtn" type="button">🔌 USB READER</button>
 </div>
 
@@ -4665,11 +4684,11 @@ function findMemberByNfcUid(uid){
 
 async function saveNfcUidToMember(memberId,uid){
   const clean=normalizeNfcUid(uid);
-  if(!clean) throw new Error("UID NFC kosong.");
+  if(!clean) throw new Error("UID kartu kosong.");
 
   const duplicate=members.find(m=>normalizeNfcUid(m.nfc_uid)===clean && m.id!==memberId);
   if(duplicate){
-    throw new Error(`Kartu NFC ini sudah terdaftar ke ${duplicate.name} (${duplicate.id}).`);
+    throw new Error(`Kartu ini sudah terdaftar ke ${duplicate.name} (${duplicate.id}).`);
   }
 
   const {error}=await supabaseClient
@@ -5220,7 +5239,7 @@ function updateMemberMethodUI(){
   const labels=[];
   if(newMemberMethods.has("name")) labels.push("Nama");
   if(newMemberMethods.has("qr")) labels.push("QR");
-  if(newMemberMethods.has("nfc")) labels.push("Reader USB");
+  if(newMemberMethods.has("nfc")) labels.push("NFC");
 
   note.textContent=`Akses aktif: ${labels.join(" + ")}. Member bisa menggunakan metode mana pun yang tersedia.`;
 }
@@ -5307,12 +5326,12 @@ document.getElementById("addMemberBtn").onclick = async ()=>{
 
   const accessLabels=["Nama"];
   if(methodsUsed.has("qr")) accessLabels.push("QR");
-  if(methodsUsed.has("nfc")) accessLabels.push("Reader USB");
+  if(methodsUsed.has("nfc")) accessLabels.push("NFC");
 
   if(methodsUsed.has("nfc")){
     const cardOk=await registerUnifiedCardForNewMember(m);
     if(cardOk && methodsUsed.has("qr")){
-      alert(`Member aktif dengan akses: ${accessLabels.join(" + ")}.\n\nSatu UID kartu dapat dipakai lewat NFC HP maupun USB Reader.`);
+      alert(`Member aktif dengan akses: ${accessLabels.join(" + ")}.\n\nKartu member aktif melalui NFC HP.`);
     }
   }else if(methodsUsed.has("qr")){
     alert(`Member berhasil dibuat: ${m.id}\n\nAkses aktif: ${accessLabels.join(" + ")}.\nQR member dapat dibuat atau dicetak dari Setup → QR Member.`);
@@ -6096,21 +6115,22 @@ document.getElementById("nfcWriterBtn")?.addEventListener("click",()=>{
   }
 });
 
-document.getElementById("writeNfcBtn")?.addEventListener("click",()=>{
+document.getElementById("writeNfcBtn")?.addEventListener("click",async()=>{
   const memberId=document.getElementById("nfcMemberSelect")?.value;
   const status=document.getElementById("nfcWriterStatus");
-  if(!memberId){
-    if(status) status.textContent="Pilih member terlebih dahulu.";
-    return;
-  }
+  if(!memberId){ if(status) status.textContent="Pilih member terlebih dahulu."; return; }
   const member=members.find(m=>m.id===memberId);
-  if(!member){
-    if(status) status.textContent="Member tidak ditemukan.";
-    return;
+  if(!member){ if(status) status.textContent="Member tidak ditemukan."; return; }
+  try{
+    if(status) status.textContent="Tempel kartu pada NFC HP...";
+    const uid=await scanNfcUidOnce("nfcWriterStatus");
+    const clean=await saveNfcUidToMember(member.id,uid);
+    await createAudit("card_uid_registered",member.id,{nfc_uid:clean,reader:"nfc_hp",source:"setup"});
+    await loadSupabaseData();
+    if(status) status.textContent=`✓ UID ${clean} tersimpan untuk ${member.name}.`;
+  }catch(err){
+    if(status) status.textContent=`Gagal membaca NFC: ${err.message||err}`;
   }
-  unifiedCardResolve=null;
-  unifiedCardMember=member;
-  openCardReaderChoice(member);
 });
 
 document.getElementById("choiceCancelBtn")?.addEventListener("click",()=>closeCardReaderChoice(false));
@@ -6651,11 +6671,27 @@ function closeCardReaderChoice(result=false){
   if(resolve) resolve(result);
 }
 
-function registerUnifiedCardForNewMember(member){
-  return new Promise(resolve=>{
-    unifiedCardResolve=resolve;
-    openCardReaderChoice(member);
-  });
+async function registerUnifiedCardForNewMember(member){
+  try{
+    const status=document.getElementById("nfcWriterStatus");
+    if(status) status.textContent="Tempel kartu pada NFC HP...";
+    const uid=await scanNfcUidOnce("nfcWriterStatus");
+    const clean=await saveNfcUidToMember(member.id,uid);
+    await createAudit("card_uid_registered",member.id,{nfc_uid:clean,reader:"nfc_hp",source:"member_create"});
+    await loadSupabaseData();
+    if(status) status.textContent=`✓ UID ${clean} tersimpan melalui NFC HP.`;
+    alert(`✓ KARTU NFC BERHASIL TERSIMPAN
+
+Member: ${member.name}
+ID: ${member.id}
+UID: ${clean}`);
+    return true;
+  }catch(err){
+    const status=document.getElementById("nfcWriterStatus");
+    if(status) status.textContent=`Gagal membaca NFC: ${err.message||err}`;
+    alert(`Member tetap berhasil dibuat, tetapi NFC belum tersimpan: ${err.message||err}`);
+    return false;
+  }
 }
 
 /* ======================================================
@@ -7016,69 +7052,6 @@ if("serviceWorker" in navigator && location.protocol==="https:"){
 }
 </script>
 <script>
-</script>
-
-<script>
-/* TAB T285 operational patch: NFC disabled. */
-(function(){
-  function applyA83Mode(){
-    ["choiceNfcHpBtn","scanModeNfcBtn","claimModeNfcBtn","nfcScanPanel","claimNfcPanel","testNfcBtn"]
-      .forEach(function(id){
-        var el=document.getElementById(id);
-        if(el) el.style.display="none";
-      });
-
-    document.querySelectorAll("[data-method='nfc']").forEach(function(el){
-      var txt=(el.textContent||"").toLowerCase();
-      if(txt.indexOf("usb")===-1 && txt.indexOf("reader")===-1){
-        el.innerHTML=el.innerHTML
-          .replace(/KARTU/gi,"USB READER")
-          .replace(/NFC/gi,"USB");
-      }
-    });
-  }
-
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",applyA83Mode,{once:true});
-  }else{
-    applyA83Mode();
-  }
-
-  setTimeout(applyA83Mode,300);
-})();
-</script>
-
-
-<script>
-/* ADMIN operational mode: full management + QR + USB Reader + Name */
-(function(){
-  function applyT285Mode(){
-    var ids=["choiceNfcHpBtn","scanModeNfcBtn","claimModeNfcBtn","nfcScanPanel","claimNfcPanel","testNfcBtn"];
-    for(var i=0;i<ids.length;i++){
-      var el=document.getElementById(ids[i]);
-      if(el) el.style.display="none";
-    }
-
-    /* Make USB reader wording explicit */
-    var nodes=document.querySelectorAll("button,span,label,small,strong,p");
-    for(var j=0;j<nodes.length;j++){
-      var n=nodes[j];
-      if(!n || n.children.length) continue;
-      var t=n.textContent||"";
-      t=t.replace(/NFC HP\s*\/\s*USB Reader/gi,"USB Reader");
-      t=t.replace(/NFC\/USB/gi,"USB Reader");
-      t=t.replace(/NFC HP/gi,"USB Reader");
-      n.textContent=t;
-    }
-  }
-
-  if(document.readyState==="loading"){
-    document.addEventListener("DOMContentLoaded",applyT285Mode);
-  }else{
-    applyT285Mode();
-  }
-  window.setTimeout(applyT285Mode,300);
-})();
 </script>
 
 </body>
