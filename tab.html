@@ -2,77 +2,113 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>RK CELL • RFID Tap Station</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#07111f">
+<title>RK CELL • Smart Member Station</title>
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;background:#eef3f3;color:#17343a}
-body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:14px}
-.shell{width:100%;max-width:760px}
-.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.brand{font-weight:1000;font-size:24px} .sub{font-size:12px;color:#667b80}
-.dot{display:inline-block;width:10px;height:10px;border-radius:50%;background:#16a34a;margin-right:6px}
-.card{background:#fff;border:1px solid #d6e0e1;border-radius:22px;padding:20px;box-shadow:0 10px 28px rgba(23,52,58,.09)}
-.hero{text-align:center;padding:18px 10px}
-.icon{font-size:74px;line-height:1}
-h1{font-size:27px;margin:8px 0 5px} .hint{font-size:16px;color:#61777c}
-.rules{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
-.rule{border-radius:16px;padding:14px;text-align:center;font-weight:900;border:1px solid #cfe0e0;background:#f7fafa}
-.rule strong{display:block;font-size:21px;margin-bottom:4px}
-.status{margin-top:14px;padding:14px;border-radius:15px;background:#edf6f5;border:1px solid #cce3e0;text-align:center;font-weight:800;min-height:54px}
-.member{display:none;margin-top:14px;border-top:1px solid #dce5e6;padding-top:15px}
-.member.show{display:block}
-.name{font-size:25px;font-weight:1000} .mid{font-size:12px;color:#71858a;margin-top:2px}
-.points{font-size:50px;font-weight:1000;color:#087f78;line-height:1;margin:13px 0 4px}
-.action{font-size:19px;font-weight:1000;margin-top:8px}
-.reward{margin-top:10px;padding:12px;border-radius:14px;background:#fff8df;border:1px solid #f0dc91}
-.claimbox{display:none;margin-top:14px;padding:15px;border-radius:16px;background:#fff3f4;border:2px solid #ef8993;text-align:center}
-.claimbox.show{display:block}
-.claimbtn{width:100%;min-height:58px;border:0;border-radius:14px;background:#e92d43;color:#fff;font-size:18px;font-weight:1000;margin-top:10px}
-.cancel{width:100%;min-height:46px;border:1px solid #cddada;border-radius:12px;background:#fff;color:#35565b;font-weight:800;margin-top:7px}
-.login{display:none;margin-bottom:10px;padding:12px;border-radius:15px;background:#fff;border:1px solid #d6e0e1}
-.login.show{display:block}
-input{width:100%;min-height:46px;margin-top:7px;border:1px solid #cbd8da;border-radius:11px;padding:10px;font-size:15px}
-.login button{width:100%;min-height:46px;margin-top:8px;border:0;border-radius:11px;background:#087f78;color:#fff;font-weight:900}
-.small{font-size:11px;color:#73868a;text-align:center;margin-top:9px}
-@media(max-width:620px){body{padding:8px}.card{padding:14px}.brand{font-size:20px}.icon{font-size:60px}h1{font-size:23px}.rules{gap:7px}.rule{padding:11px 6px}}
-
-/* RK CELL TAB FINAL: terminal operasional RFID-only */
-.manual-member-input,.qr-input,.nfc-input{display:none!important}
+html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:#07111f;color:#f8fbff}
+body{min-height:100vh;overflow-x:hidden;background:radial-gradient(circle at 12% 0,#16345a 0,#0b1e35 28%,#07111f 63%,#040a12 100%)}
+body:before{content:"";position:fixed;left:-120px;top:-160px;width:360px;height:360px;border-radius:50%;background:rgba(36,121,255,.12);box-shadow:0 0 120px rgba(36,121,255,.2);pointer-events:none}
+body:after{content:"";position:fixed;right:-120px;bottom:-170px;width:380px;height:380px;border-radius:50%;background:rgba(0,213,173,.08);box-shadow:0 0 130px rgba(0,213,173,.12);pointer-events:none}
+button,input{font-family:inherit}
+button{-webkit-tap-highlight-color:transparent}
+.shell{position:relative;z-index:1;width:100%;max-width:1040px;margin:0 auto;padding:14px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid rgba(255,255,255,.08);border-radius:20px;background:rgba(9,24,42,.94);box-shadow:0 18px 46px rgba(0,0,0,.24)}
+.brand-wrap{display:flex;align-items:center;gap:12px;min-width:0}.brand-logo{width:48px;height:48px;border-radius:15px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#2f80ff,#00c7a5);box-shadow:0 10px 24px rgba(18,125,232,.28);font-size:18px;font-weight:1000;letter-spacing:.4px}.brand-title{font-size:22px;font-weight:1000;letter-spacing:.6px;line-height:1}.brand-sub{margin-top:5px;font-size:10px;color:#89a1bd;letter-spacing:1.2px;text-transform:uppercase}.reader-pill{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;background:#0f2a25;border:1px solid rgba(54,219,167,.22);color:#9cf5d5;font-size:11px;font-weight:900;white-space:nowrap}.reader-dot{width:9px;height:9px;border-radius:50%;background:#38e0a8;box-shadow:0 0 0 5px rgba(56,224,168,.12)}
+.login{display:none;margin-top:12px;padding:16px;border-radius:22px;background:#0b1b30;border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 50px rgba(0,0,0,.28)}.login.show{display:block}.login-title{font-size:17px;font-weight:1000}.login-sub{font-size:11px;color:#8ea4bf;margin-top:4px}.login-grid{display:grid;grid-template-columns:1fr 1fr auto;gap:9px;margin-top:12px}.login input{min-width:0;height:46px;border:1px solid rgba(255,255,255,.1);border-radius:13px;background:#081426;color:#fff;padding:0 12px;font-size:14px;outline:none}.login input:focus{border-color:#2f80ff;box-shadow:0 0 0 3px rgba(47,128,255,.12)}.login button{height:46px;padding:0 18px;border:0;border-radius:13px;background:linear-gradient(135deg,#2f80ff,#2366d4);color:#fff;font-weight:1000;box-shadow:0 9px 22px rgba(47,128,255,.22)}.small{font-size:10px;color:#7990aa;margin-top:8px}
+.stage{margin-top:12px;display:grid;grid-template-columns:1.04fr .96fr;gap:12px}
+.panel{border-radius:26px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,#0d213a,#091829);box-shadow:0 24px 70px rgba(0,0,0,.30);overflow:hidden}.panel-inner{padding:20px}
+.scan-panel{position:relative;min-height:540px;display:flex;flex-direction:column;justify-content:space-between}.scan-panel:before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(47,128,255,.10),transparent 43%,rgba(0,199,165,.06));pointer-events:none}.scan-head{position:relative}.eyebrow{font-size:10px;font-weight:900;color:#6fd7ff;letter-spacing:1.7px;text-transform:uppercase}.scan-title{margin-top:8px;font-size:31px;font-weight:1000;line-height:1.08;letter-spacing:-.8px}.scan-desc{margin-top:8px;color:#8ea6c1;font-size:13px;line-height:1.5;max-width:480px}
+.scan-orb-wrap{position:relative;display:flex;justify-content:center;align-items:center;min-height:238px}.scan-orb{position:relative;width:172px;height:172px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 35% 30%,#214d79,#102943 60%,#091728 100%);border:1px solid rgba(121,191,255,.28);box-shadow:0 0 0 16px rgba(47,128,255,.05),0 0 0 34px rgba(47,128,255,.025),0 24px 60px rgba(0,0,0,.35),inset 0 0 35px rgba(63,163,255,.12)}.scan-orb:before{content:"";position:absolute;width:126px;height:126px;border-radius:50%;border:1px dashed rgba(107,210,255,.35);animation:spin 12s linear infinite}.scan-orb:after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;top:13px;left:78px;background:#39e0aa;box-shadow:0 0 24px rgba(57,224,170,.8)}@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}.card-icon{position:relative;width:76px;height:56px;border-radius:11px;background:linear-gradient(135deg,#f4fbff,#b6d7ee);box-shadow:0 12px 30px rgba(0,0,0,.26);transform:rotate(-5deg)}.card-icon:before{content:"";position:absolute;left:10px;right:10px;top:13px;height:8px;border-radius:3px;background:#2f80ff}.card-icon:after{content:"";position:absolute;left:10px;bottom:11px;width:26px;height:6px;border-radius:3px;background:#6f91ac}
+.status{position:relative;margin-top:6px;min-height:58px;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px 14px;border-radius:16px;background:#091a2d;border:1px solid rgba(87,157,214,.18);color:#d9e9f7;font-size:13px;font-weight:900;line-height:1.35}.status:before{content:"";width:8px;height:8px;border-radius:50%;background:#4ea5ff;box-shadow:0 0 0 5px rgba(78,165,255,.10);margin-right:10px;flex:0 0 auto}
+.tap-rules{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.tap-rule{padding:12px;border-radius:16px;background:#0a192b;border:1px solid rgba(255,255,255,.07)}.tap-rule strong{display:block;color:#fff;font-size:18px}.tap-rule span{display:block;margin-top:3px;font-size:10px;color:#819ab6;letter-spacing:.4px}
+.member-panel{min-height:540px;display:flex;flex-direction:column}.member-empty{display:flex;flex:1;align-items:center;justify-content:center;text-align:center;color:#718aa5;padding:28px}.member-empty strong{display:block;color:#9fb5ca;font-size:15px;margin-bottom:6px}.member{display:none}.member.show{display:flex;flex:1;flex-direction:column}.profile-card{padding:20px 20px 16px;background:linear-gradient(135deg,#112a49,#0b1d32);border-bottom:1px solid rgba(255,255,255,.07)}.profile-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.avatar{width:52px;height:52px;border-radius:17px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#2f80ff,#00bfa6);font-size:19px;font-weight:1000;box-shadow:0 12px 26px rgba(47,128,255,.24)}.profile-copy{flex:1;min-width:0}.name{font-size:24px;font-weight:1000;line-height:1.12;word-break:break-word}.mid{margin-top:5px;font-size:10px;color:#7f9ab8;letter-spacing:1px}.voice-pill{display:inline-flex;align-items:center;gap:6px;padding:7px 9px;border-radius:999px;background:rgba(0,199,165,.12);border:1px solid rgba(0,199,165,.18);color:#8ef0d5;font-size:9px;font-weight:900;white-space:nowrap}
+.points-wrap{margin-top:18px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px}.points-label{font-size:10px;color:#83a0be;letter-spacing:1.2px;font-weight:900}.points{font-size:62px;font-weight:1000;line-height:.9;letter-spacing:-2px;background:linear-gradient(180deg,#fff,#8fc9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.action{font-size:12px;font-weight:900;color:#7ff0c9;text-align:right;padding-bottom:3px}
+.reward-zone{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}.reward-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.reward-title{font-size:13px;font-weight:1000}.reward-caption{font-size:9px;color:#718aa5}.reward{display:grid;gap:8px}.reward-card{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 12px;border-radius:15px;background:#091a2d;border:1px solid rgba(255,255,255,.07)}.reward-main{min-width:0}.reward-main strong{display:block;font-size:12px;color:#eaf5ff}.reward-main small{display:block;margin-top:3px;font-size:9px;color:#6f89a4}.reward-state{padding:6px 8px;border-radius:999px;background:#10243a;color:#718da9;font-size:9px;font-weight:1000;white-space:nowrap}.reward-card.ready{background:linear-gradient(135deg,#2a230d,#1a1b16);border-color:rgba(255,197,63,.30)}.reward-card.ready .reward-state{background:#f5b942;color:#1d1606}.reward-card.claimed{background:#0d2724;border-color:rgba(63,220,169,.16)}.reward-card.claimed .reward-state{background:#1a8f69;color:#fff}
+.claim-area{display:none;margin-top:auto;padding-top:12px}.claim-area.show{display:block}.claim-card{padding:13px;border-radius:16px;background:linear-gradient(135deg,#2a210a,#1c180c);border:1px solid rgba(255,190,60,.26)}.claim-title{font-size:13px;font-weight:1000;color:#ffd474}.claim-desc{font-size:10px;color:#aa9366;margin-top:4px}.claim-reward-btn{width:100%;height:50px;margin-top:10px;border:0;border-radius:14px;background:linear-gradient(135deg,#ffc84a,#e99414);color:#211503;font-size:13px;font-weight:1000;box-shadow:0 12px 28px rgba(233,148,20,.20)}.claim-reward-btn:disabled{opacity:.55;box-shadow:none}.footer-note{margin-top:12px;text-align:center;font-size:9px;color:#607b96;line-height:1.5}
+@media(max-width:760px){.shell{padding:8px}.topbar{padding:10px 12px;border-radius:16px}.brand-logo{width:42px;height:42px;border-radius:13px}.brand-title{font-size:18px}.brand-sub{font-size:8px}.reader-pill{padding:7px 9px;font-size:9px}.stage{grid-template-columns:1fr}.scan-panel,.member-panel{min-height:auto}.scan-title{font-size:24px}.scan-orb-wrap{min-height:190px}.scan-orb{width:144px;height:144px}.scan-orb:before{width:105px;height:105px}.scan-orb:after{left:65px}.card-icon{width:66px;height:48px}.panel-inner{padding:15px}.profile-card{padding:15px}.name{font-size:20px}.points{font-size:50px}.reward-zone{padding:14px}.login-grid{grid-template-columns:1fr}.login button{width:100%}}
+@media(min-width:761px) and (orientation:landscape){body{overflow:hidden}.shell{padding:8px 12px}.topbar{padding:10px 14px}.brand-logo{width:42px;height:42px}.stage{height:calc(100vh - 82px)}.panel,.scan-panel,.member-panel{height:100%}.panel-inner{padding:16px}.scan-panel{min-height:0}.scan-title{font-size:28px}.scan-orb-wrap{min-height:205px;flex:1}.scan-orb{width:150px;height:150px}.scan-orb:before{width:110px;height:110px}.scan-orb:after{left:67px}.member-panel{min-height:0}.profile-card{padding:16px}.name{font-size:22px}.points{font-size:54px}.reward-zone{padding:13px 15px 14px}.reward-card{padding:9px 10px}.claim-reward-btn{height:44px;margin-top:8px}.footer-note{margin-top:8px}}
+@media(max-height:620px) and (orientation:landscape){.scan-desc{display:none}.scan-orb-wrap{min-height:150px}.scan-orb{width:122px;height:122px}.scan-orb:before{width:88px;height:88px}.scan-orb:after{left:53px}.card-icon{width:58px;height:42px}.tap-rule{padding:9px}.profile-card{padding:12px 15px}.points-wrap{margin-top:12px}.points{font-size:46px}.reward-zone{padding:10px 14px}.reward-card{padding:8px 9px}.footer-note{display:none}}
 </style>
-
 </head>
 <body>
 <div class="shell">
- <div class="head"><div><div class="brand">RK CELL</div><div class="sub">RFID MEMBER STATION • TAB T285</div></div><div><span class="dot"></span><span id="readerState">Reader siap</span></div></div>
- <div id="loginBox" class="login">
-   <b>Login operator diperlukan</b>
-   <input id="email" type="email" placeholder="Email admin/operator">
-   <input id="password" type="password" placeholder="Password">
-   <button id="loginBtn">MASUK</button>
-   <div id="loginStatus" class="small"></div><div class="small">Mode Android 7: koneksi XHR kompatibel, tanpa Fetch API.</div>
- </div>
- <div class="card">
-  <div class="hero">
-   <div class="icon">💳</div>
-   <h1>TEMPELKAN KARTU MEMBER</h1>
-   <div class="hint">RFID Reader External via USB OTG • input member hanya dari kartu</div>
-   <div class="rules">
-    <div class="rule"><strong>1× TAP</strong>CEK POIN</div>
-    <div class="rule"><strong>2× TAP</strong>+1 POIN</div>
-   </div>
-  </div>
-  <div id="status" class="status">Menunggu kartu...</div>
-  <div id="memberBox" class="member">
-    <div id="memberName" class="name">-</div>
-    <div id="memberId" class="mid">-</div>
-    <div id="memberPoints" class="points">0</div>
-    <div>POIN MEMBER</div>
-    <div id="action" class="action"></div>
-    <div id="reward" class="reward"></div>
-  </div>
-  <div class="small">1× tap hanya menampilkan data dan poin member. Tap kartu yang sama 2× berurutan dalam ±1,2 detik untuk menambahkan +1 poin. Claim reward dan seluruh kontrol lain hanya melalui ADMIN.</div>
- </div>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-logo">RK</div>
+      <div>
+        <div class="brand-title">RK CELL</div>
+        <div class="brand-sub">Smart Member Station • T285</div>
+      </div>
+    </div>
+    <div class="reader-pill"><span class="reader-dot"></span><span id="readerState">Reader siap</span></div>
+  </header>
+
+  <section id="loginBox" class="login">
+    <div class="login-title">Login Operator</div>
+    <div class="login-sub">Masuk untuk mengaktifkan terminal member RK CELL.</div>
+    <div class="login-grid">
+      <input id="email" type="email" placeholder="Email admin/operator" autocomplete="username">
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+      <button id="loginBtn" type="button">MASUK</button>
+    </div>
+    <div id="loginStatus" class="small"></div>
+  </section>
+
+  <main class="stage">
+    <section class="panel">
+      <div class="panel-inner scan-panel">
+        <div class="scan-head">
+          <div class="eyebrow">RFID MEMBER ACCESS</div>
+          <div class="scan-title">Tempelkan kartu<br>untuk mulai.</div>
+          <div class="scan-desc">Terminal membaca kartu melalui reader USB OTG, mencocokkan UID member, lalu menampilkan poin dan reward secara otomatis.</div>
+        </div>
+        <div class="scan-orb-wrap">
+          <div class="scan-orb"><div class="card-icon"></div></div>
+        </div>
+        <div>
+          <div id="status" class="status">Menunggu kartu...</div>
+          <div class="tap-rules">
+            <div class="tap-rule"><strong>1× TAP</strong><span>CEK POIN & REWARD</span></div>
+            <div class="tap-rule"><strong>2× TAP</strong><span>TAMBAH +1 POIN</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel member-panel">
+      <div id="memberEmpty" class="member-empty"><div><strong>Belum ada kartu terbaca</strong>Data member akan muncul di sini setelah kartu ditempelkan.</div></div>
+      <div id="memberBox" class="member">
+        <div class="profile-card">
+          <div class="profile-top">
+            <div class="avatar">RK</div>
+            <div class="profile-copy">
+              <div id="memberName" class="name">-</div>
+              <div id="memberId" class="mid">-</div>
+            </div>
+            <div class="voice-pill">● AI VOICE</div>
+          </div>
+          <div class="points-wrap">
+            <div><div class="points-label">TOTAL POIN</div><div id="memberPoints" class="points">0</div></div>
+            <div id="action" class="action"></div>
+          </div>
+        </div>
+        <div class="reward-zone">
+          <div class="reward-head"><div class="reward-title">Reward Member</div><div class="reward-caption">Program loyalti RK CELL</div></div>
+          <div id="reward" class="reward"></div>
+          <div id="claimArea" class="claim-area">
+            <div class="claim-card">
+              <div id="claimTitle" class="claim-title">Reward siap diklaim</div>
+              <div id="claimDesc" class="claim-desc"></div>
+              <button id="claimRewardBtn" class="claim-reward-btn" type="button">KLAIM REWARD</button>
+            </div>
+          </div>
+          <div class="footer-note">1× tap untuk melihat poin • 2× tap untuk +1 poin • AI Voice membacakan nama, poin, dan reward.</div>
+        </div>
+      </div>
+    </section>
+  </main>
 </div>
 
 <script>
@@ -81,7 +117,7 @@ var SUPABASE_KEY='sb_publishable_5oejSd8dlvNYSuwzNm-W1A_h3Qrn6hj';
 var ACCESS_TOKEN=localStorage.getItem('rk_t285_access_token')||'';
 
 var hidBuffer="", hidTimer=null, lastKeyAt=0;
-var pendingTap=null, pendingTimer=null, busy=false, currentMember=null;
+var pendingTap=null, pendingTimer=null, busy=false, currentMember=null, currentClaim=null, currentClaims=[];
 var DOUBLE_MS=1200;
 var rewards=[
   {threshold:10,name:"Free Admin"},
@@ -97,7 +133,7 @@ function decToHexString(dec){dec=String(dec||"").replace(/\D/g,"");if(!dec)retur
 function reverseHexBytes(hex){hex=String(hex||"").toUpperCase();if(!/^[0-9A-F]+$/.test(hex)||hex.length%2)return"";var out="";for(var i=hex.length;i>0;i-=2)out+=hex.slice(i-2,i);return out}
 function uidVariants(value){var raw=normalizeUid(value),set={};function add(v){v=normalizeUid(v);if(v)set[v]=1}add(raw);if(/^[0-9A-F]+$/.test(raw)){var even=raw.length%2?"0"+raw:raw;add(even);add(stripZeros(even));var rev=reverseHexBytes(even);add(rev);add(stripZeros(rev));add(hexToDecString(even));if(rev)add(hexToDecString(rev));if(even.length>8){var arr=[even.slice(-8),even.slice(0,8)];for(var k=0;k<arr.length;k++){var x=arr[k];add(x);add(hexToDecString(x));var xr=reverseHexBytes(x);add(xr);add(hexToDecString(xr))}}}if(/^\d+$/.test(raw)){var hx=decToHexString(raw);if(hx.length%2)hx="0"+hx;add(hx);add(reverseHexBytes(hx))}var out=[];for(var key in set)if(set.hasOwnProperty(key))out.push(key);return out}
 function setStatus(t){$("status").innerHTML=t}
-function say(t){try{if(window.speechSynthesis){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(t);u.lang="id-ID";speechSynthesis.speak(u)}}catch(e){}}
+function say(t){try{if(window.speechSynthesis&&window.SpeechSynthesisUtterance){speechSynthesis.cancel();var u=new SpeechSynthesisUtterance(String(t||""));u.lang="id-ID";u.rate=0.94;u.pitch=1.03;u.volume=1;speechSynthesis.speak(u)}}catch(e){}}
 
 function xhr(method,path,body,auth,cb){
   try{
@@ -167,25 +203,92 @@ function findMember(cardUid,cb){
   xhr("GET",q,null,true,function(err,data){if(err){cb(err);return}cb(null,(data&&data.length)?data[0]:null);});
 }
 
-function renderReward(points){
-  var mod=((points%30)+30)%30;
-  var next=null;
-  for(var i=0;i<rewards.length;i++){if(rewards[i].threshold>mod){next=rewards[i];break}}
-  if(!next)next=rewards[0];
-  var cycle=Math.floor(points/30)+((next.threshold<=mod)?1:0);
-  var absolute=cycle*30+next.threshold;
-  $("reward").innerHTML="🎁 Reward berikutnya: "+next.name+" • "+absolute+" poin";
+function loadClaims(memberId,cb){
+  var q="/rest/v1/reward_claims?select=id,member_id,points_required,claimed_at&member_id=eq."+encodeURIComponent(memberId)+"&order=claimed_at.desc";
+  xhr("GET",q,null,true,function(err,data){
+    if(err){currentClaims=[];cb&&cb();return}
+    currentClaims=data||[];cb&&cb();
+  });
 }
 
-function showMember(m,action){
+function isClaimed(pointsRequired){
+  for(var i=0;i<currentClaims.length;i++){
+    if(Number(currentClaims[i].points_required)===Number(pointsRequired))return true;
+  }
+  return false;
+}
+
+function getReadyReward(points){
+  var ready=null;
+  for(var i=0;i<rewards.length;i++){
+    if(Number(points)>=Number(rewards[i].threshold)&&!isClaimed(rewards[i].threshold))ready=rewards[i];
+  }
+  return ready;
+}
+
+function renderReward(points){
+  var html="";
+  for(var i=0;i<rewards.length;i++){
+    var r=rewards[i],claimed=isClaimed(r.threshold),ready=Number(points)>=r.threshold&&!claimed;
+    var cls=claimed?"claimed":(ready?"ready":"locked");
+    var state=claimed?"SUDAH DIKLAIM":(ready?"SIAP DIKLAIM":""+r.threshold+" POIN");
+    html+='<div class="reward-card '+cls+'"><div class="reward-main"><strong>🎁 '+r.name+'</strong><small>Reward '+r.threshold+' poin</small></div><span class="reward-state">'+state+'</span></div>';
+  }
+  $("reward").innerHTML=html;
+  var readyReward=getReadyReward(points);
+  currentClaim=readyReward;
+  if(readyReward){
+    $("claimArea").className="claim-area show pulse";
+    $("claimTitle").innerHTML="🎁 Reward siap diklaim";
+    $("claimDesc").innerHTML=readyReward.name+" • "+readyReward.threshold+" poin";
+    $("claimRewardBtn").disabled=false;
+    $("claimRewardBtn").innerHTML="KLAIM "+readyReward.name.toUpperCase();
+  }else{
+    $("claimArea").className="claim-area";
+  }
+}
+
+function voiceMember(m){
+  var pts=Number(m.points||0),ready=getReadyReward(pts),msg="Selamat datang "+(m.name||"member")+". Poin Anda saat ini "+pts+" poin.";
+  if(ready)msg+=" Anda mendapatkan reward "+ready.name+". Reward siap diklaim.";
+  else{
+    var next=null;for(var i=0;i<rewards.length;i++){if(pts<rewards[i].threshold){next=rewards[i];break}}
+    if(next)msg+=" Reward berikutnya "+next.name+" pada "+next.threshold+" poin.";
+  }
+  say(msg);
+}
+
+function showMember(m,action,doVoice){
   currentMember=m;
-  $("memberBox").className="member show";
+  $("memberBox").className="member show";if($("memberEmpty"))$("memberEmpty").style.display="none";
   $("memberName").innerHTML=m.name||"Member";
   $("memberId").innerHTML=m.id||"";
   $("memberPoints").innerHTML=Number(m.points||0);
   $("action").innerHTML=action||"";
-  renderReward(Number(m.points||0));
+  loadClaims(m.id,function(){renderReward(Number(m.points||0));if(doVoice)voiceMember(m);});
 }
+
+function claimCurrentReward(){
+  if(!currentMember||!currentClaim||busy)return;
+  var r=currentClaim;
+  if(!confirm('Klaim reward "'+r.name+'" untuk '+(currentMember.name||'member')+'?'))return;
+  busy=true;
+  $("claimRewardBtn").disabled=true;
+  $("claimRewardBtn").innerHTML="MEMPROSES...";
+  setStatus("Memproses klaim reward...");
+  xhr("POST","/rest/v1/rpc/claim_member_reward",{p_member_id:currentMember.id,p_points_required:r.threshold},true,function(err){
+    if(err){busy=false;$("claimRewardBtn").disabled=false;$("claimRewardBtn").innerHTML="COBA KLAIM LAGI";setStatus("✕ Gagal klaim: "+err.message);say("Klaim reward gagal");return}
+    loadClaims(currentMember.id,function(){
+      renderReward(Number(currentMember.points||0));
+      setStatus("✓ Reward "+r.name+" berhasil diklaim");
+      $("action").innerHTML="✓ REWARD BERHASIL DIKLAIM";
+      say("Selamat "+(currentMember.name||"member")+". Reward "+r.name+" berhasil diklaim.");
+      busy=false;
+    });
+  });
+}
+
+$("claimRewardBtn").onclick=claimCurrentReward;
 
 function addOne(m){
   var payload={p_member_id:m.id,p_category:"Lainnya",p_points:1,p_note:"Double Tap RFID +1",p_source:"reader"};
@@ -194,9 +297,8 @@ function addOne(m){
     findMember(normalizeUid(m.nfc_uid),function(err2,fresh){
       var mm=fresh||m;
       if(!fresh)mm.points=Number(m.points||0)+1;
-      showMember(mm,"✓ +1 POIN BERHASIL");
+      showMember(mm,"✓ +1 POIN BERHASIL",true);
       setStatus("✓ 2× TAP • +1 poin berhasil ditambahkan");
-      say("Berhasil. Satu poin ditambahkan untuk "+(mm.name||"member"));
       busy=false;
     });
   });
@@ -208,9 +310,8 @@ function scheduleSingle(cardUid,m){
   pendingTimer=setTimeout(function(){
     var p=pendingTap;pendingTap=null;pendingTimer=null;
     if(!p||busy)return;
-    showMember(p.member,"✓ CEK POIN");
+    showMember(p.member,"✓ CEK POIN",true);
     setStatus("✓ Data member ditampilkan • poin tidak berubah");
-    say("Poin "+(p.member.name||"member")+" saat ini "+Number(p.member.points||0));
   },DOUBLE_MS);
 }
 
@@ -225,7 +326,7 @@ function handleUid(raw){
     clearTimeout(pendingTimer);pendingTimer=null;
     var m2=pendingTap.member;pendingTap=null;
     busy=true;
-    showMember(m2,"2× TAP TERDETEKSI • MENAMBAH +1");
+    showMember(m2,"2× TAP TERDETEKSI • MENAMBAH +1",false);
     setStatus("Memproses +1 poin...");
     addOne(m2);
     return;
@@ -241,7 +342,7 @@ function handleUid(raw){
   findMember(cardUid,function(err,m){
     if(err){setStatus("✕ Gagal membaca database: "+err.message);return}
     if(!m){setStatus("✕ Kartu belum terdaftar • Reader: "+cardUid+" • NFC: "+readerToNfcUid(cardUid));say("Kartu belum terdaftar");return}
-    showMember(m,"Tap 1 terbaca • CEK POIN");
+    showMember(m,"Tap 1 terbaca • CEK POIN",false);
     setStatus("Tap 1 terbaca • cek poin • tunggu ±1,2 detik jika ingin +1");
     scheduleSingle(cardUid,m);
   });
@@ -270,5 +371,4 @@ document.addEventListener("keydown",function(e){
 requireSession();
 setStatus(ACCESS_TOKEN?"Menunggu kartu...":"Login operator diperlukan.");
 </script>
-
 </body></html>
